@@ -102,6 +102,9 @@
                             }
                         });
 
+                        const couponAppliedField = form.querySelector('[name="mhbo_coupon_applied"]');
+                        const activeCouponCode   = couponAppliedField ? couponAppliedField.value.trim() : '';
+
                         const response = await fetch(mhbo_vars.rest_url + '/recalculate-price', {
                             method: 'POST',
                             signal: recalcAbortController.signal,
@@ -117,7 +120,8 @@
                                 children: children,
                                 child_ages: childrenAges,
                                 extras: extras,
-                                mhbo_payment_type: paymentType
+                                mhbo_payment_type: paymentType,
+                                coupon_code: activeCouponCode
                             })
                         });
 
@@ -154,6 +158,20 @@
                                 // the server renders deposit rows hidden by default and relies
                                 // on the client to show them when deposit payment is selected.
                                 updateDepositVisibility();
+
+                                // Re-insert the coupon discount row if the server confirmed the coupon is still valid.
+                                // taxContainer.innerHTML wipes the row that mhbo-coupons.js inserted; this event
+                                // lets mhbo-coupons.js re-add it without triggering another AJAX validation.
+                                if (data.coupon_applied && data.coupon_discount_formatted) {
+                                    wrapper.dispatchEvent(new CustomEvent('mhboCouponDisplay', {
+                                        bubbles: true,
+                                        detail: {
+                                            code:               data.coupon_applied,
+                                            discount_formatted: data.coupon_discount_formatted,
+                                            new_total_formatted: data.total_formatted
+                                        }
+                                    }));
+                                }
                             }
 
                             // Update Payment Cards if deposit info returned
@@ -490,7 +508,8 @@
                     page_url: window.location.href,
                     stripe_pi: (function () { const el = form.querySelector('input[name="mhbo_stripe_payment_intent"]'); return el ? el.value : ''; }()),
                     paypal_order_id: (function () { const el = form.querySelector('input[name="mhbo_paypal_order_id"]'); return el ? el.value : ''; }()),
-                    paypal_capture_id: (function () { const el = form.querySelector('input[name="mhbo_paypal_capture_id"]'); return el ? el.value : ''; }())
+                    paypal_capture_id: (function () { const el = form.querySelector('input[name="mhbo_paypal_capture_id"]'); return el ? el.value : ''; }()),
+                    mhbo_coupon_code: (function () { const el = form.querySelector('[name="mhbo_coupon_applied"]'); return el ? el.value.trim() : ''; }())
                 };
 
                 fetch(mhbo_vars.rest_url + '/booking/complete', {

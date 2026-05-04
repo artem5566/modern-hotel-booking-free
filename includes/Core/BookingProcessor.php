@@ -21,7 +21,7 @@ use MHBO\Core\Cache;
  * payment verification, and database insertion.
  * 
  * @package MHBO\Core
- * @since 2.4.2
+ * @since 2.3.8
  */
 class BookingProcessor
 {
@@ -155,7 +155,8 @@ $children      = 0;
             }
             $booking_extras = $calc['extras_breakdown'] ?? [];
             $tax_data = $calc['tax'] ?? null;
-            $charge_amount = $total;
+
+$charge_amount = $total;
 
 // 5. Payment Verification
             // Only privileged internal sources may preset status/payment_status.
@@ -237,8 +238,8 @@ if ($update_id > 0) {
 
             // 7. Post-Processing
             Cache::invalidate_booking($booking_id, $room_id);
-            
-            // Clean up transients
+
+// Clean up transients
             if (isset($data['stripe_pi'])) {
                 delete_transient('mhbo_pi_amount_' . $data['stripe_pi']);
                 delete_transient('mhbo_pi_params_' . $data['stripe_pi']);

@@ -289,9 +289,13 @@
                         );
                     }
                 },
-                error: function () {
+                error: function (xhr) {
                     btn.prop('disabled', false);
-                    $stripeResult.html('<span style="color: red;">Connection error. Please try again.</span>');
+                    const response = xhr.responseJSON;
+                    const errorMsg = (response && response.data && response.data.message) 
+                        ? response.data.message 
+                        : (config.i18n?.connection_error || 'Connection error. Please try again.');
+                    $stripeResult.html('<span style="color: red;">' + errorMsg.replace(/\n/g, '<br>') + '</span>');
                 }
             });
         });
@@ -333,10 +337,14 @@
                         );
                     }
                 },
-                error: function () {
+                error: function (xhr) {
                     $paypalSpinner.removeClass('is-active');
                     btn.prop('disabled', false);
-                    $paypalResult.html('<span style="color: red;">Connection error. Please try again.</span>');
+                    const response = xhr.responseJSON;
+                    const errorMsg = (response && response.data && response.data.message) 
+                        ? response.data.message 
+                        : (config.i18n?.connection_error || 'Connection error. Please try again.');
+                    $paypalResult.html('<span style="color: red;">' + errorMsg.replace(/\n/g, '<br>') + '</span>');
                 }
             });
         });

@@ -6,7 +6,7 @@
  * room types with real-time pricing.
  *
  * @package MHBO\AI\Abilities
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);
@@ -366,7 +366,7 @@ $child_ages = [];
         }
 
         $search_url = KnowledgeBase::get_booking_url();
-        $has_multi  = ! empty( \array_filter( $available, fn( $r ) => ! empty( $r['is_multi_room'] ) ) );
+        $has_multi  = [] !== \array_filter( $available, fn( $r ) => ( $r['is_multi_room'] ?? false ) );
         $message    = [] === $available
             ? \__( 'No rooms available for the selected dates and guest count.', 'modern-hotel-booking' ) . "\n\n" . \__( 'Capacity Guidelines:', 'modern-hotel-booking' ) . "\n" . \implode( "\n", $capacity_hints )
             : \sprintf(

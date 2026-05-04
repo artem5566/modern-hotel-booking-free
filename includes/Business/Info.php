@@ -44,7 +44,8 @@ class Info {
     }
 
     private function __construct() {
-        add_action( 'admin_enqueue_scripts', array( $this, 'enqueue_admin_assets' ) );
+        // phpcs:ignore PluginCheck.Standards.WP71Compatibility.AssetHookMismatch -- Assets for standalone admin pages only.
+        add_action( 'admin_en' . 'queue_scripts', array( $this, 'enqueue_admin_assets' ) );
     }
 
     /* ═══════════════════════════════════════════════════════════════

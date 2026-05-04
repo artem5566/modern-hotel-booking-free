@@ -2,7 +2,7 @@
     "$schema": "https://schemas.wp.org/trunk/block.json",
     "apiVersion": 3,
     "name": "modern-hotel-booking/ai-concierge",
-    "version": "2.4.0",
+    "version": "2.3.8",
     "title": "Hotel: AI Concierge",
     "category": "hotel-booking",
     "icon": "format-chat",

@@ -5,7 +5,7 @@
  * Returns hotel name, contact details, amenities, and check-in/out times.
  *
  * @package MHBO\AI\Abilities
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);

@@ -1052,3 +1052,174 @@
 .mhbo-biz-row code:hover + .mhbo-copy-hint {
     opacity: 1;
 }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Availability Results Cards
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-availability-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mhbo-avail-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mhbo-chat-text-muted);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--mhbo-chat-border);
+}
+
+.mhbo-room-avail-card {
+    background: var(--mhbo-chat-bg);
+    border: 1px solid var(--mhbo-chat-border);
+    border-radius: var(--mhbo-chat-radius-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow var(--mhbo-chat-transition);
+}
+
+.mhbo-room-avail-card--multi {
+    border-left: 3px solid var(--mhbo-chat-accent);
+}
+
+.mhbo-dist-breakdown {
+    margin-top: 10px;
+    border-top: 1px solid var(--mhbo-chat-border);
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mhbo-dist-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.mhbo-dist-label {
+    font-weight: 600;
+    color: var(--mhbo-chat-text);
+}
+
+.mhbo-dist-guests {
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-multi-notice {
+    margin: 8px 0 0;
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+    font-style: italic;
+}
+
+.mhbo-room-thumb-wrap {
+    width: 100%;
+    height: 90px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.mhbo-room-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mhbo-room-avail-body {
+    padding: 10px 12px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.mhbo-room-avail-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.mhbo-room-avail-name {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.mhbo-room-badges {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.mhbo-room-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 100px;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.mhbo-room-badge--hot {
+    background: #fff0f0;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+}
+
+.mhbo-room-badge--low {
+    background: #fffbeb;
+    color: #b7791f;
+    border: 1px solid #fbd38d;
+}
+
+.mhbo-room-badge--multi {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    border: 1px solid #bee3f8;
+}
+
+@media (prefers-color-scheme: dark) {
+    .mhbo-room-badge--hot   { background: #3b0a0a; color: #fc8181; border-color: #c53030; }
+    .mhbo-room-badge--low   { background: #2d2007; color: #fbd38d; border-color: #b7791f; }
+    .mhbo-room-badge--multi { background: #0d2137; color: #90caf9; border-color: #2b6cb0; }
+}
+
+.mhbo-room-capacity {
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-room-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.mhbo-room-price strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--mhbo-chat-text);
+}
+
+.mhbo-room-price small {
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-room-avail-card .mhbo-booking-link-btn {
+    margin: 8px 12px 12px;
+    font-size: 12px;
+    padding: 8px;
+    border-radius: 100px;
+}

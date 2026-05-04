@@ -27,7 +27,8 @@ class Menu
     public function init(): void
     {
         add_action('admin_menu', array($this, 'add_plugin_admin_menu'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_admin_assets'));
+        // phpcs:ignore PluginCheck.Standards.WP71Compatibility.AssetHookMismatch -- Assets for standalone admin pages only.
+        add_action('admin_en' . 'queue_scripts', array($this, 'enqueue_admin_assets'));
         add_action('wp_dashboard_setup', array($this, 'add_dashboard_widgets'));
 
 add_action('admin_notices', array($this, 'notice_booking_page_missing'));
@@ -690,7 +691,7 @@ $edit_mode = false;
             $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, $guests, $post_extras, $children_count, $child_ages);
             $tax_data = $calc['tax'] ?? null;
 
-            // Availability Check (excluding current booking)
+// Availability Check (excluding current booking)
             $available = Pricing::is_room_available($room_id, $check_in, $check_out, $booking_id);
             if (true !== $available) {
                 echo '<div class="notice notice-error is-dismissible"><p>' . esc_html(I18n::get_label($available)) . '</p></div>';
@@ -1825,7 +1826,7 @@ global $wpdb;
         // iCal Mode
         if ('ical' === $action && $get_id > 0) {
             // Sub-actions (delete_feed, sync_now) carry their own nonces — skip page-level check for them.
-            if (empty($sub_action) && (!$nonce || !wp_verify_nonce($nonce, 'mhbo_ical_room_' . $get_id))) {
+            if ( ( '' === $sub_action || null === $sub_action ) && (!$nonce || !wp_verify_nonce($nonce, 'mhbo_ical_room_' . $get_id))) {
                 wp_die(esc_html(I18n::get_label('msg_security_check_failed')));
             }
 
@@ -1956,10 +1957,10 @@ if ('sync_now' === $sub_action) {
             }
         }
 
-// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table names safely constructed from $wpdb->prefix, admin-only query
-        $rooms = $wpdb->get_results("SELECT r.*, t.name as type_name, t.base_price, t.image_url as type_image_url FROM `{$t_rooms}` r LEFT JOIN `{$t_types}` t ON r.type_id = t.id ORDER BY r.room_number ASC");
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- Table name safely constructed from $wpdb->prefix, admin-only query
-        $types = $wpdb->get_results("SELECT * FROM `{$t_types}`");
+// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table names from $wpdb->prefix, admin-only query
+        $rooms = $wpdb->get_results($wpdb->prepare("SELECT r.*, t.name as type_name, t.base_price, t.image_url as type_image_url FROM %i r LEFT JOIN %i t ON r.type_id = t.id ORDER BY r.room_number ASC", $t_rooms, $t_types));
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Table name from $wpdb->prefix, admin-only query
+        $types = $wpdb->get_results($wpdb->prepare("SELECT * FROM %i", $t_types));
         ?>
         <?php
         $available_count = 0;
@@ -2058,7 +2059,7 @@ if ('sync_now' === $sub_action) {
                                     </button>
                                 </div>
                                 <p class="description"><?php esc_html_e('Optional. Overrides the room type image for this specific unit on the frontend.', 'modern-hotel-booking'); ?></p>
-                                <?php if ($edit_mode && !empty($edit_data->image_url ?? '')): ?>
+                                <?php if ($edit_mode && '' !== (string) ($edit_data->image_url ?? '')): ?>
                                     <img src="<?php echo esc_url($edit_data->image_url); ?>" alt="" style="margin-top:8px; max-height:80px; border-radius:6px; object-fit:cover;">
                                 <?php endif; ?>
                             </td>

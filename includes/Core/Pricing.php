@@ -323,13 +323,13 @@ class Pricing
             if ($prevent_same_day) {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $conflict = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in <= %s AND check_out >= %s AND id != %d",
+                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in <= DATE(%s) AND check_out >= DATE(%s) AND id != %d",
                     $room_id, $check_out, $check_in, $exclude_booking_id
                 ));
             } else {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $conflict = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in < %s AND check_out > %s AND id != %d",
+                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in < DATE(%s) AND check_out > DATE(%s) AND id != %d",
                     $room_id, $check_out, $check_in, $exclude_booking_id
                 ));
             }
@@ -337,13 +337,13 @@ class Pricing
             if ($prevent_same_day) {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $conflict = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in <= %s AND check_out >= %s",
+                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in <= DATE(%s) AND check_out >= DATE(%s)",
                     $room_id, $check_out, $check_in
                 ));
             } else {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
                 $conflict = $wpdb->get_var($wpdb->prepare(
-                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in < %s AND check_out > %s",
+                    "SELECT id FROM {$wpdb->prefix}mhbo_bookings WHERE room_id = %d AND status != 'cancelled' AND check_in < DATE(%s) AND check_out > DATE(%s)",
                     $room_id, $check_out, $check_in
                 ));
             }

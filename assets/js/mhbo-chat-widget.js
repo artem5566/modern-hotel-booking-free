@@ -25,16 +25,17 @@
 
     class ChatWidget {
         constructor(container) {
-            this.container  = container;
-            this.isOpen     = false;
-            this.isSending  = false;
-            this.sessionId  = sessionStorage.getItem('mhbo_session_id') || null;
-            this.evtSource  = null;
-            this.panel      = null;
-            this.fab        = null;
-            this.messagesEl = null;
-            this.inputEl    = null;
-            this.sendBtn    = null;
+            this.container      = container;
+            this.isOpen         = false;
+            this.isSending      = false;
+            this.sessionId      = sessionStorage.getItem('mhbo_session_id') || null;
+            this.evtSource      = null;
+            this.panel          = null;
+            this.fab            = null;
+            this.messagesEl     = null;
+            this.inputEl        = null;
+            this.sendBtn        = null;
+            this._nonceRetried  = false; // Guard: only refresh stale nonce once per send.
         }
 
         // ── Initialise ────────────────────────────────────────────────────────
@@ -425,9 +426,18 @@
             });
 
             if (!res.ok) {
+                // 403 = stale nonce (page cache, Cloudflare HTML cache, etc.).
+                // Refresh both nonces from the server and retry exactly once.
+                if (res.status === 403 && !this._nonceRetried) {
+                    this._nonceRetried = true;
+                    await this._refreshNonce();
+                    return this._postMessage(text);
+                }
+                this._nonceRetried = false;
                 const err = await res.json().catch(() => ({}));
                 throw new Error(err?.message || ('HTTP ' + res.status));
             }
+            this._nonceRetried = false;
 
             if (cfg.settings?.streamingEnabled && res.headers.get('Content-Type')?.includes('text/event-stream')) {
                 return res.body; // Return the ReadableStream.
@@ -435,6 +445,25 @@
 
             const json = await res.json();
             return json.data ?? json;
+        }
+
+        // Fetch fresh nonces from the server — called automatically when a 403 is received.
+        // This recovers from stale nonces baked into cached pages (Cloudflare, WP Rocket, etc.)
+        // without requiring the guest to reload the page.
+        async _refreshNonce() {
+            try {
+                const r = await fetch(cfg.restUrl + '/mhbo/v1/nonce', {
+                    credentials: 'same-origin',
+                    cache: 'no-store',
+                });
+                if (!r.ok) return;
+                const d = await r.json().catch(() => ({}));
+                const data = d.data ?? d;
+                if (data.nonce)      cfg.nonce      = data.nonce;
+                if (data.rest_nonce) cfg.restNonce  = data.rest_nonce;
+            } catch (_) {
+                // Silently ignore — the subsequent request will surface its own error.
+            }
         }
 
         receiveMessage(text) {
@@ -739,11 +768,26 @@
                 card.innerHTML = this._buildBusinessCardHtml(result);
             } else if (toolName === 'create_booking_link') {
                 card.innerHTML = this._buildBookingSummaryHtml(result);
+            } else if (toolName === 'check_availability') {
+                if (!result.rooms || !result.rooms.length) return;
+                card.innerHTML = this._buildAvailabilityCardsHtml(result);
             } else {
-                return; // Only specialized cards for these tools
+                return;
             }
 
             wrap.appendChild(card);
+
+            if (toolName === 'create_booking_link' && result.multi_room_remaining > 0) {
+                const hint = document.createElement('div');
+                hint.className = 'mhbo-chat-multi-room-hint';
+                hint.style.fontSize = '12px';
+                hint.style.color = 'var(--mhbo-chat-text-muted, #666)';
+                hint.style.marginTop = '8px';
+                hint.style.textAlign = 'center';
+                hint.innerHTML = `<em>Complete this booking, then type <strong>"next room"</strong> to continue.</em>`;
+                wrap.appendChild(hint);
+            }
+
             this.messagesEl.appendChild(wrap);
             this._attachCardEvents(card);
             this.scrollToBottom();
@@ -792,23 +836,35 @@
 
         _buildBookingSummaryHtml(data) {
             const formattedDates = `${data.check_in} — ${data.check_out}`;
-            const depositMsg = data.deposit && data.deposit.required 
+            const depositMsg = data.deposit && data.deposit.required
                 ? `${s.depositLabel || 'Deposit required'}: ${data.deposit.label}`
                 : s.noDeposit || 'No immediate deposit required';
+            const roomLabel = data.room_number
+                ? `${this._esc(data.room_name)} · Room ${this._esc(data.room_number)}`
+                : this._esc(data.room_name);
+            const guestLine = data.children > 0
+                ? `${data.adults} adults, ${data.children} children`
+                : `${data.adults} adults`;
+
+            const multiBadgeHtml = data.multi_room_label 
+                ? `<div style="font-size:11px; font-weight:600; color:var(--mhbo-color-primary, #005f73); margin-bottom:4px; text-transform:uppercase; letter-spacing:0.5px;">🏨 ${this._esc(data.multi_room_label)}</div>` 
+                : '';
 
             return `
             <div class="mhbo-booking-summary">
                 <div class="mhbo-booking-summary-header">
                     <div>
-                        <span class="mhbo-booking-summary-title">${this._esc(data.room_name)}</span>
+                        ${multiBadgeHtml}
+                        <span class="mhbo-booking-summary-title">${roomLabel}</span>
                         <span class="mhbo-booking-summary-dates">${formattedDates}</span>
                     </div>
                     <div class="mhbo-chat-avatar" style="font-size:16px">🗓️</div>
                 </div>
                 <div class="mhbo-booking-summary-grid">
                     <div class="mhbo-summary-item"><label>Stay</label><span>${data.nights} nights</span></div>
+                    <div class="mhbo-summary-item"><label>Guests</label><span>${guestLine}</span></div>
                     <div class="mhbo-summary-item"><label>Total</label><span>${data.price_formatted}</span></div>
-                    <div class="mhbo-summary-item" style="grid-column: span 2"><label>Payment</label><span>${depositMsg}</span></div>
+                    <div class="mhbo-summary-item"><label>Payment</label><span>${depositMsg}</span></div>
                 </div>
                 <div class="mhbo-booking-summary-footer">
                     <a href="${this._esc(data.booking_url)}"
@@ -827,6 +883,109 @@
                     ${data.payment_methods ? `<small style="font-size:10px; color:var(--mhbo-chat-text-muted); text-align:center">Accepting: ${this._esc(data.payment_methods)}</small>` : ''}
                 </div>
             </div>`;
+        }
+
+        _buildAvailabilityCardsHtml(data) {
+            const nights        = data.nights_count || 1;
+            const rooms         = data.rooms || [];
+            const checkIn       = this._esc(data.check_in  || '');
+            const checkOut      = this._esc(data.check_out || '');
+            const totalGuests   = data.adults   || 2;
+            const totalChildren = data.children || 0;
+
+            let html = `<div class="mhbo-availability-results">`;
+            html += `<div class="mhbo-avail-header">
+                <span class="mhbo-avail-label">${rooms.length} ${rooms.length === 1 ? (s.roomAvail || 'option') : (s.roomsAvail || 'options')} &middot; ${nights} ${nights === 1 ? (s.night || 'night') : (s.nights || 'nights')}</span>
+            </div>`;
+
+            rooms.forEach(room => {
+                const isMulti     = !!room.is_multi_room;
+                const numRooms    = parseInt(room.num_rooms    || 1, 10) || 1;
+                const unitsLeft   = parseInt(room.units_remaining || 0, 10);
+                const priceFmt    = room.price_formatted || '';
+                const perNight    = room.price_per_night;
+                const thumbUrl    = room.thumbnail_url   || '';
+                const maxAdults   = room.max_adults      || 0;
+                const maxChildren = room.max_children    || 0;
+                const roomId      = isMulti ? 0 : (room.room_id || 0);
+
+                const scarcityBadge = unitsLeft <= 1
+                    ? `<span class="mhbo-room-badge mhbo-room-badge--hot">${s.lastRoom || 'Last room!'}</span>`
+                    : unitsLeft <= 3
+                    ? `<span class="mhbo-room-badge mhbo-room-badge--low">${unitsLeft} ${s.left || 'left'}</span>`
+                    : '';
+
+                const multiBadge = isMulti
+                    ? `<span class="mhbo-room-badge mhbo-room-badge--multi">${numRooms}× ${s.rooms || 'rooms'}</span>`
+                    : '';
+
+                const thumbHtml = thumbUrl
+                    ? `<div class="mhbo-room-thumb-wrap"><img class="mhbo-room-thumb" src="${this._esc(thumbUrl)}" alt="${this._esc(room.room_name)}" loading="lazy"></div>`
+                    : '';
+
+                const capHtml = (maxAdults || maxChildren)
+                    ? `<div class="mhbo-room-capacity">👤 ${maxAdults}${maxChildren ? ' + ' + maxChildren + ' ' + (s.childrenShort || 'ch') : ''}</div>`
+                    : '';
+
+                const priceHtml = priceFmt
+                    ? `<div class="mhbo-room-price"><strong>${this._esc(priceFmt)}</strong>${perNight && nights > 1 ? `<small>${this._esc(String(perNight))} ${s.perNightShort || '/ night'}</small>` : ''}</div>`
+                    : '';
+
+                if (isMulti && room.distribution && room.distribution.length) {
+                    // Render a distribution breakdown card — the AI will call create_booking_link
+                    // once per slot and generate individual booking cards with pre-filled guest info.
+                    let distRows = room.distribution.map((slot, i) => {
+                        const label = slot.room_number ? `Room ${this._esc(String(slot.room_number))}` : `Room ${i + 1}`;
+                        const guests = slot.children > 0
+                            ? `${slot.adults} adults, ${slot.children} children`
+                            : `${slot.adults} adults`;
+                        return `<div class="mhbo-dist-row"><span class="mhbo-dist-label">${label}</span><span class="mhbo-dist-guests">${guests}</span></div>`;
+                    }).join('');
+
+                    html += `
+                    <div class="mhbo-room-avail-card mhbo-room-avail-card--multi">
+                        ${thumbHtml}
+                        <div class="mhbo-room-avail-body">
+                            <div class="mhbo-room-avail-name-row">
+                                <span class="mhbo-room-avail-name">${this._esc(room.room_name)}</span>
+                                <div class="mhbo-room-badges">${multiBadge}${scarcityBadge}</div>
+                            </div>
+                            ${capHtml}
+                            ${priceHtml}
+                            <div class="mhbo-dist-breakdown">${distRows}</div>
+                            <p class="mhbo-multi-notice">${numRooms} separate bookings required — provide your Full Name, Email, and Phone so individual booking cards can be prepared for you.</p>
+                        </div>
+                    </div>`;
+                } else {
+                    const btnLabel = isMulti ? (s.viewOptions || 'View Options') : (s.bookNow || 'Book Now');
+                    html += `
+                    <div class="mhbo-room-avail-card${isMulti ? ' mhbo-room-avail-card--multi' : ''}">
+                        ${thumbHtml}
+                        <div class="mhbo-room-avail-body">
+                            <div class="mhbo-room-avail-name-row">
+                                <span class="mhbo-room-avail-name">${this._esc(room.room_name)}</span>
+                                <div class="mhbo-room-badges">${multiBadge}${scarcityBadge}</div>
+                            </div>
+                            ${capHtml}
+                            ${priceHtml}
+                        </div>
+                        <a href="${this._esc(room.booking_url || '')}"
+                           class="mhbo-booking-link-btn mhbo-complete-booking-btn"
+                           data-room-id="${roomId}"
+                           data-check-in="${checkIn}"
+                           data-check-out="${checkOut}"
+                           data-guests="${totalGuests}"
+                           data-children="${totalChildren}"
+                           data-total-price="${room.total_price || 0}"
+                           rel="noopener noreferrer">
+                            ${btnLabel}
+                        </a>
+                    </div>`;
+                }
+            });
+
+            html += `</div>`;
+            return html;
         }
 
         _attachCardEvents(card) {
@@ -858,31 +1017,30 @@
                 });
             });
 
-            // Modal-mode intercept for Complete Booking button
-            const completeBtn = card.querySelector('.mhbo-complete-booking-btn');
+            // Modal-mode intercept for booking buttons (supports multiple buttons per card)
             const modalActive = (window.mhboChat && window.mhboChat.settings && window.mhboChat.settings.modalEnabled)
                 || typeof window.MhboModal !== 'undefined';
-            if (completeBtn && modalActive) {
-                completeBtn.addEventListener('click', function (ev) {
-                    const roomId = parseInt(completeBtn.dataset.roomId || '0', 10);
-                    if (roomId > 0) {
+            card.querySelectorAll('.mhbo-complete-booking-btn').forEach(btn => {
+                btn.addEventListener('click', function (ev) {
+                    const roomId = parseInt(btn.dataset.roomId || '0', 10);
+                    if (roomId > 0 && modalActive) {
                         ev.preventDefault();
                         document.dispatchEvent(new CustomEvent('mhboBookNow', {
                             detail: {
                                 room_id:        roomId,
-                                check_in:       completeBtn.dataset.checkIn    || '',
-                                check_out:      completeBtn.dataset.checkOut   || '',
-                                guests:         parseInt(completeBtn.dataset.guests   || '2', 10),
-                                children:       parseInt(completeBtn.dataset.children || '0', 10),
-                                total_price:    parseFloat(completeBtn.dataset.totalPrice || '0'),
-                                customer_name:  completeBtn.dataset.guestName  || '',
-                                customer_email: completeBtn.dataset.guestEmail || '',
-                                customer_phone: completeBtn.dataset.guestPhone || '',
+                                check_in:       btn.dataset.checkIn    || '',
+                                check_out:      btn.dataset.checkOut   || '',
+                                guests:         parseInt(btn.dataset.guests   || '2', 10),
+                                children:       parseInt(btn.dataset.children || '0', 10),
+                                total_price:    parseFloat(btn.dataset.totalPrice || '0'),
+                                customer_name:  btn.dataset.guestName  || '',
+                                customer_email: btn.dataset.guestEmail || '',
+                                customer_phone: btn.dataset.guestPhone || '',
                             }
                         }));
                     }
                 });
-            }
+            });
         }
     }
 

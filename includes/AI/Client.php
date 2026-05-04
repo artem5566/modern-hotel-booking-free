@@ -8,7 +8,7 @@
  *  - Direct HTTP fallback using the stored API key from plugin settings.
  *
  * @package MHBO\AI
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);
@@ -395,10 +395,18 @@ class Client {
 
         // 2026.4 BP: Cascade: primary model first, then cheaper/resilient fallbacks.
         // The chain is now dynamic, deprioritizing models with recent failures.
-        $fallback_chain = self::get_dynamic_fallback_chain( $model );
-        $last_result    = [ 'content' => '', 'tool_calls' => [], 'finish_reason' => 'error', 'error' => 'No models available.' ];
+        $fallback_chain  = self::get_dynamic_fallback_chain( $model );
+        $last_result     = [ 'content' => '', 'tool_calls' => [], 'finish_reason' => 'error', 'error' => 'No models available.' ];
+        $cascade_start   = \microtime( true );
+        $cascade_budget  = 26.0; // Hard wall: entire cascade must finish within 26 s to stay under typical 30 s proxy timeouts.
 
         foreach ( $fallback_chain as $idx => $try_model ) {
+            // Abort if we are already close to the proxy timeout wall.
+            if ( ( \microtime( true ) - $cascade_start ) >= $cascade_budget ) {
+                self::log_error( "Gemini cascade wall-clock budget ({$cascade_budget}s) exceeded — aborting." );
+                break;
+            }
+
             // Short inter-model pause — only on 2nd+ attempt to avoid hammering the API.
             // Kept to 250ms max so total request time stays well under server proxy timeouts.
             if ( $idx > 0 ) {
@@ -610,8 +618,8 @@ class Client {
      */
     private static function http_gemini_request( string $url, array $body, string $model ): array {
         $response = wp_remote_post( $url, [
-            'timeout'        => 60,
-            'connecttimeout' => 30, // Explicitly set for Local environment stability
+            'timeout'        => 22, // Must stay under server proxy timeout (typically 30s).
+            'connecttimeout' => 8,
             'sslverify'      => true,
             'headers'        => [ 'Content-Type' => 'application/json' ],
             'body'           => wp_json_encode( $body ),
@@ -879,8 +887,8 @@ class Client {
         }
 
         $args = [
-            'timeout'        => 40, // Reduced to prevent 502 proxy timeouts in Local/Windows
-            'connecttimeout' => 20,
+            'timeout'        => 22, // Must stay under server proxy timeout (typically 30s).
+            'connecttimeout' => 8,
             'sslverify'      => true,
             'headers'        => $headers,
             'body'           => wp_json_encode( $body ),
@@ -1026,7 +1034,7 @@ if ( [] !== $tools ) {
         }
 
         $response = wp_remote_post( 'https://api.anthropic.com/v1/messages', [
-            'timeout'   => 45,
+            'timeout'   => 22, // Must stay under server proxy timeout (typically 30s).
             'sslverify' => true,
             'headers'   => [
                 'x-api-key'         => $api_key,

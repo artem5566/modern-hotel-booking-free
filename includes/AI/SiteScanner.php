@@ -8,7 +8,7 @@ declare(strict_types=1);
  * result as a transient (24 h) with a permanent option fallback.
  *
  * @package MHBO\AI
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 namespace MHBO\AI;

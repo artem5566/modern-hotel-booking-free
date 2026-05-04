@@ -6,7 +6,7 @@
  * PRO:   Custom DB table with permanent storage and guest-email linking.
  *
  * @package MHBO\AI
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);

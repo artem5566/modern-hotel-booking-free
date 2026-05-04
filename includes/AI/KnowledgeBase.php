@@ -3,7 +3,7 @@
  * Knowledge Base — assembles the AI system prompt and tool definitions.
  *
  * @package MHBO\AI
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);

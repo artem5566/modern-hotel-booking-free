@@ -7,7 +7,7 @@ declare(strict_types=1);
  * The JS in mhbo-chat-widget.js picks up .mhbo-chat-widget containers.
  *
  * @package modern-hotel-booking
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 if ( ! defined( 'ABSPATH' ) ) {

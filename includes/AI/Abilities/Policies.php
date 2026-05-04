@@ -5,7 +5,7 @@
  * Returns hotel policies (cancellation, check-in/out, pets, smoking, etc.)
  *
  * @package MHBO\AI\Abilities
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);

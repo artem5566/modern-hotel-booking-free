@@ -20,7 +20,7 @@ if (!defined('ABSPATH')) {
  * is saved so the cached \DateTimeZone object is refreshed.
  *
  * @package MHBO\Core
- * @since   2.4.0
+ * @since 2.3.8
  */
 class HotelTime
 {

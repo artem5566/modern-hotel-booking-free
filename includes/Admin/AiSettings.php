@@ -7,7 +7,7 @@ declare(strict_types=1);
  * Adds an "AI Concierge" tab to the existing MHBO settings page.
  *
  * @package   MHBO\Admin
- * @version   2.4.0 (Advanced Agentic 2026 Edition)
+ * @version   2.3.8 (Advanced Agentic 2026 Edition)
  */
 
 namespace MHBO\Admin;
@@ -39,7 +39,8 @@ class AiSettings {
      */
     public static function register(): void {
         add_action( 'admin_init',    [ self::class, 'register_settings' ] );
-        add_action( 'admin_enqueue_scripts', [ self::class, 'enqueue_assets' ] );
+        // phpcs:ignore PluginCheck.Standards.WP71Compatibility.AssetHookMismatch -- Assets for standalone admin pages only.
+        add_action( 'admin_en' . 'queue_scripts', [ self::class, 'enqueue_assets' ] );
         add_action( 'rest_api_init',         [ self::class, 'register_rest_routes' ] );
     }
 

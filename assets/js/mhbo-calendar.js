@@ -13,6 +13,18 @@ jQuery(document).ready(function ($) {
         $tooltip = $('<div class="mhbo-calendar-tooltip"><span class="mhbo-tooltip-nights"></span><span class="mhbo-tooltip-price"></span><span class="mhbo-tooltip-constraint" style="display:none"></span></div>').appendTo('body');
     }
 
+    // Mobile: mouseleave never fires on touch, so dismiss tooltip on any touch outside the calendar
+    if (!$(document).data('mhbo-tooltip-touch-attached')) {
+        $(document).on('touchstart pointerup', function (e) {
+            if (!$(e.target).closest('.mhbo-calendar-inline').length) {
+                $tooltip.removeClass('mhbo-visible mhbo-tooltip-warn');
+                $tooltip.find('.mhbo-tooltip-constraint').hide();
+                $('.mhbo-range-hover').removeClass('mhbo-range-hover');
+            }
+        });
+        $(document).data('mhbo-tooltip-touch-attached', true);
+    }
+
     function initAllCalendars() {
         $('.mhbo-calendar-container').each(function () {
             const $wrapper = $(this);
@@ -313,9 +325,9 @@ jQuery(document).ready(function ($) {
                             const spanAmount = '<span class="mhbo-price-part-amount">' + formattedPrice + '</span>';
                             
                             if (pos === 'before') {
-                                priceHtml = spanCurrency + spanAmount;
+                                priceHtml = spanCurrency + ' ' + spanAmount;
                             } else {
-                                priceHtml = spanAmount + spanCurrency;
+                                priceHtml = spanAmount + ' ' + spanCurrency;
                             }
                             
                             const $priceTag = $('<span class="mhbo-fp-price">' + priceHtml + '</span>');
@@ -403,7 +415,7 @@ if (!picker || picker.selectedDates.length !== 1) {
                     }).addClass('mhbo-visible');
                 });
 
-                $wrapper.on('mouseleave', '.mhbo-calendar-inline', function () {
+                $wrapper.on('mouseleave pointerleave', '.mhbo-calendar-inline', function () {
                     $tooltip.removeClass('mhbo-visible mhbo-tooltip-warn');
                     $tooltip.find('.mhbo-tooltip-constraint').hide();
                     $wrapper.find('.mhbo-range-hover').removeClass('mhbo-range-hover');
@@ -482,7 +494,7 @@ if (!picker || picker.selectedDates.length !== 1) {
                 const symbol = mhbo_calendar.settings.currency_symbol;
                 const decimals = (typeof mhbo_calendar.settings.currency_decimals !== 'undefined') ? parseInt(mhbo_calendar.settings.currency_decimals) : 2;
                 const formatted = amount.toFixed(decimals);
-                return pos === 'before' ? (symbol + formatted) : (formatted + symbol);
+                return pos === 'before' ? (symbol + ' ' + formatted) : (formatted + ' ' + symbol);
             }
 
             // Expose error handler to wrapper

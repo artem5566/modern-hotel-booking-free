@@ -380,21 +380,6 @@
     opacity: 0.9;
 }
 
-/* On very small screen widths or inside small parent containers, stack them */
-@media (max-width: 400px) {
-    .mhbo-calendar-wrapper .mhbo-fp-price {
-        flex-direction: column;
-        align-items: center;
-        gap: 0;
-        font-size: 0.85rem !important;
-    }
-    
-    .mhbo-price-part-currency {
-        font-size: 0.75rem;
-        line-height: 1;
-    }
-}
-
 .mhbo-calendar-wrapper .flatpickr-day.selected .mhbo-fp-price,
 .mhbo-calendar-wrapper .flatpickr-day.startRange .mhbo-fp-price,
 .mhbo-calendar-wrapper .flatpickr-day.selected:hover .mhbo-fp-price,
@@ -569,19 +554,86 @@
 
 @media (max-width: 480px) {
     .mhbo-calendar-wrapper .flatpickr-day {
-        height: 75px !important;
-        padding: 2px !important;
+        height: 78px !important;
+        padding: 5px 3px !important;
+        position: relative !important;
     }
 
+    .mhbo-calendar-wrapper .mhbo-day-number {
+        font-size: 0.95rem !important;
+    }
+
+    /* Absolute positioning pins currency + amount as a tight unit at the
+       cell floor — margin-top:auto depended on cell proportions and caused
+       the pair to look separated at certain screen sizes. */
     .mhbo-calendar-wrapper .mhbo-fp-price {
-        display: block !important;
-        font-size: 0.85rem !important;
-        padding-bottom: 2px;
-        line-height: 1.1 !important;
+        position: absolute !important;
+        bottom: 4px !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-top: 0 !important;
+        padding-bottom: 0 !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 0 !important;
+        font-size: 0.82rem !important;
+        line-height: 1 !important;
+    }
+
+    .mhbo-calendar-tooltip {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* --- Mobile Calendar Width Optimisation (400–540px) --- */
+/* Shrink the card's own chrome so day cells get maximum available width. */
+@media (max-width: 540px) {
+    .mhbo-calendar-wrapper .flatpickr-calendar,
+    .mhbo-calendar-wrapper .flatpickr-calendar.inline,
+    .mhbo-calendar-wrapper .flatpickr-calendar.open {
+        padding: 6px !important;
+        border-radius: 12px !important;
+    }
+
+    .mhbo-calendar-wrapper .flatpickr-days {
+        padding: 1px !important;
+    }
+
+    /* 1px margins give each cell ~4px more width vs the default 3px */
+    .mhbo-calendar-wrapper .flatpickr-day {
+        margin: 1px !important;
+        flex-basis: calc(14.28% - 2px) !important;
+        max-width: calc(14.28% - 2px) !important;
+        border-radius: 10px !important;
+    }
+
+    /* Keep inRange stripe continuous with the new 1px margin */
+    .mhbo-calendar-wrapper .flatpickr-day.inRange {
+        margin-left: -1px !important;
+        margin-right: -1px !important;
+        flex-basis: calc(14.28%) !important;
+        max-width: calc(14.28%) !important;
     }
 
     .mhbo-calendar-container {
-        padding: 0 5px;
+        padding: 0 !important;
+        /* Bleed past the theme's content-area padding so the calendar fills
+           the screen edge-to-edge on mobile. Override --mhbo-mobile-bleed in
+           your theme CSS if your content padding differs from the 20px default. */
+        --mhbo-mobile-bleed: 20px;
+        margin-left: calc(-1 * var(--mhbo-mobile-bleed)) !important;
+        margin-right: calc(-1 * var(--mhbo-mobile-bleed)) !important;
+        width: calc(100% + 2 * var(--mhbo-mobile-bleed)) !important;
+        max-width: none !important;
+    }
+
+    /* Make currency symbol the same visual weight as the amount so the
+       stacked layout looks balanced */
+    .mhbo-price-part-currency {
+        font-size: 1em !important;
+        opacity: 1 !important;
     }
 }
 
@@ -717,20 +769,6 @@
 @keyframes mhboMonthFadeIn {
     from { opacity: 0; transform: translateX(10px); }
     to { opacity: 1; transform: translateX(0); }
-}
-
-/* --- Responsive Adjustments for 2026 --- */
-@media (max-width: 480px) {
-    .mhbo-calendar-tooltip {
-        padding: 8px 12px;
-        font-size: 0.85rem;
-    }
-
-    .mhbo-calendar-wrapper .mhbo-fp-price {
-        font-size: 0.65rem !important;
-        padding-bottom: 2px !important;
-        line-height: 1.1 !important;
-    }
 }
 
 /* --- ULTRA SELECTION PRIORITY (Fix for Contrast on 16th/Caps) --- */

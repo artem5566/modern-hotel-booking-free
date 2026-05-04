@@ -116,7 +116,7 @@ class Calendar
                     'window.mhboModalI18n = ' . wp_json_encode([
                         'bookNow'      => I18n::get_label('btn_book_now'),
                         'loading'      => I18n::get_label('label_loading'),
-                        'close'        => __('Close', 'modern-hotel-booking'),
+                        'close'        => _x('Close', 'action', 'modern-hotel-booking'),
                         'errorLoading'       => __('Could not load booking form. Please try again.', 'modern-hotel-booking'),
                         'confirming'         => __('Confirming your booking', 'modern-hotel-booking'),
                         'errorConfirmation'  => __('Your booking was received but we could not load the confirmation. Please check your email.', 'modern-hotel-booking'),

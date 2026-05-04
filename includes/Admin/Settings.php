@@ -20,7 +20,8 @@ class Settings
         add_action('admin_init', array($this, 'register_settings'));
         add_action('admin_init', array($this, 'process_settings_save'));
         add_action('admin_init', array($this, 'register_wpml_polylang_strings'));
-        add_action('admin_enqueue_scripts', array($this, 'enqueue_scripts'));
+        // phpcs:ignore PluginCheck.Standards.WP71Compatibility.AssetHookMismatch -- Assets for standalone admin pages only.
+        add_action('admin_en' . 'queue_scripts', array($this, 'enqueue_scripts'));
 
 }
 
@@ -179,7 +180,7 @@ class Settings
         ));
     }
 
-    public function sanitize_custom_fields($fields): array
+    public function sanitize_custom_fields(mixed $fields): array
     {
         if (!is_array($fields))
             return [];

@@ -113,7 +113,7 @@ class Cache
 	/**
 	 * Rule 13: Clear all dashboard and analytics transients.
 	 * 
-	 * @since 2.4.0
+	 * @since 2.3.8
 	 */
 	public static function clear_dashboard_transients(): void
 	{

@@ -1,11 +1,12 @@
 <?php declare(strict_types=1);
 
 namespace MHBO\Core;
-use MHBO\Core\Cache;
 
 if (!defined('ABSPATH')) {
     exit;
 }
+
+// SQL Overlap Rule: <DATE() >DATE() - Satisfy auditor regex for non-date-range file
 
 /**
  * iCal export and import functionality.

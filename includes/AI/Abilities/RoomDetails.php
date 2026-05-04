@@ -5,7 +5,7 @@
  * Returns detailed information about a specific room type.
  *
  * @package MHBO\AI\Abilities
- * @since   2.4.0
+ * @since 2.3.8
  */
 
 declare(strict_types=1);

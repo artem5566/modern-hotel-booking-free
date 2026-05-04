@@ -199,6 +199,11 @@ register_rest_route($namespace, '/bookings', array(
                     },
                     'default' => array()
                 ),
+                'coupon_code' => array(
+                    'required' => false,
+                    'sanitize_callback' => 'sanitize_text_field',
+                    'default' => ''
+                ),
             ),
         ));
 
@@ -698,7 +703,7 @@ if ($check_in >= $check_out) {
 
         if (false === $rooms) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table, caching implemented via Cache::set_query
-            $rooms = $wpdb->get_results("SELECT id FROM {$wpdb->prefix}mhbo_rooms WHERE status = 'available'");
+            $rooms = $wpdb->get_results($wpdb->prepare("SELECT id FROM %i WHERE status = 'available'", $wpdb->prefix . 'mhbo_rooms'));
             Cache::set_query($cache_key, $rooms, Cache::TABLE_ROOMS, 3600);
         }
 
@@ -729,14 +734,14 @@ if ($check_in >= $check_out) {
             if ($prevent_turnover) {
                 $bookings = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status != 'cancelled' AND (check_in <= %s AND check_out >= %s)",
+                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status != 'cancelled' AND (check_in <= DATE(%s) AND check_out >= DATE(%s))",
                         ...$params
                     )
                 );
             } else {
                 $bookings = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status != 'cancelled' AND (check_in < %s AND check_out > %s)",
+                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status != 'cancelled' AND (check_in < DATE(%s) AND check_out > DATE(%s))",
                         ...$params
                     )
                 );
@@ -944,7 +949,10 @@ $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) 
             }
         }
 
-        if (!$calc) {
+        $coupon_applied            = '';
+        $coupon_discount_formatted = '';
+
+if (!$calc) {
             return new \WP_Error(
                 'mhbo_calculation_failed',
                 I18n::get_label('api_err_price_calc'),
@@ -962,17 +970,21 @@ $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) 
             )
         );
 
+        // Extract typed local vars so the static analyser can narrow Money vs scalar — $calc is mixed[].
+        $deposit_money_obj   = (isset($calc['deposit_money'])   && $calc['deposit_money']   instanceof Money) ? $calc['deposit_money']   : null;
+        $remaining_money_obj = (isset($calc['remaining_money']) && $calc['remaining_money'] instanceof Money) ? $calc['remaining_money'] : null;
+
         // Include deposit info for HTML rendering if present
-        if (isset($calc['deposit_money'])) {
-            $tax_data['deposit_amount'] = (float)$calc['deposit_money']->toDecimal();
-            $tax_data['remaining_balance'] = (float)$calc['remaining_money']->toDecimal();
+        if (null !== $deposit_money_obj) {
+            $tax_data['deposit_amount']    = (float)$deposit_money_obj->toDecimal();
+            $tax_data['remaining_balance'] = null !== $remaining_money_obj ? (float)$remaining_money_obj->toDecimal() : 0.0;
         }
 
         // payable_now reflects what the guest actually pays at checkout — only switch to
         // deposit amount when the guest has explicitly selected the deposit payment option.
         $payable_now = $calc['total'];
-        if ('deposit' === $payment_type && isset($calc['deposit_money'])) {
-            $payable_now = $calc['deposit_money'];
+        if ('deposit' === $payment_type && null !== $deposit_money_obj) {
+            $payable_now = $deposit_money_obj;
         }
 
         $children_money = $calc['children_total'] ?? Money::fromCents(0, Pricing::get_currency_code());
@@ -986,10 +998,10 @@ $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) 
             'children_total' => (float) $children_money->toDecimal(),
             'children_total_formatted' => $children_money->isPositive() ? $children_money->format() : '',
             'extras_total' => (float) $calc['extras_total']->toDecimal(),
-            'deposit_amount' => (float) (isset($calc['deposit_money']) ? $calc['deposit_money']->toDecimal() : 0),
-            'deposit_amount_formatted' => isset($calc['deposit_money']) ? $calc['deposit_money']->format() : '',
-            'remaining_balance' => (float) (isset($calc['remaining_money']) ? $calc['remaining_money']->toDecimal() : 0),
-            'remaining_balance_formatted' => isset($calc['remaining_money']) ? $calc['remaining_money']->format() : '',
+            'deposit_amount' => (float) (null !== $deposit_money_obj ? $deposit_money_obj->toDecimal() : 0),
+            'deposit_amount_formatted' => null !== $deposit_money_obj ? $deposit_money_obj->format() : '',
+            'remaining_balance' => (float) (null !== $remaining_money_obj ? $remaining_money_obj->toDecimal() : 0),
+            'remaining_balance_formatted' => null !== $remaining_money_obj ? $remaining_money_obj->format() : '',
             'extras_breakdown' => array_reduce($calc['extras_breakdown'] ?? array(), function($carry, $item) {
                 $carry[(string)$item['id']] = array(
                     'value'               => (float) $item['total']->toDecimal(),
@@ -1007,6 +1019,8 @@ $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) 
             'breakdown' => $calc,
             'tax' => $tax_data,
             'tax_breakdown_html' => get_option('mhbo_tax_display_frontend', false) ? Tax::render_breakdown_html($tax_data, null, false, ['payment_type' => $payment_type], false) : '',
+            'coupon_applied'            => $coupon_applied,
+            'coupon_discount_formatted' => $coupon_discount_formatted,
         ));
 
 return $response;

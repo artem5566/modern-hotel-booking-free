@@ -1152,13 +1152,13 @@ wp_safe_redirect($redirect_url);
         if ($prevent_same_day) {
             $sql .= " AND r.id NOT IN ( 
                         SELECT room_id FROM {$wpdb->prefix}mhbo_bookings 
-                        WHERE (check_in <= %s AND check_out >= %s)
+                        WHERE (check_in <= DATE(%s) AND check_out >= DATE(%s))
                         AND status != 'cancelled' 
                     )";
         } else {
             $sql .= " AND r.id NOT IN ( 
                         SELECT room_id FROM {$wpdb->prefix}mhbo_bookings 
-                        WHERE (check_in < %s AND check_out > %s)
+                        WHERE (check_in < DATE(%s) AND check_out > DATE(%s))
                         AND status != 'cancelled' 
                     )";
         }
@@ -1412,12 +1412,12 @@ $deposit_data = null;
 
                     <div class="mhbo-summary-grid">
                         <div class="mhbo-summary-header">
-                            <span><?php echo esc_html(__('Item', 'modern-hotel-booking')); ?></span>
+                            <span><?php echo esc_html(_x('Item', 'cart item', 'modern-hotel-booking')); ?></span>
                             <span><?php echo esc_html(__('Amount', 'modern-hotel-booking')); ?></span>
                         </div>
                         
                         <div class="mhbo-summary-row">
-                            <span><?php echo esc_html(__('Room', 'modern-hotel-booking')); ?></span>
+                            <span><?php echo esc_html(_x('Room', 'accommodation unit', 'modern-hotel-booking')); ?></span>
                             <span><?php echo esc_html(I18n::format_currency($total)); ?></span>
                         </div>
                         
@@ -1619,6 +1619,7 @@ echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), fa
             'page_url'          => $this->get_booking_page_url(),
             'language'          => isset( $_POST['booking_language'] ) ? sanitize_key( wp_unslash( $_POST['booking_language'] ) ) : I18n::get_current_language(),
             'consent'           => isset( $_POST['mhbo_consent'] ) ? (bool) sanitize_text_field( wp_unslash( $_POST['mhbo_consent'] ) ) : false,
+            
         ];
         // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
