@@ -15,17 +15,13 @@
   "steps": [
     {
       "step": "installPlugin",
-      "pluginZipFile": {
-        "resource": "wordpress.org/plugins/modern-hotel-booking"
-      },
       "pluginData": {
-        "resource": "vfs",
-        "path": "modern-hotel-booking"
+        "resource": "wordpress.org/plugins",
+        "slug": "modern-hotel-booking"
+      },
+      "options": {
+        "activate": true
       }
-    },
-    {
-      "step": "activatePlugin",
-      "pluginPath": "modern-hotel-booking/modern-hotel-booking.php"
     },
     {
       "step": "setSiteOptions",
