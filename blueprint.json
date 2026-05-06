@@ -17,6 +17,10 @@
       "step": "installPlugin",
       "pluginZipFile": {
         "resource": "wordpress.org/plugins/modern-hotel-booking"
+      },
+      "pluginData": {
+        "resource": "vfs",
+        "path": "modern-hotel-booking"
       }
     },
     {
