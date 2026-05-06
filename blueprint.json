@@ -2,15 +2,15 @@
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
     "title": "Modern Hotel Booking - Azure Bay Showcase",
-    "description": "Experience the full luxury resort setup with pre-seeded rooms and custom layouts.",
-    "author": "Antigravity Architect"
+    "description": "Experience the full luxury resort setup with pre-seeded rooms and custom layouts",
+    "author": "StartMySuccess"
   },
   "preferredVersions": {
     "php": "8.3",
     "wp": "latest"
   },
-  "login": true,
   "landingPage": "/",
+  "login": true,
   "steps": [
     {
       "step": "unzip",
@@ -19,6 +19,12 @@
         "url": "https://raw.githubusercontent.com/leslieradue-web/modern-hotel-booking-free/main/playground.zip"
       },
       "extractToPath": "/wordpress"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "permalink_structure": "/%postname%/"
+      }
     }
   ]
 }

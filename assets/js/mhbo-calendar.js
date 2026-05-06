@@ -285,7 +285,7 @@ jQuery(document).ready(function ($) {
                             instance.set('maxDate', new Date().fp_incr(365));
                             instance.set('disable', disabledDates);
                             $selectionBox.removeClass('mhbo-visible').hide();
-                            $guide.text(mhbo_calendar.i18n.select_checkout || 'Now select your check-out date');
+                            $guide.text(mhbo_calendar.i18n.select_checkin || 'Select your check-in date');
                         }
                     },
                     onDayCreate: function (dObj, dStr, fp, dayElem) {

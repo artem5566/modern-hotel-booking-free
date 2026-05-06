@@ -187,6 +187,7 @@ class Calendar
                     'prevent_turnover' => (int) get_option('mhbo_prevent_same_day_turnover', 0) === 1,
                 ],
                 'i18n' => [
+                    'select_checkin' => I18n::get_label('label_select_check_in'),
                     'your_selection' => I18n::get_label('label_your_selection'),
                     'check_in' => I18n::get_label('label_check_in'),
                     'check_out' => I18n::get_label('label_check_out'),
@@ -226,7 +227,7 @@ class Calendar
 
     private static $calendar_instance_rendered = false;
 
-    public function render_shortcode($atts)
+    public function render_shortcode($atts): string
     {
         $atts = shortcode_atts(['room_id' => 0], $atts);
         $room_id = absint($atts['room_id']);
@@ -244,7 +245,7 @@ class Calendar
      * @param int $room_id Room ID to display (0 for aggregated view).
      * @return string HTML content.
      */
-    public static function render_unified_view($room_id = 0)
+    public static function render_unified_view(int $room_id = 0): string
     {
         // Ensure assets are loaded
         self::enqueue_assets();
@@ -276,7 +277,7 @@ class Calendar
             <div class="mhbo-calendar-inline"></div>
 
             <!-- Inline error notification area (hidden until needed) -->
-            <div class="mhbo-calendar-errors mhbo-inline-errors" style="display:none !important;"></div>
+            <div class="mhbo-calendar-errors mhbo-inline-errors" style="display:none;"></div>
 
             <?php
             // Build the action URL for the booking form submission
@@ -306,8 +307,9 @@ class Calendar
             $btn_label = ($room_id > 0) ? I18n::get_label('btn_book_now') : I18n::get_label('btn_search_rooms');
             ?>
 
-            <div class="mhbo-selection-box" style="display:none !important;">
+            <div class="mhbo-selection-box" style="display:none;">
                 <form action="<?php echo esc_url($action_url); ?>" method="get" class="mhbo-selection-form">
+                    <?php Shortcode::render_url_hidden_inputs($action_url); ?>
                     <input type="hidden" name="mhbo_nonce" value="<?php echo esc_attr(wp_create_nonce('mhbo_auto_action')); ?>">
                     <input type="hidden" name="room_id" value="<?php echo esc_attr((string) $room_id); ?>">
                     <input type="hidden" name="check_in" class="mhbo-cal-check-in">

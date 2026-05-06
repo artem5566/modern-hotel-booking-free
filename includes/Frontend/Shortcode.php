@@ -943,9 +943,9 @@ $localized_data = [
 
         $room_id_attr = isset($atts['room_id']) ? absint($atts['room_id']) : 0;
 
-        // 1. Process 'Book Now' from search results (POST) - Redirect to clean GET URL with real Room ID
-        if (isset($_POST['mhbo_book_room'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below.
-            $nonce = isset($_POST['mhbo_book_now_nonce']) ? sanitize_key(wp_unslash($_POST['mhbo_book_now_nonce'])) : '';
+        // 1. Process 'Book Now' from search results (GET form submission)
+        if (isset($_GET['mhbo_book_room'])) {
+            $nonce = isset($_GET['mhbo_book_now_nonce']) ? sanitize_key(wp_unslash($_GET['mhbo_book_now_nonce'])) : '';
             if (!wp_verify_nonce($nonce, 'mhbo_book_now_action')) {
                 echo '<div class="mhbo-message mhbo-error">' . esc_html(I18n::get_label('label_security_error')) . '</div>';
                 return;
@@ -955,52 +955,55 @@ $localized_data = [
             $redirect_args = array(
                 'mhbo_auto_book' => 1,
                 'mhbo_nonce'     => wp_create_nonce('mhbo_auto_action'),
-                'room_id'        => isset($_POST['room_id']) ? absint(wp_unslash($_POST['room_id'])) : 0,
-                'type_id'        => isset($_POST['type_id']) ? absint(wp_unslash($_POST['type_id'])) : 0,
-                'check_in'       => isset($_POST['check_in']) ? sanitize_text_field(wp_unslash($_POST['check_in'])) : '',
-                'check_out'      => isset($_POST['check_out']) ? sanitize_text_field(wp_unslash($_POST['check_out'])) : '',
-                'guests'         => isset($_POST['guests']) ? absint(wp_unslash($_POST['guests'])) : 1,
-                'children'       => isset($_POST['children']) ? absint(wp_unslash($_POST['children'])) : 0,
-                'total_price'    => isset($_POST['total_price']) ? (float) sanitize_text_field(wp_unslash($_POST['total_price'])) : 0.0,
+                'room_id'        => isset($_GET['room_id']) ? absint(wp_unslash($_GET['room_id'])) : 0,
+                'type_id'        => isset($_GET['type_id']) ? absint(wp_unslash($_GET['type_id'])) : 0,
+                'check_in'       => isset($_GET['check_in']) ? sanitize_text_field(wp_unslash($_GET['check_in'])) : '',
+                'check_out'      => isset($_GET['check_out']) ? sanitize_text_field(wp_unslash($_GET['check_out'])) : '',
+                'guests'         => isset($_GET['guests']) ? absint(wp_unslash($_GET['guests'])) : 1,
+                'children'       => isset($_GET['children']) ? absint(wp_unslash($_GET['children'])) : 0,
+                'total_price'    => isset($_GET['total_price']) ? (float) sanitize_text_field(wp_unslash($_GET['total_price'])) : 0.0,
             );
 
-            $redirect_url = add_query_arg($redirect_args, $this->get_booking_page_url());
+            // 2026 BP: Persist child_ages across the PRG redirect via a short-lived transient.
+            $child_ages_redirect = isset($_GET['child_ages']) && is_array($_GET['child_ages'])
+                ? array_map('absint', wp_unslash($_GET['child_ages'])) : [];
+            if ([] !== $child_ages_redirect) {
+                set_transient(
+                    'mhbo_child_ages_' . $redirect_args['mhbo_nonce'],
+                    wp_json_encode($child_ages_redirect),
+                    300
+                );
+            }
 
-wp_safe_redirect($redirect_url);
+            wp_safe_redirect(add_query_arg($redirect_args, $this->get_booking_page_url()));
             exit;
         }
 
-        // 2. Process Manual Search Form (POST) - Priority 2
-        if (isset($_POST['mhbo_search'])) { // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified below.
+        // 2. Process Manual Search Form (POST -> GET Redirect)
+        if (isset($_POST['mhbo_search'])) {
             $nonce = isset($_POST['mhbo_search_nonce']) ? sanitize_key(wp_unslash($_POST['mhbo_search_nonce'])) : '';
-            if (!wp_verify_nonce($nonce, 'mhbo_search_action')) {
-                echo '<div class="mhbo-message mhbo-error">' . esc_html(I18n::get_label('label_security_error')) . '</div>';
-                return;
-            }
-            
-            // Extract and sanitize for explicit passing (satisfies WPCS NonceVerification)
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing -- Verified in handle_booking_process.
-            $check_in = isset($_POST['check_in']) ? sanitize_text_field(wp_unslash($_POST['check_in'])) : '';
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing
-            $check_out = isset($_POST['check_out']) ? sanitize_text_field(wp_unslash($_POST['check_out'])) : '';
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing
-            $guests = isset($_POST['guests']) ? absint(wp_unslash($_POST['guests'])) : 2;
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing
-            $room_id_filter = isset($_POST['room_id_filter']) ? intval(wp_unslash($_POST['room_id_filter'])) : $room_id_attr;
-            // phpcs:ignore WordPress.Security.NonceVerification.Missing
-            $children_search = isset($_POST['children']) ? absint(wp_unslash($_POST['children'])) : 0;
+            if (wp_verify_nonce($nonce, 'mhbo_search_action')) {
+                $search_args = [
+                    'check_in'  => isset($_POST['check_in']) ? sanitize_text_field(wp_unslash($_POST['check_in'])) : '',
+                    'check_out' => isset($_POST['check_out']) ? sanitize_text_field(wp_unslash($_POST['check_out'])) : '',
+                    'guests'    => isset($_POST['guests']) ? absint(wp_unslash($_POST['guests'])) : 2,
+                    'children'  => isset($_POST['children']) ? absint(wp_unslash($_POST['children'])) : 0,
+                    'mhbo_auto_search' => 1
+                ];
+                $rid = isset($_POST['room_id_filter']) ? intval(wp_unslash($_POST['room_id_filter'])) : $room_id_attr;
+                if ($rid > 0) { $search_args['room_id'] = $rid; }
 
-            $this->render_search_results($room_id_filter, $check_in, $check_out, $guests, 0, $children_search);
-            return;
+                global $wp;
+                wp_safe_redirect(add_query_arg($search_args, home_url(add_query_arg([], $wp->request))));
+                exit;
+            }
         }
 
-        // 3. Check for Automatic Booking/Search (GET) - Priority 3
-        // We favor nonced links for auto-book (Priority), but allow deep-linking for search.
-        $is_auto_book = isset($_GET['mhbo_auto_book']); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Verified below for auto-book.
-        $is_auto_search = isset($_GET['mhbo_auto_search']) || (isset($_GET['check_in']) && isset($_GET['check_out'])); // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Read-only search parameters.
+        // 3. Check for Automatic Booking/Search (GET)
+        $is_auto_book = isset($_GET['mhbo_auto_book']);
+        $is_auto_search = isset($_GET['mhbo_auto_search']) || (isset($_GET['check_in']) && isset($_GET['check_out']));
 
         if ($is_auto_book || $is_auto_search) {
-            // Extraction with strict sanitization (2026/WP Repo Compliance)
             $room_id = isset($_GET['room_id']) ? absint(wp_unslash($_GET['room_id'])) : $room_id_attr;
             $type_id = isset($_GET['type_id']) ? absint(wp_unslash($_GET['type_id'])) : 0;
             $check_in = isset($_GET['check_in']) ? sanitize_text_field(wp_unslash($_GET['check_in'])) : '';
@@ -1009,12 +1012,10 @@ wp_safe_redirect($redirect_url);
             $children = isset($_GET['children']) ? absint(wp_unslash($_GET['children'])) : 0;
             $exclude_id = isset($_GET['exclude_id']) ? absint(wp_unslash($_GET['exclude_id'])) : 0;
 
-            // For auto-book, we REQUIRE a nonce for security (Priority)
             if ($is_auto_book) {
                 $nonce = isset($_GET['mhbo_nonce']) ? sanitize_key(wp_unslash($_GET['mhbo_nonce'])) : '';
                 if (wp_verify_nonce($nonce, 'mhbo_auto_action')) {
                     if ($room_id === 0 && $type_id > 0 && '' !== $check_in && '' !== $check_out) {
-                        // Resolve room_id from type_id and redirect to clean URL
                         $resolved_room_id = Pricing::find_available_room($type_id, $check_in, $check_out, $guests);
                         if ($resolved_room_id > 0) {
                             $redirect_url = add_query_arg(
@@ -1037,21 +1038,20 @@ wp_safe_redirect($redirect_url);
                     }
 
                     if ($room_id > 0) {
-                        $currency_code = Pricing::get_currency_code();
-
-                        // 2026 BP: Recover child_ages BEFORE price recalculation so
-                        // the displayed price accounts for children charges.
                         $recovered_child_ages = [];
+                        $nonce_key = isset($_GET['mhbo_nonce']) ? sanitize_key(wp_unslash($_GET['mhbo_nonce'])) : '';
+                        if ('' !== $nonce_key) {
+                            $raw_ages = get_transient('mhbo_child_ages_' . $nonce_key);
+                            if (false !== $raw_ages) {
+                                delete_transient('mhbo_child_ages_' . $nonce_key);
+                                $decoded = json_decode((string) $raw_ages, true);
+                                $recovered_child_ages = is_array($decoded) ? array_map('absint', $decoded) : [];
+                            }
+                        }
 
-// 2026 BP: ALWAYS recalculate price server-side for the form display.
-                        // Never trust the total_price from the URL — it could be tampered.
-                        // Pass children + child_ages so children supplements are included.
-                        // Extras are not pre-selected from the URL — compulsory extras auto-inject
-                        // inside calculate_booking_money.
                         $calc_preview = Pricing::calculate_booking_money( $room_id, $check_in, $check_out, max( 1, $guests ), [], $children, $recovered_child_ages );
-                        $total = ( is_array( $calc_preview ) && isset( $calc_preview['total'] ) )
-                            ? $calc_preview['total']
-                            : Money::fromCents( 0, $currency_code );
+                        $total = ( is_array( $calc_preview ) && isset( $calc_preview['total'] ) ) ? $calc_preview['total'] : Money::fromCents( 0, Pricing::get_currency_code() );
+                        
                         $this->render_booking_form(array(
                             'room_id'        => $room_id,
                             'type_id'        => $type_id,
@@ -1060,7 +1060,7 @@ wp_safe_redirect($redirect_url);
                             'guests'         => max(1, $guests),
                             'children'       => $children,
                             'exclude_id'     => $exclude_id,
-                            
+                            'child_ages'     => $recovered_child_ages,
                             'total_price'    => $total,
                             'customer_name'  => isset($_GET['customer_name']) ? sanitize_text_field(wp_unslash($_GET['customer_name'])) : '',
                             'customer_email' => isset($_GET['customer_email']) ? sanitize_email(wp_unslash($_GET['customer_email'])) : '',
@@ -1069,7 +1069,6 @@ wp_safe_redirect($redirect_url);
                         ));
                         return;
                     } else {
-                        // Suppress error if we are about to show search results (Better UX)
                         if (!$is_auto_search) {
                             echo '<div class="mhbo-error mhbo-message mhbo-error">' . esc_html(I18n::get_label('label_no_room_available_auto')) . '</div>';
                         }
@@ -1077,14 +1076,13 @@ wp_safe_redirect($redirect_url);
                 }
             }
 
-            // For search, we allow deep-linking without nonce if dates are valid
             if ($this->validate_date($check_in) && $this->validate_date($check_out)) {
                 $this->render_search_results($room_id, $check_in, $check_out, $guests, $type_id, $children);
                 return;
             }
         }
 
-        // 4. Default: Render empty search form or unified view
+        // 4. Default: Render empty search form
         $this->render_search_form($room_id_attr);
     }
 
@@ -1182,7 +1180,7 @@ wp_safe_redirect($redirect_url);
             
             $available_rooms = [];
             $seen_types = [];
-            if ( null !== $all_rooms && [] !== $all_rooms ) {
+            if ( is_array($all_rooms) && [] !== $all_rooms ) {
                 foreach ($all_rooms as $room) {
                     if (!isset($seen_types[$room->type_id])) {
                         $available_rooms[] = $room;
@@ -1202,7 +1200,8 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
         }
 
         echo '<div class="mhbo-rooms-grid">';
-        foreach ($available_rooms as $room) {
+        if (is_array($available_rooms) && [] !== $available_rooms) {
+            foreach ($available_rooms as $room) {
             $start_date = new \DateTime($check_in);
             $end_date = new \DateTime($check_out);
             $interval = new \DateInterval('P1D');
@@ -1245,7 +1244,7 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
             $amenities_raw = $room->amenities ?: ($room->type_amenities ?? '[]');
             $amenities = $amenities_raw ? json_decode((string)$amenities_raw) : [];
 
-            if ([] !== $amenities) {
+            if (is_array($amenities) && [] !== $amenities) {
                 echo '<div class="mhbo-amenities" style="margin-bottom:10px; font-size:0.85rem; color:#666;">';
                 foreach ($amenities as $am) {
                     echo '<span style="display:inline-block; background:#eee; padding:2px 8px; border-radius:12px; margin-right:5px; margin-bottom:5px;">' . esc_html(ucfirst((string)I18n::decode($am))) . '</span>';
@@ -1262,11 +1261,14 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
             // This prevents "Room 1" from being hardcoded into all results if the user is on the Room 1 page.
             $assigned_room_id = ($room_id_filter > 0 && (int)$room->id === (int)$room_id_filter) ? $room_id_filter : $room->id;
 
-            echo '<form method="post" action="' . esc_url($this->get_booking_page_url()) . '">';
+            $checkout_url = $this->get_booking_page_url();
+            echo '<form method="get" action="' . esc_url($checkout_url) . '">';
+            self::render_url_hidden_inputs($checkout_url);
             wp_nonce_field('mhbo_book_now_action', 'mhbo_book_now_nonce');
             echo '<input type="hidden" name="check_in" value="' . esc_attr($check_in) . '"><input type="hidden" name="check_out" value="' . esc_attr($check_out) . '"><input type="hidden" name="room_id" value="' . esc_attr((string) $assigned_room_id) . '"><input type="hidden" name="type_id" value="' . esc_attr((string) $room->type_id) . '"><input type="hidden" name="guests" value="' . esc_attr((string) max(1, $guests)) . '"><input type="hidden" name="children" value="' . esc_attr((string) max(0, $children)) . '"><input type="hidden" name="total_price" value="' . esc_attr((string)$total->toDecimal()) . '">';
             echo '<button type="submit" name="mhbo_book_room" class="mhbo-btn">' . esc_html(I18n::get_label('btn_book_now')) . '</button>';
             echo '</form></div></div>';
+        }
         }
         echo '</div>';
     }
@@ -1787,5 +1789,31 @@ wp_add_inline_style('mhbo-frontend', '
 
         // Fallback to home if no specific booking page is configured
         return esc_url_raw(home_url('/'));
+    }
+
+    /**
+     * Render hidden inputs for all query parameters in a URL.
+     * This is essential for GET forms in WordPress where the action URL's
+     * own query string is stripped by the browser.
+     *
+     * @since 2.3.8
+     * @param string $url The URL to extract parameters from.
+     * @return void Echoes hidden input fields.
+     */
+    public static function render_url_hidden_inputs(string $url): void
+    {
+        $query = wp_parse_url($url, PHP_URL_QUERY);
+        if (!$query) {
+            return;
+        }
+
+        parse_str($query, $params);
+        if (is_array($params)) {
+            foreach ($params as $key => $val) {
+                if (is_scalar($val)) {
+                    echo '<input type="hidden" name="' . esc_attr((string)$key) . '" value="' . esc_attr((string)$val) . '">';
+                }
+            }
+        }
     }
 }
