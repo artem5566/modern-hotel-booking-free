@@ -1,9 +1,9 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
-    "title": "Modern Hotel Booking - Public Preview",
-    "description": "Live demo of the Modern Hotel Booking plugin.",
-    "author": "StartMySuccess"
+    "title": "Modern Hotel Booking - Official Showcase",
+    "description": "Production-ready hotel booking experience with pre-seeded luxury rooms and revenue data.",
+    "author": "Antigravity Architect"
   },
   "preferredVersions": {
     "php": "8.3",
@@ -26,14 +26,19 @@
     {
       "step": "setSiteOptions",
       "options": {
-        "blogname": "Azure Bay Resort",
+        "blogname": "Azure Bay Resort & Spa",
+        "blogdescription": "Tropical Luxury Redefined",
         "show_on_front": "page",
-        "permalink_structure": "/%postname%/"
+        "permalink_structure": "/%postname%/",
+        "mhbo_modal_enabled": 1,
+        "mhbo_currency_code": "USD",
+        "mhbo_currency_symbol": "$",
+        "mhbo_hotel_name": "Azure Bay Resort"
       }
     },
     {
       "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; global $wpdb; $home_content = '<!-- wp:modern-hotel-booking/booking-form /-->'; $home_id = wp_insert_post(['post_title' => 'Home', 'post_content' => $home_content, 'post_status' => 'publish', 'post_type' => 'page']); update_option('page_on_front', $home_id);"
+      "code": "<?php require_once '/wordpress/wp-load.php'; global $wpdb; \n\n// 1. Seed Room Types\n$room_types = [\n    ['name' => 'Royal Ocean Suite', 'description' => 'A grand suite with floor-to-ceiling ocean views and a private balcony.', 'base_price' => 349.00, 'max_adults' => 2, 'total_rooms' => 2, 'amenities' => 'wifi,ac,tv,breakfast,pool'],\n    ['name' => 'Deluxe Garden Room', 'description' => 'Elegant comfort surrounded by lush tropical gardens.', 'base_price' => 199.00, 'max_adults' => 2, 'total_rooms' => 5, 'amenities' => 'wifi,ac,tv'],\n    ['name' => 'Family Bungalow', 'description' => 'Spacious accommodation for the whole family, close to the pool.', 'base_price' => 279.00, 'max_adults' => 4, 'total_rooms' => 3, 'amenities' => 'wifi,ac,tv,breakfast']\n];\n\nforeach ($room_types as $rt) {\n    $wpdb->insert($wpdb->prefix . 'mhbo_room_types', $rt);\n    $type_id = $wpdb->insert_id;\n    for ($i = 1; $i <= $rt['total_rooms']; $i++) {\n        $wpdb->insert($wpdb->prefix . 'mhbo_rooms', ['type_id' => $type_id, 'room_number' => '10' . $type_id . $i, 'status' => 'available']);\n    }\n}\n\n// 2. Seed Bookings for Dashboard Stats\n$bookings = [\n    ['room_id' => 1, 'customer_name' => 'John Doe', 'check_in' => date('Y-m-d'), 'check_out' => date('Y-m-d', strtotime('+3 days')), 'total_price' => 1047.00, 'status' => 'confirmed'],\n    ['room_id' => 3, 'customer_name' => 'Jane Smith', 'check_in' => date('Y-m-d', strtotime('+1 day')), 'check_out' => date('Y-m-d', strtotime('+5 days')), 'total_price' => 1116.00, 'status' => 'paid'],\n    ['room_id' => 6, 'customer_name' => 'Mike Ross', 'check_in' => date('Y-m-d', strtotime('-5 days')), 'check_out' => date('Y-m-d', strtotime('-2 days')), 'total_price' => 597.00, 'status' => 'confirmed']\n];\n\nforeach ($bookings as $b) {\n    $b['booking_token'] = bin2hex(random_bytes(16));\n    $b['customer_email'] = strtolower(str_replace(' ', '.', $b['customer_name'])) . '@example.com';\n    $b['created_at'] = current_time('mysql');\n    $wpdb->insert($wpdb->prefix . 'mhbo_bookings', $b);\n}\n\n// 3. Create Home Page Content\n$home_content = '<!-- wp:cover {\"url\":\"https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1920\",\"dimRatio\":50,\"overlayColor\":\"vivid-cyan-blue\",\"align\":\"full\"} --><div class=\"wp-block-cover alignfull\"><span aria-hidden=\"true\" class=\"wp-block-cover__background has-vivid-cyan-blue-background-color has-background-dim\"></span><img class=\"wp-block-cover__image-background\" alt=\"\" src=\"https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1920\" data-object-fit=\"cover\"/><div class=\"wp-block-cover__inner-container\"><!-- wp:heading {\"textAlign\":\"center\",\"level\":1,\"style\":{\"typography\":{\"fontSize\":\"60px\"}}} --><h1 class=\"has-text-align-center\" style=\"font-size:60px\">Azure Bay Resort</h1><!-- /wp:heading --><!-- wp:paragraph {\"align\":\"center\",\"style\":{\"typography\":{\"fontSize\":\"24px\"}}} --><p class=\"has-text-align-center\" style=\"font-size:24px\">Tropical luxury and serene comfort for the modern traveler.</p><!-- /wp:paragraph --><!-- wp:spacer {\"height\":\"20px\"} --><div style=\"height:20px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div><!-- /wp:spacer --><!-- wp:buttons {\"layout\":{\"type\":\"flex\",\"justifyContent\":\"center\"}} --><div class=\"wp-block-buttons\"><!-- wp:button {\"className\":\"is-style-outline\"} --><div class=\"wp-block-button is-style-outline\"><a class=\"wp-block-button__link wp-element-button\" href=\"/book-now/\">Book Your Escape</a></div><!-- /wp:button --></div><!-- /wp:buttons --></div></div><!-- /wp:cover --><!-- wp:spacer {\"height\":\"60px\"} --><div style=\"height:60px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div><!-- /wp:spacer --><!-- wp:columns {\"align\":\"wide\"} --><div class=\"wp-block-columns alignwide\"><!-- wp:column {\"width\":\"35%\"} --><div class=\"wp-block-column\" style=\"flex-basis:35%\"><!-- wp:heading {\"level\":3} --><h3>Check Availability</h3><!-- /wp:heading --><!-- wp:modern-hotel-booking/booking-form /--></div><!-- /wp:column --><!-- wp:column {\"width\":\"65%\"} --><div class=\"wp-block-column\" style=\"flex-basis:65%\"><!-- wp:heading --><h2>Featured Room: Royal Ocean Suite</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Experience the ultimate in luxury with our ocean-front suites. Private terraces, personalized service, and breathtaking views.</p><!-- /wp:paragraph --><!-- wp:modern-hotel-booking/room-calendar {\"roomId\":1} /--></div><!-- /wp:column --></div><!-- /wp:columns -->';\n$home_id = wp_insert_post(['post_title' => 'Home', 'post_content' => $home_content, 'post_status' => 'publish', 'post_type' => 'page']);\nupdate_option('page_on_front', $home_id);\nupdate_option('mhbo_booking_page', $home_id);\n\n// 4. Create Book Now (Results) Page\n$book_now_id = wp_insert_post(['post_title' => 'Book Now', 'post_content' => '<!-- wp:heading --><h2>Available Accommodations</h2><!-- /wp:heading --><!-- wp:modern-hotel-booking/booking-form /-->', 'post_status' => 'publish', 'post_type' => 'page']);\n\n// 5. Final Polish\nwp_update_user(['ID' => 1, 'admin_color' => 'midnight']);\nflush_rewrite_rules();"
     }
   ]
 }
