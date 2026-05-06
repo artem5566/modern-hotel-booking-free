@@ -16,7 +16,7 @@
       "step": "unzip",
       "zipFile": {
         "resource": "url",
-        "url": "https://raw.githubusercontent.com/leslieradue-web/modern-hotel-booking-free/playground-changes-2026-05-06T18-30-27-681Z/modern-hotel-booking/playground.zip"
+        "url": "https://raw.githubusercontent.com/leslieradue-web/modern-hotel-booking-free/main/playground.zip"
       },
       "extractToPath": "/wordpress"
     }
