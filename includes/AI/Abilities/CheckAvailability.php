@@ -156,7 +156,7 @@ $child_ages = [];
             return [ 'available' => false, 'rooms' => [], 'nights_count' => 0, 'message' => \__( 'Stay cannot exceed 365 nights.', 'modern-hotel-booking' ) ];
         }
 
-        // Fetch rooms from DB (mirrors RestApi::get_availability).
+// Fetch rooms from DB (mirrors RestApi::get_availability).
         $cache_key = 'rooms_with_types_ai';
         $rooms     = Cache::get_query( (string) $cache_key, Cache::TABLE_ROOMS );
 

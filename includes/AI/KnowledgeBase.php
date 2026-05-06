@@ -86,7 +86,9 @@ $rules_text   = self::get_instruction_rules();
         $booking_line = $booking_url ? "- BOOKING LINKS: Use the PRE-FILLED booking_url returned by tools (e.g. check_availability). Never provide a naked link like {$booking_url} if a specific tool result is available." : '';
         $deposit_line = self::get_deposit_prompt_line();
 
-        return "=== CONCIERGE RULEBOOK (2026) ===\n" .
+        $stay_limits_line = '';
+
+return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "1. AGENTIC FINALIZATION & PROACTIVE MANDATE: You are a booking agent, not just a link provider. If a guest confirms dates and guest count, immediately call `check_availability` to start the booking flow. IF YOU HAVE ALL REQUIRED PARAMETERS FOR A TOOL (like Name, Email, Phone for a booking), YOU MUST CALL THE TOOL IMMEDIATELY. DO NOT ASK FOR PERMISSION TO EXECUTE A TOOL IF YOU HAVE THE DATA. PROCEED WITHOUT HESITATION.\n" .
                "\n" .
                "2. BOOKING FLOW PROTOCOL:\n" .
@@ -149,6 +151,7 @@ $rules_text   = self::get_instruction_rules();
                "   - CURRENCY: Always use words like \"dollars\" or \"euros\". \n" .
                "   - DATES: Today is {$today}. Never ask the user to format dates like \"YYYY-MM-DD\".\n" .
                "\n" .
+               "{$stay_limits_line}" .
                "{$booking_line}\n" .
                "{$deposit_line}";
     }

@@ -4,7 +4,7 @@ Donate link: https://startmysuccess.com/
 Tags: hotel booking, vacation rental, ical, booking calendar, accommodation
 Requires at least: 6.6
 Tested up to: 7.0
-Stable tag: 2.3.8
+Stable tag: 2.3.9
 Requires PHP: 8.0
 License: GPL-2.0-or-later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -130,6 +130,13 @@ Visit [StartMySuccess.com](https://startmysuccess.com/) for all Pro features, pr
 
 == Changelog ==
 
+= 2.3.9 =
+* **MOD (Free): Localization Infrastructure Upgrade** — Full 15-locale translation ritual with 100% string coverage.
+* **MOD (Free): Multi-Currency Optimization** — Improved symbol detection for guest-facing calendars.
+* **FIX**: Resolved encoding issues in Romanian and Cyrillic translations (Anti-Mojibake).
+* **FIX**: Stabilized AI Concierge availability checking with global Min Nights constraints.
+* **FIX**: Resolved service fee recalculation error in multi-room bookings.
+
 = 2.3.8 =
 * **NEW (Pro): Full Coupon System** — Create fixed or percentage discounts with expiry dates.
 * **MOD (Free): Enhanced Room Assignment Logic** — Defaulted to 'Available' tab; blocked manual selection of unavailable units.
@@ -144,6 +151,9 @@ Visit [StartMySuccess.com](https://startmysuccess.com/) for all Pro features, pr
 
 
 == Upgrade Notice ==
+
+= 2.3.9 =
+Stabilization release with 100% translation coverage across 15 locales and AI availability hardening. Recommended for all users.
 
 = 2.3.8 =
 New Coupon System added to Pro and improved iCal sync reliability. Recommended for all users.

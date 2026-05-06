@@ -9,7 +9,7 @@ msgstr ""
 "MIME-Version: 1.0\n"
 "Content-Type: text/plain; charset=UTF-8\n"
 "Content-Transfer-Encoding: 8bit\n"
-"POT-Creation-Date: 2026-05-04T12:07:09+00:00\n"
+"POT-Creation-Date: 2026-05-06T10:23:59+00:00\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "X-Generator: WP-CLI 2.12.0\n"
 "X-Domain: modern-hotel-booking\n"
@@ -66,9 +66,9 @@ msgstr ""
 #: includes/Admin/AiSettings.php:298
 #: includes/Admin/AiSettings.php:348
 #: includes/AI/KnowledgeBase.php:54
-#: includes/AI/Loader.php:578
+#: includes/AI/Loader.php:586
 #: includes/Core/I18n.php:1039
-#: includes/Core/I18n.php:1151
+#: includes/Core/I18n.php:1162
 #: includes/Pro/CouponAdmin.php:591
 msgid "AI Concierge"
 msgstr ""
@@ -82,7 +82,7 @@ msgid "Assistant Persona"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:337
-#: includes/Core/I18n.php:1276
+#: includes/Core/I18n.php:1287
 msgid "Appearance"
 msgstr ""
 
@@ -92,8 +92,8 @@ msgid "AI Discovery (GEO)"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:340
-#: includes/Core/I18n.php:1275
-#: includes/Core/I18n.php:1461
+#: includes/Core/I18n.php:1286
+#: includes/Core/I18n.php:1472
 msgid "Analytics"
 msgstr ""
 
@@ -102,14 +102,14 @@ msgid "Manage your AI guest assistant, knowledge base, and voice integrations."
 msgstr ""
 
 #: includes/Admin/AiSettings.php:352
-#: includes/Core/I18n.php:1269
-#: includes/Core/I18n.php:1570
+#: includes/Core/I18n.php:1280
+#: includes/Core/I18n.php:1581
 msgid "Settings"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:377
-#: includes/Core/I18n.php:1392
-#: includes/Core/I18n.php:1819
+#: includes/Core/I18n.php:1403
+#: includes/Core/I18n.php:1830
 msgid "System Status"
 msgstr ""
 
@@ -279,7 +279,7 @@ msgstr ""
 
 #: includes/Admin/AiSettings.php:532
 #: includes/Admin/AiSettings.php:662
-#: includes/Core/I18n.php:1675
+#: includes/Core/I18n.php:1686
 msgid "API Key"
 msgstr ""
 
@@ -376,14 +376,14 @@ msgstr ""
 
 #: includes/Admin/AiSettings.php:627
 #: includes/Admin/AiSettings.php:674
-#: includes/Core/I18n.php:1698
+#: includes/Core/I18n.php:1709
 msgid "Endpoint"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:635
 #: includes/Admin/AiSettings.php:1272
 #: includes/Admin/AiSettings.php:1275
-#: includes/Core/I18n.php:1544
+#: includes/Core/I18n.php:1555
 msgid "Test Connection"
 msgstr ""
 
@@ -491,13 +491,13 @@ msgid "Position"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:784
-#: includes/Core/I18n.php:2283
+#: includes/Core/I18n.php:2294
 #: blocks/ai-concierge/index.js:55
 msgid "Bottom Right"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:785
-#: includes/Core/I18n.php:2284
+#: includes/Core/I18n.php:2295
 #: blocks/ai-concierge/index.js:56
 msgid "Bottom Left"
 msgstr ""
@@ -730,9 +730,9 @@ msgid "Sync Failed"
 msgstr ""
 
 #: includes/Admin/AiSettings.php:1307
-#: includes/Core/I18n.php:1331
-#: includes/Core/I18n.php:2773
-#: includes/Core/I18n.php:2876
+#: includes/Core/I18n.php:1342
+#: includes/Core/I18n.php:2784
+#: includes/Core/I18n.php:2887
 msgid "Are you sure?"
 msgstr ""
 
@@ -828,7 +828,7 @@ msgid "Open"
 msgstr ""
 
 #: includes/Admin/Menu.php:389
-#: includes/Core/I18n.php:2079
+#: includes/Core/I18n.php:2090
 #: includes/Pro/Invoice.php:274
 #: includes/Pro/Invoice.php:282
 msgctxt "confirmation"
@@ -836,7 +836,7 @@ msgid "Yes"
 msgstr ""
 
 #: includes/Admin/Menu.php:390
-#: includes/Core/I18n.php:2080
+#: includes/Core/I18n.php:2091
 #: includes/Pro/Invoice.php:282
 msgctxt "confirmation"
 msgid "No"
@@ -853,7 +853,7 @@ msgstr ""
 #: includes/Admin/Menu.php:393
 #: includes/Admin/Menu.php:487
 #: includes/Core/I18n.php:722
-#: includes/Core/I18n.php:2064
+#: includes/Core/I18n.php:2075
 msgctxt "action"
 msgid "Save"
 msgstr ""
@@ -867,7 +867,7 @@ msgid "Clear override"
 msgstr ""
 
 #: includes/Admin/Menu.php:396
-#: includes/Core/I18n.php:2065
+#: includes/Core/I18n.php:2076
 #: includes/Pro/CouponAdmin.php:612
 msgid "Cancel"
 msgstr ""
@@ -990,7 +990,7 @@ msgstr ""
 #: includes/Admin/Menu.php:2450
 #: includes/Admin/Menu.php:3189
 #: includes/Core/I18n.php:723
-#: includes/Core/I18n.php:2063
+#: includes/Core/I18n.php:2074
 #: includes/Pro/CouponAdmin.php:444
 msgid "Delete"
 msgstr ""
@@ -1005,7 +1005,7 @@ msgstr ""
 
 #: includes/Admin/Menu.php:525
 #: includes/Admin/Settings.php:1781
-#: includes/Core/I18n.php:1279
+#: includes/Core/I18n.php:1290
 msgid "Coupons"
 msgstr ""
 
@@ -1040,16 +1040,16 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2056
 #: includes/Admin/Menu.php:2769
-#: includes/Core/I18n.php:1309
-#: includes/Core/I18n.php:2466
-#: includes/Core/I18n.php:2718
+#: includes/Core/I18n.php:1320
+#: includes/Core/I18n.php:2477
+#: includes/Core/I18n.php:2729
 #: includes/Pro/CouponAdmin.php:331
 #: includes/Pro/CouponAdmin.php:600
 msgid "Status"
 msgstr ""
 
 #: includes/Admin/Menu.php:2061
-#: includes/Core/I18n.php:1303
+#: includes/Core/I18n.php:1314
 msgid "Payment"
 msgstr ""
 
@@ -1059,8 +1059,8 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2078
 #: includes/Admin/Menu.php:2771
-#: includes/Core/I18n.php:1305
-#: includes/Core/I18n.php:1705
+#: includes/Core/I18n.php:1316
+#: includes/Core/I18n.php:1716
 #: includes/Pro/CouponAdmin.php:332
 msgid "Actions"
 msgstr ""
@@ -1086,24 +1086,24 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2112
 #: includes/Core/I18n.php:658
-#: includes/Core/I18n.php:1417
+#: includes/Core/I18n.php:1428
 msgid "No bookings found."
 msgstr ""
 
 #: includes/Admin/Menu.php:2113
 #: includes/Core/I18n.php:659
-#: includes/Core/I18n.php:1418
+#: includes/Core/I18n.php:1429
 msgid "Your search criteria didn't return any results."
 msgstr ""
 
 #: includes/Admin/Menu.php:2256
-#: includes/Core/I18n.php:1496
+#: includes/Core/I18n.php:1507
 msgid "Content & Localization"
 msgstr ""
 
 #: includes/Admin/Menu.php:2271
-#: includes/Core/I18n.php:1497
-#: includes/Core/I18n.php:2167
+#: includes/Core/I18n.php:1508
+#: includes/Core/I18n.php:2178
 msgid "Room Name"
 msgstr ""
 
@@ -1112,9 +1112,9 @@ msgid "e.g. Deluxe Sea View Suite"
 msgstr ""
 
 #: includes/Admin/Menu.php:2277
-#: includes/Core/I18n.php:1137
-#: includes/Core/I18n.php:1498
-#: includes/Core/I18n.php:2856
+#: includes/Core/I18n.php:1148
+#: includes/Core/I18n.php:1509
+#: includes/Core/I18n.php:2867
 #: includes/Pro/CouponAdmin.php:502
 msgid "Description"
 msgstr ""
@@ -1125,37 +1125,37 @@ msgid "Describe the features, view, and unique selling points..."
 msgstr ""
 
 #: includes/Admin/Menu.php:2288
-#: includes/Core/I18n.php:1499
+#: includes/Core/I18n.php:1510
 msgid "Pricing & Capacity"
 msgstr ""
 
 #: includes/Admin/Menu.php:2291
-#: includes/Core/I18n.php:1500
+#: includes/Core/I18n.php:1511
 msgid "Nightly Base Rate"
 msgstr ""
 
 #: includes/Admin/Menu.php:2300
-#: includes/Core/I18n.php:1501
+#: includes/Core/I18n.php:1512
 msgid "Adult Capacity"
 msgstr ""
 
 #: includes/Admin/Menu.php:2307
-#: includes/Core/I18n.php:1502
+#: includes/Core/I18n.php:1513
 msgid "Child Capacity"
 msgstr ""
 
 #: includes/Admin/Menu.php:2313
-#: includes/Core/I18n.php:1503
+#: includes/Core/I18n.php:1514
 msgid "Child Free Age"
 msgstr ""
 
 #: includes/Admin/Menu.php:2319
-#: includes/Core/I18n.php:1504
+#: includes/Core/I18n.php:1515
 msgid "Extra Child Rate"
 msgstr ""
 
 #: includes/Admin/Menu.php:2332
-#: includes/Core/I18n.php:1505
+#: includes/Core/I18n.php:1516
 msgid "Media & Amenities"
 msgstr ""
 
@@ -1165,12 +1165,12 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2339
 #: includes/Admin/Menu.php:2958
-#: includes/Core/I18n.php:1506
+#: includes/Core/I18n.php:1517
 msgid "Select"
 msgstr ""
 
 #: includes/Admin/Menu.php:2345
-#: includes/Core/I18n.php:1507
+#: includes/Core/I18n.php:1518
 msgid "Standard Amenities"
 msgstr ""
 
@@ -1181,17 +1181,17 @@ msgid "Discard Changes"
 msgstr ""
 
 #: includes/Admin/Menu.php:2381
-#: includes/Core/I18n.php:1508
+#: includes/Core/I18n.php:1519
 msgid "Defined Room Types"
 msgstr ""
 
 #: includes/Admin/Menu.php:2382
-#: includes/Core/I18n.php:1509
+#: includes/Core/I18n.php:1520
 msgid "Manage and edit your existing room configurations."
 msgstr ""
 
 #: includes/Admin/Menu.php:2389
-#: includes/Core/I18n.php:1510
+#: includes/Core/I18n.php:1521
 msgid "No room types defined yet. Create your first category above."
 msgstr ""
 
@@ -1219,12 +1219,12 @@ msgid "Are you sure you want to delete this room type? This may affect existing 
 msgstr ""
 
 #: includes/Admin/Menu.php:2540
-#: includes/Core/I18n.php:1511
+#: includes/Core/I18n.php:1522
 msgid "Manage Rooms"
 msgstr ""
 
 #: includes/Admin/Menu.php:2546
-#: includes/Core/I18n.php:1512
+#: includes/Core/I18n.php:1523
 #: includes/Pro/AdminCalendar.php:1426
 msgid "Back to Rooms"
 msgstr ""
@@ -1254,29 +1254,29 @@ msgid "Out of Service"
 msgstr ""
 
 #: includes/Admin/Menu.php:2744
-#: includes/Core/I18n.php:1346
-#: includes/Core/I18n.php:1513
+#: includes/Core/I18n.php:1357
+#: includes/Core/I18n.php:1524
 msgid "Deployment Export URL"
 msgstr ""
 
 #: includes/Admin/Menu.php:2745
-#: includes/Core/I18n.php:1347
-#: includes/Core/I18n.php:1514
+#: includes/Core/I18n.php:1358
+#: includes/Core/I18n.php:1525
 msgid "Provide this URL to external OTAs (Airbnb, Booking.com) to export this room's availability."
 msgstr ""
 
 #: includes/Admin/Menu.php:2757
-#: includes/Core/I18n.php:1515
+#: includes/Core/I18n.php:1526
 msgid "Copied!"
 msgstr ""
 
 #: includes/Admin/Menu.php:2757
-#: includes/Core/I18n.php:1516
+#: includes/Core/I18n.php:1527
 msgid "Copy URL"
 msgstr ""
 
 #: includes/Admin/Menu.php:2762
-#: includes/Core/I18n.php:1517
+#: includes/Core/I18n.php:1528
 msgid "Import External Calendars"
 msgstr ""
 
@@ -1285,7 +1285,7 @@ msgid "Platform"
 msgstr ""
 
 #: includes/Admin/Menu.php:2768
-#: includes/Core/I18n.php:2644
+#: includes/Core/I18n.php:2655
 msgid "Connection Name"
 msgstr ""
 
@@ -1294,7 +1294,7 @@ msgid "Last Sync"
 msgstr ""
 
 #: includes/Admin/Menu.php:2776
-#: includes/Core/I18n.php:1521
+#: includes/Core/I18n.php:1532
 msgid "No external feeds connected yet."
 msgstr ""
 
@@ -1311,7 +1311,7 @@ msgstr[0] ""
 msgstr[1] ""
 
 #: includes/Admin/Menu.php:2850
-#: includes/Core/I18n.php:2573
+#: includes/Core/I18n.php:2584
 msgid "Never synced"
 msgstr ""
 
@@ -1340,7 +1340,7 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2879
 #: includes/Core/I18n.php:754
-#: includes/Core/I18n.php:1522
+#: includes/Core/I18n.php:1533
 msgid "iCal Feed URL (HTTPS)"
 msgstr ""
 
@@ -1351,7 +1351,7 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2892
 #: includes/Core/I18n.php:756
-#: includes/Core/I18n.php:1523
+#: includes/Core/I18n.php:1534
 msgid "Force Global Sync"
 msgstr ""
 
@@ -1362,7 +1362,7 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2911
 #: includes/Core/I18n.php:694
-#: includes/Core/I18n.php:1524
+#: includes/Core/I18n.php:1535
 msgid "Classification / Type"
 msgstr ""
 
@@ -1372,7 +1372,7 @@ msgid "— Select Room Type —"
 msgstr ""
 
 #: includes/Admin/Menu.php:2924
-#: includes/Core/I18n.php:1525
+#: includes/Core/I18n.php:1536
 msgid "Room Number / Identifier"
 msgstr ""
 
@@ -1388,7 +1388,7 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2931
 #: includes/Core/I18n.php:698
-#: includes/Core/I18n.php:1526
+#: includes/Core/I18n.php:1537
 msgid "Specific price for this unit. Leave at 0 to use the category default."
 msgstr ""
 
@@ -1418,7 +1418,7 @@ msgstr ""
 
 #: includes/Admin/Menu.php:2983
 #: includes/Core/I18n.php:692
-#: includes/Core/I18n.php:1527
+#: includes/Core/I18n.php:1538
 msgid "Full Unit Inventory"
 msgstr ""
 
@@ -1443,13 +1443,13 @@ msgstr ""
 
 #: includes/Admin/Menu.php:3041
 #: includes/Core/I18n.php:745
-#: includes/Core/I18n.php:1528
+#: includes/Core/I18n.php:1539
 msgid "Edit Details"
 msgstr ""
 
 #: includes/Admin/Menu.php:3045
 #: includes/Core/I18n.php:746
-#: includes/Core/I18n.php:1529
+#: includes/Core/I18n.php:1540
 msgid "iCal Connections"
 msgstr ""
 
@@ -1459,7 +1459,7 @@ msgid "Permanently remove this unit from inventory?"
 msgstr ""
 
 #: includes/Admin/Menu.php:3119
-#: includes/Core/I18n.php:1530
+#: includes/Core/I18n.php:1541
 msgid "Service Extras & Add-ons"
 msgstr ""
 
@@ -1468,7 +1468,7 @@ msgid "Active Add-ons"
 msgstr ""
 
 #: includes/Admin/Menu.php:3131
-#: includes/Core/I18n.php:1531
+#: includes/Core/I18n.php:1542
 msgid "Configure Available Services"
 msgstr ""
 
@@ -1563,7 +1563,7 @@ msgstr ""
 #: includes/AI/Abilities/CreateBookingLink.php:127
 #: includes/AI/Abilities/Pro/ModifyBooking.php:122
 #: includes/Core/I18n.php:903
-#: includes/Core/I18n.php:1602
+#: includes/Core/I18n.php:1613
 msgid "Check-in date cannot be in the past."
 msgstr ""
 
@@ -1580,52 +1580,64 @@ msgstr ""
 msgid "Stay cannot exceed 365 nights."
 msgstr ""
 
-#: includes/AI/Abilities/CheckAvailability.php:186
+#. translators: 1: minimum nights, 2: requested nights
+#: includes/AI/Abilities/CheckAvailability.php:178
+#, php-format
+msgid "The hotel has a minimum stay requirement of %1$d nights. You requested %2$d night(s). Please adjust the dates and try again."
+msgstr ""
+
+#. translators: 1: maximum nights, 2: requested nights
+#: includes/AI/Abilities/CheckAvailability.php:187
+#, php-format
+msgid "The hotel has a maximum stay limit of %1$d nights. You requested %2$d night(s). Please adjust the dates and try again."
+msgstr ""
+
+#: includes/AI/Abilities/CheckAvailability.php:209
 msgid "No rooms found."
 msgstr ""
 
 #. translators: %d: age
-#: includes/AI/Abilities/CheckAvailability.php:398
+#: includes/AI/Abilities/CheckAvailability.php:421
 #, php-format
 msgid " (Children aged %d and under stay free)"
 msgstr ""
 
-#: includes/AI/Abilities/CheckAvailability.php:399
+#: includes/AI/Abilities/CheckAvailability.php:422
 msgid " (Babies aged 0 stay free)"
 msgstr ""
 
 #. translators: 1: room name, 2: max adults, 3: max children, 4: total capacity, 5: age policy
-#: includes/AI/Abilities/CheckAvailability.php:403
+#: includes/AI/Abilities/CheckAvailability.php:426
 #, php-format
 msgid "- %1$s: Max Adults %2$d, Max Children %3$d. Total: %4$d%5$s"
 msgstr ""
 
-#: includes/AI/Abilities/CheckAvailability.php:415
+#: includes/AI/Abilities/CheckAvailability.php:438
 msgid "No rooms available for the selected dates and guest count."
 msgstr ""
 
-#: includes/AI/Abilities/CheckAvailability.php:415
+#: includes/AI/Abilities/CheckAvailability.php:438
 msgid "Capacity Guidelines:"
 msgstr ""
 
 #. translators: %1$d number of rooms, %2$d nights
-#: includes/AI/Abilities/CheckAvailability.php:418
+#: includes/AI/Abilities/CheckAvailability.php:441
 #, php-format
 msgid "%1$d room type available for %2$d night."
 msgid_plural "%1$d room types available for %2$d nights."
 msgstr[0] ""
 msgstr[1] ""
 
-#: includes/AI/Abilities/CheckAvailability.php:425
+#: includes/AI/Abilities/CheckAvailability.php:448
 msgid "Note: some options require multiple rooms to accommodate your group."
 msgstr ""
 
 #. translators: This is an internal instruction for the AI model to handle multiple room reservations.
-#: includes/AI/Abilities/CheckAvailability.php:427
+#: includes/AI/Abilities/CheckAvailability.php:450
 msgid "IMPORTANT: For multi-room options, I must create INDIVIDUAL booking cards for each room. I need the guest's Full Name, Email, and Phone to prepare these cards. Once they provide these details, I will generate the FIRST card and instruct them to return here for the next one."
 msgstr ""
 
-#: includes/AI/Abilities/CheckAvailability.php:429
+#: includes/AI/Abilities/CheckAvailability.php:452
 msgid "Guests can book directly using the provided room links or view all options here: "
 msgstr ""
 
@@ -2005,35 +2017,35 @@ msgid "Contact hotel"
 msgstr ""
 
 #. translators: %1$s: optional refund policy note e.g. " (non-refundable)"
-#: includes/AI/KnowledgeBase.php:230
+#: includes/AI/KnowledgeBase.php:244
 #, php-format
 msgid "- A deposit of your first night's rate is required at booking time%1$s."
 msgstr ""
 
 #. translators: %1$s: deposit amount, %2$s: currency symbol, %3$s: optional refund policy note
-#: includes/AI/KnowledgeBase.php:237
+#: includes/AI/KnowledgeBase.php:251
 #, php-format
 msgid "- A deposit of %1$s %2$s is required at booking time%3$s."
 msgstr ""
 
 #. translators: %1$d: deposit percentage, %2$s: optional refund policy note
-#: includes/AI/KnowledgeBase.php:246
-#: includes/AI/KnowledgeBase.php:253
+#: includes/AI/KnowledgeBase.php:260
+#: includes/AI/KnowledgeBase.php:267
 #, php-format
 msgid "- A deposit of %1$d%% of the total is required at booking time%2$s."
 msgstr ""
 
-#: includes/AI/KnowledgeBase.php:257
+#: includes/AI/KnowledgeBase.php:271
 msgid "Inform guests when discussing pricing."
 msgstr ""
 
 #: includes/AI/LlmFile.php:39
 #: includes/AI/LlmFile.php:63
-#: includes/AI/Loader.php:179
+#: includes/AI/Loader.php:187
 #: includes/Core/I18n.php:600
-#: includes/Core/I18n.php:1432
-#: includes/Core/I18n.php:2139
-#: includes/Core/I18n.php:2766
+#: includes/Core/I18n.php:1443
+#: includes/Core/I18n.php:2150
+#: includes/Core/I18n.php:2777
 #: includes/Pro/AdminCalendar.php:302
 #: includes/Pro/CouponAdmin.php:257
 #: includes/Pro/CouponAdmin.php:286
@@ -2052,7 +2064,7 @@ msgstr ""
 msgid "AI Discovery files removed."
 msgstr ""
 
-#: includes/AI/Loader.php:595
+#: includes/AI/Loader.php:603
 msgid "Hotel AI Guest"
 msgstr ""
 
@@ -2074,7 +2086,7 @@ msgid "Booking not found."
 msgstr ""
 
 #: includes/Business/Info.php:277
-#: includes/Core/I18n.php:2144
+#: includes/Core/I18n.php:2155
 msgid "Business settings saved successfully."
 msgstr ""
 
@@ -2163,8 +2175,8 @@ msgid "Name"
 msgstr ""
 
 #: includes/Core/Email.php:164
-#: includes/Core/I18n.php:1325
-#: includes/Core/I18n.php:2244
+#: includes/Core/I18n.php:1336
+#: includes/Core/I18n.php:2255
 msgctxt "customer detail"
 msgid "Email"
 msgstr ""
@@ -2182,14 +2194,14 @@ msgstr ""
 #. translators: %s: tax name (e.g., VAT)
 #: includes/Core/Email.php:185
 #: includes/Core/I18n.php:822
-#: includes/Core/I18n.php:2433
+#: includes/Core/I18n.php:2444
 #: includes/Pro/Invoice.php:173
 msgid "Booking Details"
 msgstr ""
 
 #: includes/Core/Email.php:187
 #: includes/Core/I18n.php:1001
-#: includes/Core/I18n.php:2461
+#: includes/Core/I18n.php:2472
 msgid "Booking ID"
 msgstr ""
 
@@ -2223,13 +2235,13 @@ msgid "Guests"
 msgstr ""
 
 #: includes/Core/Email.php:192
-#: includes/Core/I18n.php:1320
+#: includes/Core/I18n.php:1331
 msgid "Payment Method"
 msgstr ""
 
 #: includes/Core/Email.php:193
-#: includes/Core/I18n.php:1318
-#: includes/Core/I18n.php:2465
+#: includes/Core/I18n.php:1329
+#: includes/Core/I18n.php:2476
 msgid "Total Price"
 msgstr ""
 
@@ -2246,7 +2258,7 @@ msgid "Full Payment"
 msgstr ""
 
 #: includes/Core/Email.php:202
-#: includes/Core/I18n.php:1282
+#: includes/Core/I18n.php:1293
 msgid "Coupon Code"
 msgstr ""
 
@@ -2321,19 +2333,19 @@ msgid "If you did not request this code, please ignore this email."
 msgstr ""
 
 #: includes/Core/I18n.php:448
-#: includes/Core/I18n.php:2513
+#: includes/Core/I18n.php:2524
 msgid "Stripe"
 msgstr ""
 
 #: includes/Core/I18n.php:449
 #: includes/Core/I18n.php:819
-#: includes/Core/I18n.php:2500
-#: includes/Core/I18n.php:2514
+#: includes/Core/I18n.php:2511
+#: includes/Core/I18n.php:2525
 msgid "PayPal"
 msgstr ""
 
 #: includes/Core/I18n.php:450
-#: includes/Core/I18n.php:1326
+#: includes/Core/I18n.php:1337
 msgid "Pay on Arrival / Manual"
 msgstr ""
 
@@ -2459,7 +2471,7 @@ msgid "Full Name"
 msgstr ""
 
 #: includes/Core/I18n.php:582
-#: includes/Core/I18n.php:2467
+#: includes/Core/I18n.php:2478
 msgid "Customer Name"
 msgstr ""
 
@@ -2509,7 +2521,7 @@ msgid "Manual Booking Added!"
 msgstr ""
 
 #: includes/Core/I18n.php:597
-#: includes/Core/I18n.php:1380
+#: includes/Core/I18n.php:1391
 msgid "Are you sure you want to remove this extra?"
 msgstr ""
 
@@ -2518,12 +2530,12 @@ msgid "Failed to save booking. Please try again."
 msgstr ""
 
 #: includes/Core/I18n.php:601
-#: includes/Core/I18n.php:1236
+#: includes/Core/I18n.php:1247
 msgid "Settings saved successfully."
 msgstr ""
 
 #: includes/Core/I18n.php:603
-#: includes/Core/I18n.php:2145
+#: includes/Core/I18n.php:2156
 msgid "Tax settings saved successfully."
 msgstr ""
 
@@ -2544,18 +2556,18 @@ msgid "Pay via Revolut"
 msgstr ""
 
 #: includes/Core/I18n.php:611
-#: includes/Core/I18n.php:1265
+#: includes/Core/I18n.php:1276
 msgid "Dashboard"
 msgstr ""
 
 #: includes/Core/I18n.php:612
-#: includes/Core/I18n.php:1266
-#: includes/Core/I18n.php:2704
+#: includes/Core/I18n.php:1277
+#: includes/Core/I18n.php:2715
 msgid "Bookings"
 msgstr ""
 
 #: includes/Core/I18n.php:613
-#: includes/Core/I18n.php:1412
+#: includes/Core/I18n.php:1423
 msgid "Room Types"
 msgstr ""
 
@@ -2593,12 +2605,12 @@ msgid "Active Bookings"
 msgstr ""
 
 #: includes/Core/I18n.php:622
-#: includes/Core/I18n.php:1365
+#: includes/Core/I18n.php:1376
 msgid "View All Bookings"
 msgstr ""
 
 #: includes/Core/I18n.php:623
-#: includes/Core/I18n.php:1363
+#: includes/Core/I18n.php:1374
 msgid "Recent Activity"
 msgstr ""
 
@@ -2641,7 +2653,7 @@ msgid "Total"
 msgstr ""
 
 #: includes/Core/I18n.php:633
-#: includes/Core/I18n.php:1715
+#: includes/Core/I18n.php:1726
 msgctxt "noun"
 msgid "Status"
 msgstr ""
@@ -2662,9 +2674,9 @@ msgid "Actions"
 msgstr ""
 
 #: includes/Core/I18n.php:638
-#: includes/Core/I18n.php:2054
-#: includes/Core/I18n.php:2202
-#: includes/Core/I18n.php:2836
+#: includes/Core/I18n.php:2065
+#: includes/Core/I18n.php:2213
+#: includes/Core/I18n.php:2847
 msgid "Booking Management"
 msgstr ""
 
@@ -2722,7 +2734,7 @@ msgid "Language"
 msgstr ""
 
 #: includes/Core/I18n.php:652
-#: includes/Core/I18n.php:2469
+#: includes/Core/I18n.php:2480
 msgid "Admin Notes"
 msgstr ""
 
@@ -2739,7 +2751,7 @@ msgid "📧 Email Invoice"
 msgstr ""
 
 #: includes/Core/I18n.php:657
-#: includes/Core/I18n.php:1302
+#: includes/Core/I18n.php:1313
 msgid "Are you sure you want to delete this booking? This action cannot be undone."
 msgstr ""
 
@@ -2795,35 +2807,35 @@ msgid "Child %d:"
 msgstr ""
 
 #: includes/Core/I18n.php:674
-#: includes/Core/I18n.php:1297
-#: includes/Core/I18n.php:1328
-#: includes/Core/I18n.php:2767
+#: includes/Core/I18n.php:1308
+#: includes/Core/I18n.php:1339
+#: includes/Core/I18n.php:2778
 msgid "Paid Full"
 msgstr ""
 
 #. translators: %s: balance amount
 #: includes/Core/I18n.php:676
-#: includes/Core/I18n.php:1299
-#: includes/Core/I18n.php:2769
+#: includes/Core/I18n.php:1310
+#: includes/Core/I18n.php:2780
 #, php-format
 msgid "Bal: %s"
 msgstr ""
 
 #. translators: %s: pending amount
 #: includes/Core/I18n.php:678
-#: includes/Core/I18n.php:2771
+#: includes/Core/I18n.php:2782
 #, php-format
 msgid "Pending: %s"
 msgstr ""
 
 #: includes/Core/I18n.php:680
-#: includes/Core/I18n.php:1405
+#: includes/Core/I18n.php:1416
 msgctxt "booking status"
 msgid "Confirmed"
 msgstr ""
 
 #: includes/Core/I18n.php:681
-#: includes/Core/I18n.php:1407
+#: includes/Core/I18n.php:1418
 msgctxt "booking status"
 msgid "Cancelled"
 msgstr ""
@@ -2871,7 +2883,7 @@ msgid "No Show"
 msgstr ""
 
 #: includes/Core/I18n.php:693
-#: includes/Core/I18n.php:1307
+#: includes/Core/I18n.php:1318
 msgid "Unit #"
 msgstr ""
 
@@ -3005,24 +3017,24 @@ msgid "Failed to email invoice. Guest may not have an email address."
 msgstr ""
 
 #: includes/Core/I18n.php:741
-#: includes/Core/I18n.php:2477
-#: includes/Core/I18n.php:2798
+#: includes/Core/I18n.php:2488
+#: includes/Core/I18n.php:2809
 msgid "Register New Unit"
 msgstr ""
 
 #: includes/Core/I18n.php:742
-#: includes/Core/I18n.php:2797
+#: includes/Core/I18n.php:2808
 msgid "Save Unit Data"
 msgstr ""
 
 #: includes/Core/I18n.php:743
-#: includes/Core/I18n.php:2795
+#: includes/Core/I18n.php:2806
 msgid "Modify Unit Registration"
 msgstr ""
 
 #: includes/Core/I18n.php:750
-#: includes/Core/I18n.php:1272
-#: includes/Core/I18n.php:1457
+#: includes/Core/I18n.php:1283
+#: includes/Core/I18n.php:1468
 msgid "iCal Sync"
 msgstr ""
 
@@ -3212,12 +3224,12 @@ msgid "Now select your check-out date"
 msgstr ""
 
 #: includes/Core/I18n.php:812
-#: includes/Core/I18n.php:1208
+#: includes/Core/I18n.php:1219
 msgid "Check-in Time"
 msgstr ""
 
 #: includes/Core/I18n.php:813
-#: includes/Core/I18n.php:1209
+#: includes/Core/I18n.php:1220
 msgid "Check-out Time"
 msgstr ""
 
@@ -3251,7 +3263,7 @@ msgid "None"
 msgstr ""
 
 #: includes/Core/I18n.php:824
-#: includes/Core/I18n.php:2347
+#: includes/Core/I18n.php:2358
 msgid "No tax calculation or display. Prices shown as-is."
 msgstr ""
 
@@ -3292,7 +3304,7 @@ msgstr ""
 
 #: includes/Core/I18n.php:836
 #: includes/Core/I18n.php:843
-#: includes/Core/I18n.php:1271
+#: includes/Core/I18n.php:1282
 msgid "Extras"
 msgstr ""
 
@@ -3331,14 +3343,14 @@ msgstr ""
 
 #. translators: %1$s: tax label, %2$s: tax rate percentage
 #: includes/Core/I18n.php:847
-#: includes/Core/I18n.php:1783
+#: includes/Core/I18n.php:1794
 #, php-format
 msgid "%1$s - Extras (%2$s%%)"
 msgstr ""
 
 #. translators: %1$s: tax label, %2$s: tax rate percentage
 #: includes/Core/I18n.php:849
-#: includes/Core/I18n.php:1785
+#: includes/Core/I18n.php:1796
 #, php-format
 msgid "%1$s (%2$s%%)"
 msgstr ""
@@ -3356,7 +3368,7 @@ msgid "Security verification failed. Please refresh the page."
 msgstr ""
 
 #: includes/Core/I18n.php:855
-#: includes/Core/I18n.php:1434
+#: includes/Core/I18n.php:1445
 msgid "Security check failed."
 msgstr ""
 
@@ -3395,7 +3407,7 @@ msgid "Visual breakdown of your reservations and revenue."
 msgstr ""
 
 #: includes/Core/I18n.php:865
-#: includes/Core/I18n.php:1533
+#: includes/Core/I18n.php:1544
 msgid "You do not have sufficient permissions to export data."
 msgstr ""
 
@@ -3450,12 +3462,12 @@ msgid "New"
 msgstr ""
 
 #: includes/Core/I18n.php:884
-#: includes/Core/I18n.php:2205
+#: includes/Core/I18n.php:2216
 msgid "Popular"
 msgstr ""
 
 #: includes/Core/I18n.php:885
-#: includes/Core/I18n.php:2208
+#: includes/Core/I18n.php:2219
 msgid "Updated"
 msgstr ""
 
@@ -3482,23 +3494,23 @@ msgid "Please select check-in and check-out dates."
 msgstr ""
 
 #: includes/Core/I18n.php:896
-#: includes/Core/I18n.php:2157
+#: includes/Core/I18n.php:2168
 msgid "Booked"
 msgstr ""
 
 #: includes/Core/I18n.php:897
-#: includes/Core/I18n.php:1330
+#: includes/Core/I18n.php:1341
 msgid "Pending"
 msgstr ""
 
 #: includes/Core/I18n.php:898
-#: includes/Core/I18n.php:2819
+#: includes/Core/I18n.php:2830
 msgid "Available"
 msgstr ""
 
 #: includes/Core/I18n.php:899
-#: includes/Core/I18n.php:2168
-#: includes/Core/I18n.php:2709
+#: includes/Core/I18n.php:2179
+#: includes/Core/I18n.php:2720
 #: includes/Pro/AdminCalendar.php:1381
 msgid "Room Type"
 msgstr ""
@@ -3603,7 +3615,7 @@ msgid "Paid"
 msgstr ""
 
 #: includes/Core/I18n.php:928
-#: includes/Core/I18n.php:2440
+#: includes/Core/I18n.php:2451
 msgid "Amount Paid:"
 msgstr ""
 
@@ -3652,8 +3664,8 @@ msgid "Payment capture failed: "
 msgstr ""
 
 #: includes/Core/I18n.php:942
-#: includes/Core/I18n.php:1735
-#: includes/Core/I18n.php:2429
+#: includes/Core/I18n.php:1746
+#: includes/Core/I18n.php:2440
 msgid "Payment Confirmation"
 msgstr ""
 
@@ -3705,13 +3717,13 @@ msgid "Required"
 msgstr ""
 
 #: includes/Core/I18n.php:958
-#: includes/Core/I18n.php:2377
+#: includes/Core/I18n.php:2388
 msgid "First Night's Rate"
 msgstr ""
 
 #: includes/Core/I18n.php:959
-#: includes/Core/I18n.php:1729
-#: includes/Core/I18n.php:2887
+#: includes/Core/I18n.php:1740
+#: includes/Core/I18n.php:2898
 msgid "This deposit is non-refundable."
 msgstr ""
 
@@ -3902,12 +3914,12 @@ msgid "Live"
 msgstr ""
 
 #: includes/Core/I18n.php:1018
-#: includes/Core/I18n.php:2533
+#: includes/Core/I18n.php:2544
 msgid "Airbnb Reservation"
 msgstr ""
 
 #: includes/Core/I18n.php:1019
-#: includes/Core/I18n.php:2535
+#: includes/Core/I18n.php:2546
 msgid "Google Calendar Event"
 msgstr ""
 
@@ -4052,7 +4064,7 @@ msgid "Need more help? Contact us directly:"
 msgstr ""
 
 #: includes/Core/I18n.php:1060
-#: includes/Core/I18n.php:2230
+#: includes/Core/I18n.php:2241
 msgid "WhatsApp"
 msgstr ""
 
@@ -4065,5415 +4077,5447 @@ msgstr ""
 msgid "Call Us"
 msgstr ""
 
-#: includes/Core/I18n.php:1063
-#: includes/Core/I18n.php:1079
-msgid "Analyzing your request..."
-msgstr ""
-
 #: includes/Core/I18n.php:1064
-#: includes/Core/I18n.php:1080
-msgid "Refining details..."
+msgid "Start voice input"
 msgstr ""
 
 #: includes/Core/I18n.php:1065
-msgid "Invalid nonce."
+msgid "Stop voice input"
 msgstr ""
 
 #: includes/Core/I18n.php:1066
-msgid "Too many requests. Please wait a moment before sending another message."
+msgid "Toggle voice output"
 msgstr ""
 
 #: includes/Core/I18n.php:1067
-msgid "Message must be 1000 characters or fewer."
+msgid "Voice input is not supported in your browser."
 msgstr ""
 
 #: includes/Core/I18n.php:1068
-msgid "The AI did not return a response. Please try again."
-msgstr ""
-
-#: includes/Core/I18n.php:1069
-msgid "AI provider not configured. Please set up your API key in Settings → AI Concierge."
-msgstr ""
-
-#: includes/Core/I18n.php:1070
-msgid "Custom AI endpoint URL is missing or invalid. Please update it in Settings → AI Concierge."
+msgid "Microphone access denied. Please allow microphone access to use voice input."
 msgstr ""
 
 #: includes/Core/I18n.php:1071
+msgid "Hi there! 👋 Can I help you plan your stay?"
+msgstr ""
+
+#: includes/Core/I18n.php:1072
+msgid "Hi! I can answer questions about availability or pricing. Just ask!"
+msgstr ""
+
+#: includes/Core/I18n.php:1073
+msgid "Looking for the perfect room? I can help you choose!"
+msgstr ""
+
+#: includes/Core/I18n.php:1074
+#: includes/Core/I18n.php:1090
+msgid "Analyzing your request..."
+msgstr ""
+
+#: includes/Core/I18n.php:1075
+#: includes/Core/I18n.php:1091
+msgid "Refining details..."
+msgstr ""
+
+#: includes/Core/I18n.php:1076
+msgid "Invalid nonce."
+msgstr ""
+
+#: includes/Core/I18n.php:1077
+msgid "Too many requests. Please wait a moment before sending another message."
+msgstr ""
+
+#: includes/Core/I18n.php:1078
+msgid "Message must be 1000 characters or fewer."
+msgstr ""
+
+#: includes/Core/I18n.php:1079
+msgid "The AI did not return a response. Please try again."
+msgstr ""
+
+#: includes/Core/I18n.php:1080
+msgid "AI provider not configured. Please set up your API key in Settings → AI Concierge."
+msgstr ""
+
+#: includes/Core/I18n.php:1081
+msgid "Custom AI endpoint URL is missing or invalid. Please update it in Settings → AI Concierge."
+msgstr ""
+
+#: includes/Core/I18n.php:1082
 msgid "Our AI concierge is currently cooling down due to high demand. Please try again in a moment."
 msgstr ""
 
 #. translators: %1$d: seconds cooling down
-#: includes/Core/I18n.php:1073
+#: includes/Core/I18n.php:1084
 #, php-format
 msgid "Concierge is cooling down due to high demand. Please try again in %1$ds."
 msgstr ""
 
 #. translators: %s: provider name
-#: includes/Core/I18n.php:1075
+#: includes/Core/I18n.php:1086
 #, php-format
 msgid "Unknown AI provider: %s"
 msgstr ""
 
 #. translators: %d: HTTP status code
-#: includes/Core/I18n.php:1077
+#: includes/Core/I18n.php:1088
 #, php-format
 msgid "Gemini returned non-JSON response (HTTP %d)"
 msgstr ""
 
-#: includes/Core/I18n.php:1078
+#: includes/Core/I18n.php:1089
 msgid "Unknown Gemini error"
 msgstr ""
 
 #. translators: %d: retry attempt number
-#: includes/Core/I18n.php:1082
+#: includes/Core/I18n.php:1093
 #, php-format
 msgid "Model busy, retrying (attempt %d/1)..."
 msgstr ""
 
 #. translators: %s: room type name
-#: includes/Core/I18n.php:1084
+#: includes/Core/I18n.php:1095
 #, php-format
 msgid "Tell me more about the %s"
 msgstr ""
 
-#: includes/Core/I18n.php:1085
+#: includes/Core/I18n.php:1096
 msgid "Tell me more about your rooms"
 msgstr ""
 
-#: includes/Core/I18n.php:1086
+#: includes/Core/I18n.php:1097
 msgid "What is your cancellation policy?"
 msgstr ""
 
-#: includes/Core/I18n.php:1087
+#: includes/Core/I18n.php:1098
 msgid "How do I complete my booking?"
 msgstr ""
 
-#: includes/Core/I18n.php:1088
+#: includes/Core/I18n.php:1099
 msgid "Check availability for these dates"
 msgstr ""
 
-#: includes/Core/I18n.php:1089
+#: includes/Core/I18n.php:1100
 msgid "What amenities does the hotel offer?"
 msgstr ""
 
-#: includes/Core/I18n.php:1090
+#: includes/Core/I18n.php:1101
 msgid "What is included in my stay?"
 msgstr ""
 
-#: includes/Core/I18n.php:1091
+#: includes/Core/I18n.php:1102
 msgid "How do I get directions to the hotel?"
 msgstr ""
 
-#: includes/Core/I18n.php:1092
+#: includes/Core/I18n.php:1103
 msgid "Can I modify my booking later?"
 msgstr ""
 
-#: includes/Core/I18n.php:1093
+#: includes/Core/I18n.php:1104
 msgid "Check availability for new dates"
 msgstr ""
 
-#: includes/Core/I18n.php:1094
+#: includes/Core/I18n.php:1105
 msgid "What is your refund policy?"
 msgstr ""
 
-#: includes/Core/I18n.php:1095
+#: includes/Core/I18n.php:1106
 msgid "Check room availability"
 msgstr ""
 
-#: includes/Core/I18n.php:1096
+#: includes/Core/I18n.php:1107
 msgid "Tell me about the hotel"
 msgstr ""
 
-#: includes/Core/I18n.php:1097
+#: includes/Core/I18n.php:1108
 msgid "How do I pay for my stay?"
 msgstr ""
 
-#: includes/Core/I18n.php:1098
+#: includes/Core/I18n.php:1109
 msgid "What are the payment options?"
 msgstr ""
 
-#: includes/Core/I18n.php:1099
+#: includes/Core/I18n.php:1110
 msgid "Tell me about your cancellation policy"
 msgstr ""
 
-#: includes/Core/I18n.php:1100
+#: includes/Core/I18n.php:1111
 msgid "Can I add breakfast or other extras?"
 msgstr ""
 
-#: includes/Core/I18n.php:1101
+#: includes/Core/I18n.php:1112
 msgid "What are your room types?"
 msgstr ""
 
 #. translators: %s: language tag (e.g. en_US)
-#: includes/Core/I18n.php:1105
+#: includes/Core/I18n.php:1116
 #, php-format
 msgid "- Language: This page is served in language tag \"%s\". Always reply in that language. If the guest writes in a different language, match their language instead."
 msgstr ""
 
 #. translators: %s: guest name
-#: includes/Core/I18n.php:1107
+#: includes/Core/I18n.php:1118
 #, php-format
 msgid "- CURRENT GUEST NAME: %s."
 msgstr ""
 
 #. translators: %s: guest email
-#: includes/Core/I18n.php:1109
+#: includes/Core/I18n.php:1120
 #, php-format
 msgid "- CURRENT GUEST EMAIL: %s."
 msgstr ""
 
 #. translators: %s: guest phone number
-#: includes/Core/I18n.php:1111
+#: includes/Core/I18n.php:1122
 #, php-format
 msgid "- CURRENT GUEST PHONE: %s."
 msgstr ""
 
 #. translators: %1$s: current date, %2$s: day of the week
-#: includes/Core/I18n.php:1113
+#: includes/Core/I18n.php:1124
 #, php-format
 msgid "- CURRENT DATE (Hotel Timezone): %1$s. Today is %2$s. Always use this as the starting point for availability."
 msgstr ""
 
-#: includes/Core/I18n.php:1114
+#: includes/Core/I18n.php:1125
 msgid "- SCARCITY URGENCY: If inventory for a requested date is low (less than 3 units), EXPLICITLY highlight this urgency in your response using bold or ALL CAPS (e.g., \"ONLY 2 ROOMS LEFT!\")."
 msgstr ""
 
 #. translators: %s: function name
-#: includes/Core/I18n.php:1116
+#: includes/Core/I18n.php:1127
 #, php-format
 msgid "- PROACTIVE MANDATE: If you have the guest's name, email, and phone already collected in the context above, YOU MUST call %s immediately for their chosen room. DO NOT WAIT FOR CONFIRMATION."
 msgstr ""
 
-#: includes/Core/I18n.php:1119
+#: includes/Core/I18n.php:1130
 msgid "=== HOTEL OVERVIEW ==="
 msgstr ""
 
-#: includes/Core/I18n.php:1120
+#: includes/Core/I18n.php:1131
 msgid "--- POLICIES ---"
 msgstr ""
 
-#: includes/Core/I18n.php:1121
+#: includes/Core/I18n.php:1132
 msgid "--- LOCAL CONCIERGE GUIDE ---"
 msgstr ""
 
 #. translators: %s: room name
-#: includes/Core/I18n.php:1123
+#: includes/Core/I18n.php:1134
 #, php-format
 msgid "=== ROOM: %s ==="
 msgstr ""
 
-#: includes/Core/I18n.php:1124
+#: includes/Core/I18n.php:1135
 msgid "=== EXTRAS & ADD-ONS ==="
 msgstr ""
 
-#: includes/Core/I18n.php:1125
+#: includes/Core/I18n.php:1136
 msgid "=== PRICING & TAX RULES ==="
 msgstr ""
 
-#: includes/Core/I18n.php:1126
+#: includes/Core/I18n.php:1137
 msgid "=== PAYMENT METHODS ==="
 msgstr ""
 
-#: includes/Core/I18n.php:1127
+#: includes/Core/I18n.php:1138
 msgid "=== WHATSAPP & DIRECT CONTACT ==="
 msgstr ""
 
 #. translators: %s: page title
-#: includes/Core/I18n.php:1129
+#: includes/Core/I18n.php:1140
 #, php-format
 msgid "=== PAGE: %s ==="
 msgstr ""
 
 #. translators: %s: post title
-#: includes/Core/I18n.php:1131
+#: includes/Core/I18n.php:1142
 #, php-format
 msgid "=== POST: %s ==="
 msgstr ""
 
-#: includes/Core/I18n.php:1132
+#: includes/Core/I18n.php:1143
 msgid "Type ID"
 msgstr ""
 
-#: includes/Core/I18n.php:1133
+#: includes/Core/I18n.php:1144
 msgid "Base Price per Night"
 msgstr ""
 
-#: includes/Core/I18n.php:1134
+#: includes/Core/I18n.php:1145
 msgid "Max Adults"
 msgstr ""
 
-#: includes/Core/I18n.php:1135
+#: includes/Core/I18n.php:1146
 msgid "Max Children"
 msgstr ""
 
-#: includes/Core/I18n.php:1136
+#: includes/Core/I18n.php:1147
 msgid "Total Rooms Available"
 msgstr ""
 
-#: includes/Core/I18n.php:1138
-#: includes/Core/I18n.php:2872
+#: includes/Core/I18n.php:1149
+#: includes/Core/I18n.php:2883
 msgid "Room Amenities"
 msgstr ""
 
-#: includes/Core/I18n.php:1141
+#: includes/Core/I18n.php:1152
 msgid "## Core Property Details"
 msgstr ""
 
-#: includes/Core/I18n.php:1142
+#: includes/Core/I18n.php:1153
 msgid "## Rooms & Amenities"
 msgstr ""
 
-#: includes/Core/I18n.php:1143
+#: includes/Core/I18n.php:1154
 msgid "Our property offers various room types optimized for different guest capacities. See the full manifest for specific features."
 msgstr ""
 
-#: includes/Core/I18n.php:1144
+#: includes/Core/I18n.php:1155
 msgid "## AI Interaction & Booking"
 msgstr ""
 
-#: includes/Core/I18n.php:1145
+#: includes/Core/I18n.php:1156
 msgid "AI Agents can interact with our concierge and booking engine via the following endpoints:"
 msgstr ""
 
-#: includes/Core/I18n.php:1146
+#: includes/Core/I18n.php:1157
 msgid "## Full Site Manifest"
 msgstr ""
 
-#: includes/Core/I18n.php:1147
+#: includes/Core/I18n.php:1158
 msgid "View Detailed Knowledge Base"
 msgstr ""
 
-#: includes/Core/I18n.php:1148
+#: includes/Core/I18n.php:1159
 msgid "Welcome to our hotel."
 msgstr ""
 
-#: includes/Core/I18n.php:1150
+#: includes/Core/I18n.php:1161
 #: blocks/ai-concierge/index.js:38
 msgid "AI Concierge Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1152
+#: includes/Core/I18n.php:1163
 msgid "Modern Hotel Booking AI"
 msgstr ""
 
-#: includes/Core/I18n.php:1153
+#: includes/Core/I18n.php:1164
 msgid "Real-time hotel availability, policies, and booking assistant."
 msgstr ""
 
-#: includes/Core/I18n.php:1156
+#: includes/Core/I18n.php:1167
 msgid "Verification code has expired."
 msgstr ""
 
-#: includes/Core/I18n.php:1157
+#: includes/Core/I18n.php:1168
 msgid "Too many failed attempts. Verification is locked for this session."
 msgstr ""
 
 #. translators: %d: number of attempts remaining
-#: includes/Core/I18n.php:1159
+#: includes/Core/I18n.php:1170
 #, php-format
 msgid "Invalid code. You have %d attempts remaining."
 msgstr ""
 
-#: includes/Core/I18n.php:1160
+#: includes/Core/I18n.php:1171
 msgid "Identity verified successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1161
+#: includes/Core/I18n.php:1172
 msgid "Verification code resent to your email."
 msgstr ""
 
-#: includes/Core/I18n.php:1162
+#: includes/Core/I18n.php:1173
 msgid "Failed to send verification code. Please try again."
 msgstr ""
 
-#: includes/Core/I18n.php:1163
+#: includes/Core/I18n.php:1174
 msgid "Fallback AI not configured."
 msgstr ""
 
-#: includes/Core/I18n.php:1164
+#: includes/Core/I18n.php:1175
 msgid "Unknown fallback provider."
 msgstr ""
 
 #. translators: %1$d: circuit breaker tier score, %2$d: seconds remaining before retry
-#: includes/Core/I18n.php:1166
+#: includes/Core/I18n.php:1177
 #, php-format
 msgid "Our AI concierge is currently cooling down due to high demand (Tier %1$d). Please try again in %2$d seconds."
 msgstr ""
 
-#: includes/Core/I18n.php:1169
+#: includes/Core/I18n.php:1180
 msgid "Hotel: Business Card"
 msgstr ""
 
-#: includes/Core/I18n.php:1170
-msgid "A compact summary of your hotel for headers or footers."
-msgstr ""
-
-#: includes/Core/I18n.php:1172
-msgctxt "settings tab"
-msgid "License"
-msgstr ""
-
-#: includes/Core/I18n.php:1173
-msgctxt "settings tab"
-msgid "General"
-msgstr ""
-
-#: includes/Core/I18n.php:1174
-msgctxt "settings tab"
-msgid "Pricing"
-msgstr ""
-
-#: includes/Core/I18n.php:1175
-msgctxt "settings tab"
-msgid "Emails"
-msgstr ""
-
-#: includes/Core/I18n.php:1176
-msgctxt "settings tab"
-msgid "Language"
-msgstr ""
-
-#: includes/Core/I18n.php:1177
-msgctxt "settings tab"
-msgid "Amenities"
-msgstr ""
-
-#: includes/Core/I18n.php:1178
-msgctxt "settings tab"
-msgid "Business"
-msgstr ""
-
-#: includes/Core/I18n.php:1179
-msgctxt "settings tab"
-msgid "Themes"
-msgstr ""
-
-#: includes/Core/I18n.php:1180
-msgctxt "settings tab"
-msgid "GDPR"
-msgstr ""
-
 #: includes/Core/I18n.php:1181
-msgctxt "settings tab"
-msgid "Tax & VAT"
-msgstr ""
-
-#: includes/Core/I18n.php:1182
-msgctxt "settings tab"
-msgid "Deposits"
+msgid "A compact summary of your hotel for headers or footers."
 msgstr ""
 
 #: includes/Core/I18n.php:1183
 msgctxt "settings tab"
-msgid "Webhooks"
+msgid "License"
 msgstr ""
 
 #: includes/Core/I18n.php:1184
-msgid "Plugin Settings"
+msgctxt "settings tab"
+msgid "General"
 msgstr ""
 
 #: includes/Core/I18n.php:1185
-msgid "Configure the core behavior of the hotel booking system."
+msgctxt "settings tab"
+msgid "Pricing"
+msgstr ""
+
+#: includes/Core/I18n.php:1186
+msgctxt "settings tab"
+msgid "Emails"
 msgstr ""
 
 #: includes/Core/I18n.php:1187
-msgid "Performance"
+msgctxt "settings tab"
+msgid "Language"
 msgstr ""
 
 #: includes/Core/I18n.php:1188
-msgid "Performance & Caching"
+msgctxt "settings tab"
+msgid "Amenities"
 msgstr ""
 
 #: includes/Core/I18n.php:1189
-msgid "Optimize your site speed by configuring object caching and transients."
+msgctxt "settings tab"
+msgid "Business"
 msgstr ""
 
 #: includes/Core/I18n.php:1190
-msgid "Enable Persistent Caching"
+msgctxt "settings tab"
+msgid "Themes"
 msgstr ""
 
 #: includes/Core/I18n.php:1191
-msgid "Activate MHBO Cache"
+msgctxt "settings tab"
+msgid "GDPR"
 msgstr ""
 
 #: includes/Core/I18n.php:1192
-msgid "Reduces database load by caching room rates and availability calculations."
+msgctxt "settings tab"
+msgid "Tax & VAT"
 msgstr ""
 
 #: includes/Core/I18n.php:1193
-msgid "Object Cache Status"
+msgctxt "settings tab"
+msgid "Deposits"
 msgstr ""
 
 #: includes/Core/I18n.php:1194
-msgid "Object Cache Active"
+msgctxt "settings tab"
+msgid "Webhooks"
 msgstr ""
 
 #: includes/Core/I18n.php:1195
-msgid "Your server has persistent object caching active (Redis/Memcached). This is the most efficient configuration."
+msgid "Plugin Settings"
 msgstr ""
 
 #: includes/Core/I18n.php:1196
-msgid "Using Database Transients"
-msgstr ""
-
-#: includes/Core/I18n.php:1197
-msgid "No persistent object cache detected. The plugin will use WordPress database transients instead."
+msgid "Configure the core behavior of the hotel booking system."
 msgstr ""
 
 #: includes/Core/I18n.php:1198
-msgid "Purge Caches"
+msgid "Performance"
 msgstr ""
 
 #: includes/Core/I18n.php:1199
-msgid "If you notice outdated prices or availability, you can manually clear all MHBO cached data."
+msgid "Performance & Caching"
 msgstr ""
 
 #: includes/Core/I18n.php:1200
-msgid "Clear All MHBO Cache"
+msgid "Optimize your site speed by configuring object caching and transients."
 msgstr ""
 
 #: includes/Core/I18n.php:1201
-msgid "Clearing cache..."
+msgid "Enable Persistent Caching"
 msgstr ""
 
 #: includes/Core/I18n.php:1202
-msgid "All caches purged successfully."
+msgid "Activate MHBO Cache"
+msgstr ""
+
+#: includes/Core/I18n.php:1203
+msgid "Reduces database load by caching room rates and availability calculations."
 msgstr ""
 
 #: includes/Core/I18n.php:1204
-msgid "General Settings"
+msgid "Object Cache Status"
 msgstr ""
 
 #: includes/Core/I18n.php:1205
-msgid "Security Settings"
+msgid "Object Cache Active"
 msgstr ""
 
 #: includes/Core/I18n.php:1206
-msgid "Currency & Formatting"
+msgid "Your server has persistent object caching active (Redis/Memcached). This is the most efficient configuration."
+msgstr ""
+
+#: includes/Core/I18n.php:1207
+msgid "Using Database Transients"
+msgstr ""
+
+#: includes/Core/I18n.php:1208
+msgid "No persistent object cache detected. The plugin will use WordPress database transients instead."
+msgstr ""
+
+#: includes/Core/I18n.php:1209
+msgid "Purge Caches"
 msgstr ""
 
 #: includes/Core/I18n.php:1210
-#: includes/Core/I18n.php:2599
-msgid "Notification Email"
+msgid "If you notice outdated prices or availability, you can manually clear all MHBO cached data."
 msgstr ""
 
 #: includes/Core/I18n.php:1211
-msgid "Booking Page"
+msgid "Clear All MHBO Cache"
 msgstr ""
 
 #: includes/Core/I18n.php:1212
-msgid "Booking Page URL Override"
+msgid "Clearing cache..."
 msgstr ""
 
 #: includes/Core/I18n.php:1213
-msgid "Prevent Same-Day Turnover"
-msgstr ""
-
-#: includes/Core/I18n.php:1214
-msgid "Enable Children Rates"
+msgid "All caches purged successfully."
 msgstr ""
 
 #: includes/Core/I18n.php:1215
-msgid "Guest Reservation Fields"
+msgid "General Settings"
 msgstr ""
 
 #: includes/Core/I18n.php:1216
-msgid "Save Data on Uninstall"
+msgid "Security Settings"
 msgstr ""
 
 #: includes/Core/I18n.php:1217
-msgid "Powered By Link"
-msgstr ""
-
-#: includes/Core/I18n.php:1218
-msgid "Trusted Proxies"
-msgstr ""
-
-#: includes/Core/I18n.php:1219
-msgid "Currency Code (ISO)"
-msgstr ""
-
-#: includes/Core/I18n.php:1220
-msgid "Currency Symbol"
+msgid "Currency & Formatting"
 msgstr ""
 
 #: includes/Core/I18n.php:1221
-msgid "Currency Position"
+#: includes/Core/I18n.php:2610
+msgid "Notification Email"
 msgstr ""
 
 #: includes/Core/I18n.php:1222
-msgid "Show Decimals in Prices"
+msgid "Booking Page"
+msgstr ""
+
+#: includes/Core/I18n.php:1223
+msgid "Booking Page URL Override"
 msgstr ""
 
 #: includes/Core/I18n.php:1224
-msgid "Check this to prevent a room from being booked on the same day it is vacated."
+msgid "Prevent Same-Day Turnover"
 msgstr ""
 
 #: includes/Core/I18n.php:1225
-msgid "Enable children counting and age-based pricing tiers."
+msgid "Enable Children Rates"
 msgstr ""
 
 #: includes/Core/I18n.php:1226
-msgid "If unchecked, all plugin data and settings will be deleted when the plugin is uninstalled."
+msgid "Guest Reservation Fields"
 msgstr ""
 
 #: includes/Core/I18n.php:1227
-msgid "Show a small \"Powered by MHBO\" link in the booking footer."
+msgid "Save Data on Uninstall"
 msgstr ""
 
 #: includes/Core/I18n.php:1228
-msgid "Enter IP addresses of trusted proxies (one per line) for accurate IP detection."
+msgid "Powered By Link"
 msgstr ""
 
 #: includes/Core/I18n.php:1229
-msgid "If unchecked, prices will be rounded to the nearest whole number."
+msgid "Trusted Proxies"
 msgstr ""
 
 #: includes/Core/I18n.php:1230
-msgid "The page containing the [hotel_booking] shortcode. This is used for generating booking links."
+msgid "Currency Code (ISO)"
+msgstr ""
+
+#: includes/Core/I18n.php:1231
+msgid "Currency Symbol"
 msgstr ""
 
 #: includes/Core/I18n.php:1232
-msgid "After (e.g. 100 $)"
+msgid "Currency Position"
 msgstr ""
 
 #: includes/Core/I18n.php:1233
-msgid "Before (e.g. $ 100)"
+msgid "Show Decimals in Prices"
 msgstr ""
 
-#: includes/Core/I18n.php:1234
-msgid "— Select Page —"
+#: includes/Core/I18n.php:1235
+msgid "Check this to prevent a room from being booked on the same day it is vacated."
+msgstr ""
+
+#: includes/Core/I18n.php:1236
+msgid "Enable children counting and age-based pricing tiers."
 msgstr ""
 
 #: includes/Core/I18n.php:1237
-msgid "Are you sure? This action cannot be undone."
+msgid "If unchecked, all plugin data and settings will be deleted when the plugin is uninstalled."
 msgstr ""
 
 #: includes/Core/I18n.php:1238
-msgid "Remove this field?"
+msgid "Show a small \"Powered by MHBO\" link in the booking footer."
 msgstr ""
 
 #: includes/Core/I18n.php:1239
-msgid "No holidays configured yet."
+msgid "Enter IP addresses of trusted proxies (one per line) for accurate IP detection."
 msgstr ""
 
-#: includes/Core/I18n.php:1242
-#: includes/Core/I18n.php:1799
-msgid "License Key"
+#: includes/Core/I18n.php:1240
+msgid "If unchecked, prices will be rounded to the nearest whole number."
+msgstr ""
+
+#: includes/Core/I18n.php:1241
+msgid "The page containing the [hotel_booking] shortcode. This is used for generating booking links."
 msgstr ""
 
 #: includes/Core/I18n.php:1243
-msgid "Enter your Pro license key to unlock premium features and updates."
+msgid "After (e.g. 100 $)"
 msgstr ""
 
 #: includes/Core/I18n.php:1244
-#: includes/Core/I18n.php:1800
-msgid "License Status"
+msgid "Before (e.g. $ 100)"
 msgstr ""
 
 #: includes/Core/I18n.php:1245
-msgid "License Expiration"
-msgstr ""
-
-#: includes/Core/I18n.php:1246
-msgid "Renew your license to continue receiving premium support and updates."
-msgstr ""
-
-#: includes/Core/I18n.php:1247
-#: includes/Core/I18n.php:1801
-msgid "Activate License"
+msgid "— Select Page —"
 msgstr ""
 
 #: includes/Core/I18n.php:1248
-#: includes/Core/I18n.php:1802
-msgid "Deactivate License"
+msgid "Are you sure? This action cannot be undone."
 msgstr ""
 
 #: includes/Core/I18n.php:1249
-msgid "Refresh Status"
+msgid "Remove this field?"
 msgstr ""
 
 #: includes/Core/I18n.php:1250
-msgid "Pro Features Locked"
+msgid "No holidays configured yet."
 msgstr ""
 
-#: includes/Core/I18n.php:1251
-msgid "A valid license is required to access advanced modules like GDPR, Tax, and Dynamic Pricing."
-msgstr ""
-
-#: includes/Core/I18n.php:1252
-msgid "Premium Features Active"
+#: includes/Core/I18n.php:1253
+#: includes/Core/I18n.php:1810
+msgid "License Key"
 msgstr ""
 
 #: includes/Core/I18n.php:1254
-msgid "Advanced Payment Gateways"
+msgid "Enter your Pro license key to unlock premium features and updates."
 msgstr ""
 
 #: includes/Core/I18n.php:1255
-#: includes/Core/I18n.php:2298
-#: includes/Core/I18n.php:2609
-#: includes/Core/I18n.php:2841
-msgid "iCal Synchronization"
+#: includes/Core/I18n.php:1811
+msgid "License Status"
 msgstr ""
 
 #: includes/Core/I18n.php:1256
-msgid "Occupancy Analytics"
+msgid "License Expiration"
 msgstr ""
 
 #: includes/Core/I18n.php:1257
-msgid "Partial Payments & Deposits"
+msgid "Renew your license to continue receiving premium support and updates."
 msgstr ""
 
 #: includes/Core/I18n.php:1258
-msgid "Dynamic Pricing Rules"
+#: includes/Core/I18n.php:1812
+msgid "Activate License"
 msgstr ""
 
 #: includes/Core/I18n.php:1259
-msgid "Priority Developer Support"
+#: includes/Core/I18n.php:1813
+msgid "Deactivate License"
 msgstr ""
 
-#: includes/Core/I18n.php:1264
-#: includes/Core/I18n.php:2448
-msgid "Hotel Booking"
+#: includes/Core/I18n.php:1260
+msgid "Refresh Status"
+msgstr ""
+
+#: includes/Core/I18n.php:1261
+msgid "Pro Features Locked"
+msgstr ""
+
+#: includes/Core/I18n.php:1262
+msgid "A valid license is required to access advanced modules like GDPR, Tax, and Dynamic Pricing."
+msgstr ""
+
+#: includes/Core/I18n.php:1263
+msgid "Premium Features Active"
+msgstr ""
+
+#: includes/Core/I18n.php:1265
+msgid "Advanced Payment Gateways"
+msgstr ""
+
+#: includes/Core/I18n.php:1266
+#: includes/Core/I18n.php:2309
+#: includes/Core/I18n.php:2620
+#: includes/Core/I18n.php:2852
+msgid "iCal Synchronization"
 msgstr ""
 
 #: includes/Core/I18n.php:1267
+msgid "Occupancy Analytics"
+msgstr ""
+
+#: includes/Core/I18n.php:1268
+msgid "Partial Payments & Deposits"
+msgstr ""
+
+#: includes/Core/I18n.php:1269
+msgid "Dynamic Pricing Rules"
+msgstr ""
+
+#: includes/Core/I18n.php:1270
+msgid "Priority Developer Support"
+msgstr ""
+
+#: includes/Core/I18n.php:1275
+#: includes/Core/I18n.php:2459
+msgid "Hotel Booking"
+msgstr ""
+
+#: includes/Core/I18n.php:1278
 msgctxt "admin menu"
 msgid "Rooms"
 msgstr ""
 
-#: includes/Core/I18n.php:1268
+#: includes/Core/I18n.php:1279
 msgid "Pricing Rules"
 msgstr ""
 
-#: includes/Core/I18n.php:1270
+#: includes/Core/I18n.php:1281
 msgid "PRO Features"
 msgstr ""
 
-#: includes/Core/I18n.php:1273
-#: includes/Core/I18n.php:1458
-#: includes/Core/I18n.php:1850
+#: includes/Core/I18n.php:1284
+#: includes/Core/I18n.php:1469
+#: includes/Core/I18n.php:1861
 msgid "Payments"
 msgstr ""
 
-#: includes/Core/I18n.php:1274
-#: includes/Core/I18n.php:1459
-#: includes/Core/I18n.php:1679
+#: includes/Core/I18n.php:1285
+#: includes/Core/I18n.php:1470
+#: includes/Core/I18n.php:1690
 msgid "Webhooks"
 msgstr ""
 
-#: includes/Core/I18n.php:1277
-#: includes/Core/I18n.php:1462
+#: includes/Core/I18n.php:1288
+#: includes/Core/I18n.php:1473
 msgid "Advanced Pricing"
 msgstr ""
 
-#: includes/Core/I18n.php:1278
-#: includes/Core/I18n.php:2476
+#: includes/Core/I18n.php:1289
+#: includes/Core/I18n.php:2487
 msgid "Licensing"
 msgstr ""
 
-#: includes/Core/I18n.php:1283
+#: includes/Core/I18n.php:1294
 msgid "Enter coupon code"
 msgstr ""
 
-#: includes/Core/I18n.php:1284
+#: includes/Core/I18n.php:1295
 msgctxt "action"
 msgid "Apply"
 msgstr ""
 
-#: includes/Core/I18n.php:1285
-#: includes/Core/I18n.php:2285
+#: includes/Core/I18n.php:1296
+#: includes/Core/I18n.php:2296
 msgid "Remove"
 msgstr ""
 
-#: includes/Core/I18n.php:1288
-#: includes/Core/I18n.php:2777
+#: includes/Core/I18n.php:1299
+#: includes/Core/I18n.php:2788
 msgid "Room Types & Configuration"
 msgstr ""
 
-#: includes/Core/I18n.php:1289
-#: includes/Core/I18n.php:2778
+#: includes/Core/I18n.php:1300
+#: includes/Core/I18n.php:2789
 msgid "Define your property layout, base pricing, and maximum capacities."
 msgstr ""
 
-#: includes/Core/I18n.php:1290
-#: includes/Core/I18n.php:2788
+#: includes/Core/I18n.php:1301
+#: includes/Core/I18n.php:2799
 msgid "Room Inventory"
 msgstr ""
 
-#: includes/Core/I18n.php:1291
-#: includes/Core/I18n.php:2789
+#: includes/Core/I18n.php:1302
+#: includes/Core/I18n.php:2800
 msgid "Real-time overview of your physical units, their status, and synchronization settings."
 msgstr ""
 
-#: includes/Core/I18n.php:1292
+#: includes/Core/I18n.php:1303
 msgid "Customer Details"
 msgstr ""
 
-#: includes/Core/I18n.php:1293
+#: includes/Core/I18n.php:1304
 msgid "Extra Guest Information"
 msgstr ""
 
-#: includes/Core/I18n.php:1294
+#: includes/Core/I18n.php:1305
 msgid "Room & Dates"
 msgstr ""
 
-#: includes/Core/I18n.php:1300
+#: includes/Core/I18n.php:1311
 msgid "Add Booking"
 msgstr ""
 
-#: includes/Core/I18n.php:1301
+#: includes/Core/I18n.php:1312
 msgid "Pending:"
 msgstr ""
 
-#: includes/Core/I18n.php:1304
+#: includes/Core/I18n.php:1315
 msgctxt "short for language"
 msgid "Lang"
 msgstr ""
 
-#: includes/Core/I18n.php:1306
+#: includes/Core/I18n.php:1317
 msgctxt "column header"
 msgid "ID"
 msgstr ""
 
-#: includes/Core/I18n.php:1308
+#: includes/Core/I18n.php:1319
 msgid "Daily Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:1310
+#: includes/Core/I18n.php:1321
 msgid "Management"
 msgstr ""
 
-#: includes/Core/I18n.php:1313
+#: includes/Core/I18n.php:1324
 msgid "Add Manual Booking"
 msgstr ""
 
 #. translators: %d: Booking ID
-#: includes/Core/I18n.php:1315
+#: includes/Core/I18n.php:1326
 #, php-format
 msgid "Edit Booking #%d"
 msgstr ""
 
-#: includes/Core/I18n.php:1316
+#: includes/Core/I18n.php:1327
 msgid "Discount Amount"
 msgstr ""
 
-#: includes/Core/I18n.php:1317
+#: includes/Core/I18n.php:1328
 msgid "No extras configured."
 msgstr ""
 
-#: includes/Core/I18n.php:1319
+#: includes/Core/I18n.php:1330
 msgid "Deposit Amount"
 msgstr ""
 
-#: includes/Core/I18n.php:1321
+#: includes/Core/I18n.php:1332
 msgid "Mark as received"
 msgstr ""
 
-#: includes/Core/I18n.php:1322
+#: includes/Core/I18n.php:1333
 msgid "Deposit Received"
 msgstr ""
 
-#: includes/Core/I18n.php:1323
+#: includes/Core/I18n.php:1334
 msgid "Payment Info"
 msgstr ""
 
-#: includes/Core/I18n.php:1324
+#: includes/Core/I18n.php:1335
 msgid "-- Select Room --"
 msgstr ""
 
-#: includes/Core/I18n.php:1329
+#: includes/Core/I18n.php:1340
 msgid "Completed"
 msgstr ""
 
-#: includes/Core/I18n.php:1332
-#: includes/Core/I18n.php:2774
+#: includes/Core/I18n.php:1343
+#: includes/Core/I18n.php:2785
 msgid "Room Type Deleted."
 msgstr ""
 
-#: includes/Core/I18n.php:1333
-#: includes/Core/I18n.php:2775
+#: includes/Core/I18n.php:1344
+#: includes/Core/I18n.php:2786
 msgid "Room Type Updated!"
 msgstr ""
 
-#: includes/Core/I18n.php:1334
-#: includes/Core/I18n.php:2776
+#: includes/Core/I18n.php:1345
+#: includes/Core/I18n.php:2787
 msgid "Room Type Added!"
 msgstr ""
 
-#: includes/Core/I18n.php:1335
-#: includes/Core/I18n.php:2779
+#: includes/Core/I18n.php:1346
+#: includes/Core/I18n.php:2790
 msgid "Modify Room Configuration"
 msgstr ""
 
-#: includes/Core/I18n.php:1336
-#: includes/Core/I18n.php:2780
+#: includes/Core/I18n.php:1347
+#: includes/Core/I18n.php:2791
 msgid "Define New Room Type"
 msgstr ""
 
-#: includes/Core/I18n.php:1337
-#: includes/Core/I18n.php:2781
+#: includes/Core/I18n.php:1348
+#: includes/Core/I18n.php:2792
 msgid "Save Configuration"
 msgstr ""
 
-#: includes/Core/I18n.php:1338
-#: includes/Core/I18n.php:2782
+#: includes/Core/I18n.php:1349
+#: includes/Core/I18n.php:2793
 msgid "Create Room Type"
 msgstr ""
 
-#: includes/Core/I18n.php:1339
-#: includes/Core/I18n.php:2783
+#: includes/Core/I18n.php:1350
+#: includes/Core/I18n.php:2794
 msgid "Room Deleted."
 msgstr ""
 
-#: includes/Core/I18n.php:1340
-#: includes/Core/I18n.php:2784
+#: includes/Core/I18n.php:1351
+#: includes/Core/I18n.php:2795
 msgid "Feed Added!"
 msgstr ""
 
-#: includes/Core/I18n.php:1341
-#: includes/Core/I18n.php:2785
+#: includes/Core/I18n.php:1352
+#: includes/Core/I18n.php:2796
 msgid "Sync Completed."
 msgstr ""
 
 #. translators: %s: unit/room name or number
-#: includes/Core/I18n.php:1345
-#: includes/Core/I18n.php:2793
+#: includes/Core/I18n.php:1356
+#: includes/Core/I18n.php:2804
 #, php-format
 msgid "iCal Synchronization — Unit %s"
 msgstr ""
 
-#: includes/Core/I18n.php:1350
+#: includes/Core/I18n.php:1361
 msgid "Hotel Booking Overview"
 msgstr ""
 
-#: includes/Core/I18n.php:1351
-#: includes/Core/I18n.php:1370
+#: includes/Core/I18n.php:1362
+#: includes/Core/I18n.php:1381
 msgid "Real-time monitoring of your property operations, revenue, and guest activity."
 msgstr ""
 
-#: includes/Core/I18n.php:1352
-#: includes/Core/I18n.php:1661
+#: includes/Core/I18n.php:1363
+#: includes/Core/I18n.php:1672
 msgid "Total Bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:1353
+#: includes/Core/I18n.php:1364
 msgid "Pending / Action Required"
 msgstr ""
 
-#: includes/Core/I18n.php:1354
+#: includes/Core/I18n.php:1365
 msgid "Check-ins Today"
 msgstr ""
 
-#: includes/Core/I18n.php:1355
+#: includes/Core/I18n.php:1366
 msgid "Stay Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:1356
+#: includes/Core/I18n.php:1367
 msgid "Total revenue from completed stays."
 msgstr ""
 
-#: includes/Core/I18n.php:1357
+#: includes/Core/I18n.php:1368
 msgid "Target Pipeline"
 msgstr ""
 
-#: includes/Core/I18n.php:1358
+#: includes/Core/I18n.php:1369
 msgid "Projected revenue from confirmed future bookings."
 msgstr ""
 
-#: includes/Core/I18n.php:1359
+#: includes/Core/I18n.php:1370
 msgid "Total Volume"
 msgstr ""
 
-#: includes/Core/I18n.php:1360
+#: includes/Core/I18n.php:1371
 msgid "Cumulative count of all historical bookings."
 msgstr ""
 
-#: includes/Core/I18n.php:1361
+#: includes/Core/I18n.php:1372
 msgid "Attention Needed"
 msgstr ""
 
-#: includes/Core/I18n.php:1362
+#: includes/Core/I18n.php:1373
 msgid "Bookings that require manual intervention."
 msgstr ""
 
-#: includes/Core/I18n.php:1364
+#: includes/Core/I18n.php:1375
 msgid "No recent bookings found."
 msgstr ""
 
-#: includes/Core/I18n.php:1366
-#: includes/Core/I18n.php:1482
-#: includes/Core/I18n.php:2193
+#: includes/Core/I18n.php:1377
+#: includes/Core/I18n.php:1493
+#: includes/Core/I18n.php:2204
 msgid "Quick Actions"
 msgstr ""
 
-#: includes/Core/I18n.php:1367
+#: includes/Core/I18n.php:1378
 msgid "Create New Booking"
 msgstr ""
 
-#: includes/Core/I18n.php:1368
+#: includes/Core/I18n.php:1379
 msgid "Manage Inventory"
 msgstr ""
 
-#: includes/Core/I18n.php:1369
+#: includes/Core/I18n.php:1380
 msgid "Hotel Control Center"
 msgstr ""
 
-#: includes/Core/I18n.php:1372
+#: includes/Core/I18n.php:1383
 msgid "MHBO: Booking Search"
 msgstr ""
 
-#: includes/Core/I18n.php:1373
+#: includes/Core/I18n.php:1384
 msgid "A compact booking search form."
 msgstr ""
 
-#: includes/Core/I18n.php:1374
+#: includes/Core/I18n.php:1385
 msgid "Title:"
 msgstr ""
 
-#: includes/Core/I18n.php:1375
+#: includes/Core/I18n.php:1386
 msgid "Book Your Stay"
 msgstr ""
 
-#: includes/Core/I18n.php:1378
+#: includes/Core/I18n.php:1389
 msgid "Decrease quantity"
 msgstr ""
 
-#: includes/Core/I18n.php:1379
+#: includes/Core/I18n.php:1390
 msgid "Increase quantity"
 msgstr ""
 
-#: includes/Core/I18n.php:1383
+#: includes/Core/I18n.php:1394
 msgid "Unlock Premium Hospitality Features"
 msgstr ""
 
-#: includes/Core/I18n.php:1384
+#: includes/Core/I18n.php:1395
 msgid "Power up with iCal Sync, Stripe/PayPal integration, Advanced Pricing rules, and Deep Analytics."
 msgstr ""
 
-#: includes/Core/I18n.php:1385
-#: includes/Core/I18n.php:1448
-#: includes/Core/I18n.php:2187
+#: includes/Core/I18n.php:1396
+#: includes/Core/I18n.php:1459
+#: includes/Core/I18n.php:2198
 msgid "Upgrade to Pro"
 msgstr ""
 
-#: includes/Core/I18n.php:1386
+#: includes/Core/I18n.php:1397
 msgid "Need Assistance?"
 msgstr ""
 
-#: includes/Core/I18n.php:1387
+#: includes/Core/I18n.php:1398
 msgid "Explore our documentation or contact the support team for property management advice."
 msgstr ""
 
-#: includes/Core/I18n.php:1388
+#: includes/Core/I18n.php:1399
 msgid "Report Issues →"
 msgstr ""
 
-#: includes/Core/I18n.php:1389
+#: includes/Core/I18n.php:1400
 msgid "Get Pro Version →"
 msgstr ""
 
-#: includes/Core/I18n.php:1393
+#: includes/Core/I18n.php:1404
 msgid "License Status:"
 msgstr ""
 
-#: includes/Core/I18n.php:1394
+#: includes/Core/I18n.php:1405
 msgid "Unlicensed"
 msgstr ""
 
-#: includes/Core/I18n.php:1395
+#: includes/Core/I18n.php:1406
 msgid "Plugin Edition:"
 msgstr ""
 
-#: includes/Core/I18n.php:1396
+#: includes/Core/I18n.php:1407
 msgid "Free Version"
 msgstr ""
 
-#: includes/Core/I18n.php:1397
+#: includes/Core/I18n.php:1408
 msgid "Plugin Version:"
 msgstr ""
 
-#: includes/Core/I18n.php:1398
+#: includes/Core/I18n.php:1409
 msgid "Database Status:"
 msgstr ""
 
-#: includes/Core/I18n.php:1399
+#: includes/Core/I18n.php:1410
 msgid "Healthy"
 msgstr ""
 
-#: includes/Core/I18n.php:1402
+#: includes/Core/I18n.php:1413
 msgid "Powered by"
 msgstr ""
 
-#: includes/Core/I18n.php:1403
+#: includes/Core/I18n.php:1414
 msgctxt "noun"
 msgid "Date"
 msgstr ""
 
-#: includes/Core/I18n.php:1404
+#: includes/Core/I18n.php:1415
 msgctxt "state of entity"
 msgid "Status"
 msgstr ""
 
-#: includes/Core/I18n.php:1406
+#: includes/Core/I18n.php:1417
 msgctxt "booking status"
 msgid "Pending"
 msgstr ""
 
-#: includes/Core/I18n.php:1408
+#: includes/Core/I18n.php:1419
 msgctxt "booking source"
 msgid "Direct"
 msgstr ""
 
-#: includes/Core/I18n.php:1409
+#: includes/Core/I18n.php:1420
 msgctxt "booking source"
 msgid "iCal Import"
 msgstr ""
 
-#: includes/Core/I18n.php:1410
+#: includes/Core/I18n.php:1421
 msgid "View All"
 msgstr ""
 
-#: includes/Core/I18n.php:1411
+#: includes/Core/I18n.php:1422
 msgid "Hotel Revenue Overview"
 msgstr ""
 
-#: includes/Core/I18n.php:1413
+#: includes/Core/I18n.php:1424
 msgid "Version Updates"
 msgstr ""
 
-#: includes/Core/I18n.php:1414
+#: includes/Core/I18n.php:1425
 msgid "View Changelog"
 msgstr ""
 
-#: includes/Core/I18n.php:1415
-#: includes/Core/I18n.php:2075
+#: includes/Core/I18n.php:1426
+#: includes/Core/I18n.php:2086
 msgctxt "status"
 msgid "Active"
 msgstr ""
 
-#: includes/Core/I18n.php:1416
+#: includes/Core/I18n.php:1427
 msgid "Email Address"
 msgstr ""
 
-#: includes/Core/I18n.php:1421
+#: includes/Core/I18n.php:1432
 msgid "Search Labels..."
 msgstr ""
 
-#: includes/Core/I18n.php:1423
+#: includes/Core/I18n.php:1434
 msgid "Save General Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1424
+#: includes/Core/I18n.php:1435
 msgid "Save Multilingual Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1425
-#: includes/Core/I18n.php:1551
-#: includes/Core/I18n.php:2173
+#: includes/Core/I18n.php:1436
+#: includes/Core/I18n.php:1562
+#: includes/Core/I18n.php:2184
 msgid "Save Payment Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1426
-#: includes/Core/I18n.php:1654
-#: includes/Core/I18n.php:2175
+#: includes/Core/I18n.php:1437
+#: includes/Core/I18n.php:1665
+#: includes/Core/I18n.php:2186
 msgid "Save Theme Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1427
-#: includes/Core/I18n.php:1554
+#: includes/Core/I18n.php:1438
+#: includes/Core/I18n.php:1565
 msgid "Save Pricing Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1429
+#: includes/Core/I18n.php:1440
 msgid "Error saving settings."
 msgstr ""
 
-#: includes/Core/I18n.php:1431
+#: includes/Core/I18n.php:1442
 msgid "Invalid booking ID."
 msgstr ""
 
-#: includes/Core/I18n.php:1433
+#: includes/Core/I18n.php:1444
 msgid "Unauthorized."
 msgstr ""
 
 #. translators: %s: date the balance was collected
-#: includes/Core/I18n.php:1436
+#: includes/Core/I18n.php:1447
 #, php-format
 msgid "Balance marked as collected by admin on %s."
 msgstr ""
 
-#: includes/Core/I18n.php:1438
+#: includes/Core/I18n.php:1449
 msgid "Please enter a license key."
 msgstr ""
 
-#: includes/Core/I18n.php:1439
+#: includes/Core/I18n.php:1450
 msgid "Connection error."
 msgstr ""
 
-#: includes/Core/I18n.php:1442
+#: includes/Core/I18n.php:1453
 msgid "Pro Experience"
 msgstr ""
 
-#: includes/Core/I18n.php:1443
+#: includes/Core/I18n.php:1454
 msgid "All Pro features are unlocked and ready to use."
 msgstr ""
 
-#: includes/Core/I18n.php:1444
+#: includes/Core/I18n.php:1455
 msgid "Pro License Required"
 msgstr ""
 
-#: includes/Core/I18n.php:1445
+#: includes/Core/I18n.php:1456
 msgid "Pro License Active"
 msgstr ""
 
 #. translators: %s: license expiry date
-#: includes/Core/I18n.php:1447
+#: includes/Core/I18n.php:1458
 #, php-format
 msgid "Expires: %s"
 msgstr ""
 
-#: includes/Core/I18n.php:1449
+#: includes/Core/I18n.php:1460
 msgid "Manage License"
 msgstr ""
 
-#: includes/Core/I18n.php:1450
-#: includes/Core/I18n.php:2188
+#: includes/Core/I18n.php:1461
+#: includes/Core/I18n.php:2199
 msgid "Enter License Key"
 msgstr ""
 
-#: includes/Core/I18n.php:1451
-#: includes/Core/I18n.php:2189
+#: includes/Core/I18n.php:1462
+#: includes/Core/I18n.php:2200
 msgid "Priority Support"
 msgstr ""
 
-#: includes/Core/I18n.php:1452
-#: includes/Core/I18n.php:2190
+#: includes/Core/I18n.php:1463
+#: includes/Core/I18n.php:2201
 msgid "Priority Updates"
 msgstr ""
 
-#: includes/Core/I18n.php:1453
-#: includes/Core/I18n.php:2191
+#: includes/Core/I18n.php:1464
+#: includes/Core/I18n.php:2202
 msgid "All Premium Features"
 msgstr ""
 
-#: includes/Core/I18n.php:1455
+#: includes/Core/I18n.php:1466
 msgid "Overview"
 msgstr ""
 
-#: includes/Core/I18n.php:1456
-#: includes/Core/I18n.php:2296
-#: includes/Core/I18n.php:2471
-#: includes/Core/I18n.php:2839
+#: includes/Core/I18n.php:1467
+#: includes/Core/I18n.php:2307
+#: includes/Core/I18n.php:2482
+#: includes/Core/I18n.php:2850
 msgid "Booking Extras"
 msgstr ""
 
-#: includes/Core/I18n.php:1460
-#: includes/Core/I18n.php:1635
+#: includes/Core/I18n.php:1471
+#: includes/Core/I18n.php:1646
 msgid "Pro Themes"
 msgstr ""
 
-#: includes/Core/I18n.php:1463
+#: includes/Core/I18n.php:1474
 msgid "Business"
 msgstr ""
 
-#: includes/Core/I18n.php:1464
+#: includes/Core/I18n.php:1475
 msgctxt "settings tab"
 msgid "Tax"
 msgstr ""
 
-#: includes/Core/I18n.php:1466
-#: includes/Core/I18n.php:2055
-#: includes/Core/I18n.php:2203
+#: includes/Core/I18n.php:1477
+#: includes/Core/I18n.php:2066
+#: includes/Core/I18n.php:2214
 msgid "Compliance & UX"
 msgstr ""
 
-#: includes/Core/I18n.php:1467
-#: includes/Core/I18n.php:2056
-#: includes/Core/I18n.php:2204
+#: includes/Core/I18n.php:1478
+#: includes/Core/I18n.php:2067
+#: includes/Core/I18n.php:2215
 msgid "Developer Platform"
 msgstr ""
 
-#: includes/Core/I18n.php:1469
+#: includes/Core/I18n.php:1480
 msgid "GDPR Data Privacy"
 msgstr ""
 
-#: includes/Core/I18n.php:1470
+#: includes/Core/I18n.php:1481
 msgid "Automated anonymization and consent management."
 msgstr ""
 
-#: includes/Core/I18n.php:1471
+#: includes/Core/I18n.php:1482
 msgid "Business Analytics"
 msgstr ""
 
-#: includes/Core/I18n.php:1472
+#: includes/Core/I18n.php:1483
 msgid "Visual reports on revenue, occupancy, and ADR."
 msgstr ""
 
-#: includes/Core/I18n.php:1473
+#: includes/Core/I18n.php:1484
 msgid "Premium Themes"
 msgstr ""
 
-#: includes/Core/I18n.php:1474
+#: includes/Core/I18n.php:1485
 msgid "Exclusive design templates for your booking form."
 msgstr ""
 
-#: includes/Core/I18n.php:1475
-#: includes/Core/I18n.php:2306
+#: includes/Core/I18n.php:1486
+#: includes/Core/I18n.php:2317
 msgid "Multilingual Support"
 msgstr ""
 
-#: includes/Core/I18n.php:1476
+#: includes/Core/I18n.php:1487
 msgid "Expand your reach with unlimited locale translations."
 msgstr ""
 
-#: includes/Core/I18n.php:1477
+#: includes/Core/I18n.php:1488
 msgid "Enterprise REST API"
 msgstr ""
 
-#: includes/Core/I18n.php:1478
+#: includes/Core/I18n.php:1489
 msgid "Connect your hotel to external apps and OTAs."
 msgstr ""
 
-#: includes/Core/I18n.php:1479
+#: includes/Core/I18n.php:1490
 msgid "Webhooks & Events"
 msgstr ""
 
-#: includes/Core/I18n.php:1480
+#: includes/Core/I18n.php:1491
 msgid "Real-time notifications for automated workflows."
 msgstr ""
 
-#: includes/Core/I18n.php:1483
+#: includes/Core/I18n.php:1494
 msgid "Configure Payments"
 msgstr ""
 
-#: includes/Core/I18n.php:1484
+#: includes/Core/I18n.php:1495
 msgid "Setup Tax Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1485
-#: includes/Core/I18n.php:2196
+#: includes/Core/I18n.php:1496
+#: includes/Core/I18n.php:2207
 msgid "View Analytics"
 msgstr ""
 
-#: includes/Core/I18n.php:1486
+#: includes/Core/I18n.php:1497
 msgid "Manage iCal Sync"
 msgstr ""
 
-#: includes/Core/I18n.php:1488
+#: includes/Core/I18n.php:1499
 msgid "Gutenberg Blocks"
 msgstr ""
 
-#: includes/Core/I18n.php:1490
-#: includes/Core/I18n.php:2341
+#: includes/Core/I18n.php:1501
+#: includes/Core/I18n.php:2352
 msgid "Tax Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1491
-#: includes/Core/I18n.php:2342
+#: includes/Core/I18n.php:1502
+#: includes/Core/I18n.php:2353
 msgid "Configure VAT/Sales Tax settings for your hotel bookings. Tax is disabled by default for backward compatibility."
 msgstr ""
 
-#: includes/Core/I18n.php:1492
-#: includes/Core/I18n.php:2343
+#: includes/Core/I18n.php:1503
+#: includes/Core/I18n.php:2354
 msgid "Tax Mode"
 msgstr ""
 
-#: includes/Core/I18n.php:1493
-#: includes/Core/I18n.php:2344
-#: includes/Core/I18n.php:2866
+#: includes/Core/I18n.php:1504
+#: includes/Core/I18n.php:2355
+#: includes/Core/I18n.php:2877
 msgid "Disabled"
 msgstr ""
 
-#: includes/Core/I18n.php:1518
+#: includes/Core/I18n.php:1529
 msgid "Service / Feed Name"
 msgstr ""
 
-#: includes/Core/I18n.php:1519
+#: includes/Core/I18n.php:1530
 msgid "Feed URL"
 msgstr ""
 
-#: includes/Core/I18n.php:1520
+#: includes/Core/I18n.php:1531
 msgid "Last Heartbeat"
 msgstr ""
 
-#: includes/Core/I18n.php:1532
-#: includes/Core/I18n.php:2192
+#: includes/Core/I18n.php:1543
+#: includes/Core/I18n.php:2203
 msgid "Pro features are not available."
 msgstr ""
 
-#: includes/Core/I18n.php:1534
+#: includes/Core/I18n.php:1545
 msgid "Pro build required to sync calendars."
 msgstr ""
 
-#: includes/Core/I18n.php:1535
-#: includes/Core/I18n.php:2074
+#: includes/Core/I18n.php:1546
+#: includes/Core/I18n.php:2085
 msgctxt "selection"
 msgid "None"
 msgstr ""
 
-#: includes/Core/I18n.php:1538
-#: includes/Core/I18n.php:2525
+#: includes/Core/I18n.php:1549
+#: includes/Core/I18n.php:2536
 msgid "PayPal SDK Locale"
 msgstr ""
 
-#: includes/Core/I18n.php:1539
+#: includes/Core/I18n.php:1550
 msgid "Force a specific locale for the PayPal buttons (e.g. en_US, fr_FR)."
 msgstr ""
 
-#: includes/Core/I18n.php:1540
+#: includes/Core/I18n.php:1551
 msgid "SDK Query Arguments"
 msgstr ""
 
-#: includes/Core/I18n.php:1541
+#: includes/Core/I18n.php:1552
 msgid "Additional JSON-formatted arguments for the PayPal SDK loader."
 msgstr ""
 
-#: includes/Core/I18n.php:1542
+#: includes/Core/I18n.php:1553
 msgid "e.g. locale=en_US"
 msgstr ""
 
-#: includes/Core/I18n.php:1543
+#: includes/Core/I18n.php:1554
 msgid "e.g. lang=fr"
 msgstr ""
 
-#: includes/Core/I18n.php:1545
+#: includes/Core/I18n.php:1556
 msgid "Verify that your API credentials are valid and can reach the gateway."
 msgstr ""
 
-#: includes/Core/I18n.php:1546
+#: includes/Core/I18n.php:1557
 msgid "Pay on Arrival (On-Site)"
 msgstr ""
 
-#: includes/Core/I18n.php:1547
+#: includes/Core/I18n.php:1558
 msgid "Enable On-Site Payment"
 msgstr ""
 
-#: includes/Core/I18n.php:1548
+#: includes/Core/I18n.php:1559
 msgid "Allow guests to book now and pay manually when they arrive."
 msgstr ""
 
-#: includes/Core/I18n.php:1549
+#: includes/Core/I18n.php:1560
 msgid "Customer Instructions"
 msgstr ""
 
-#: includes/Core/I18n.php:1550
+#: includes/Core/I18n.php:1561
 msgid "Instructions shown to the customer after selecting this payment method."
 msgstr ""
 
-#: includes/Core/I18n.php:1552
-#: includes/Core/I18n.php:2174
+#: includes/Core/I18n.php:1563
+#: includes/Core/I18n.php:2185
 msgid "Save Webhook Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1553
-#: includes/Core/I18n.php:2176
+#: includes/Core/I18n.php:1564
+#: includes/Core/I18n.php:2187
 msgid "Save Tax Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:1557
-#: includes/Core/I18n.php:2140
+#: includes/Core/I18n.php:1568
+#: includes/Core/I18n.php:2151
 msgid "Pricing settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1558
-#: includes/Core/I18n.php:2142
+#: includes/Core/I18n.php:1569
+#: includes/Core/I18n.php:2153
 msgid "Payment settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1559
-#: includes/Core/I18n.php:2135
+#: includes/Core/I18n.php:1570
+#: includes/Core/I18n.php:2146
 msgid "GDPR settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1560
-#: includes/Core/I18n.php:2146
+#: includes/Core/I18n.php:1571
+#: includes/Core/I18n.php:2157
 msgid "Performance settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1561
+#: includes/Core/I18n.php:1572
 msgid "Deposit settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1562
-#: includes/Core/I18n.php:2147
+#: includes/Core/I18n.php:1573
+#: includes/Core/I18n.php:2158
 msgid "License settings saved successfully."
 msgstr ""
 
 #. translators: %d: number of rooms synced
-#: includes/Core/I18n.php:1564
+#: includes/Core/I18n.php:1575
 #, php-format
 msgid "%d room(s) synced successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1567
+#: includes/Core/I18n.php:1578
 msgid "Sending…"
 msgstr ""
 
-#: includes/Core/I18n.php:1573
+#: includes/Core/I18n.php:1584
 msgid "I agree to the processing of my personal data for the purpose of managing my booking reservation."
 msgstr ""
 
-#: includes/Core/I18n.php:1576
+#: includes/Core/I18n.php:1587
 msgid "Pro Feature Restricted"
 msgstr ""
 
-#: includes/Core/I18n.php:1577
+#: includes/Core/I18n.php:1588
 msgid "A valid license is required to access advanced modules."
 msgstr ""
 
-#: includes/Core/I18n.php:1578
+#: includes/Core/I18n.php:1589
 msgid "Unlock all premium features to maximize your booking potential."
 msgstr ""
 
-#: includes/Core/I18n.php:1579
+#: includes/Core/I18n.php:1590
 msgid "Unlock the full potential of your hotel management with premium tools."
 msgstr ""
 
-#: includes/Core/I18n.php:1582
-#: includes/Core/I18n.php:2326
+#: includes/Core/I18n.php:1593
+#: includes/Core/I18n.php:2337
 msgid "Weekend Pricing"
 msgstr ""
 
-#: includes/Core/I18n.php:1583
+#: includes/Core/I18n.php:1594
 msgid "Define specific nightly rates for Friday and Saturday stays."
 msgstr ""
 
-#: includes/Core/I18n.php:1584
-#: includes/Core/I18n.php:2327
+#: includes/Core/I18n.php:1595
+#: includes/Core/I18n.php:2338
 msgid "Weekend Days"
 msgstr ""
 
-#: includes/Core/I18n.php:1585
-#: includes/Core/I18n.php:2328
+#: includes/Core/I18n.php:1596
+#: includes/Core/I18n.php:2339
 msgid "Weekend Adjustment"
 msgstr ""
 
-#: includes/Core/I18n.php:1586
+#: includes/Core/I18n.php:1597
 msgid "Add/subtract a flat amount per night."
 msgstr ""
 
-#: includes/Core/I18n.php:1587
+#: includes/Core/I18n.php:1598
 msgid "Add/subtract a percentage of the base rate."
 msgstr ""
 
-#: includes/Core/I18n.php:1588
+#: includes/Core/I18n.php:1599
 msgid "Holiday & Peak Season"
 msgstr ""
 
-#: includes/Core/I18n.php:1589
-#: includes/Core/I18n.php:2330
+#: includes/Core/I18n.php:1600
+#: includes/Core/I18n.php:2341
 msgid "Holiday Date Picker"
 msgstr ""
 
-#: includes/Core/I18n.php:1590
+#: includes/Core/I18n.php:1601
 msgid "Define specific calendar dates for special pricing rules."
 msgstr ""
 
-#: includes/Core/I18n.php:1591
-#: includes/Core/I18n.php:2331
+#: includes/Core/I18n.php:1602
+#: includes/Core/I18n.php:2342
 msgid "Holiday Adjustment"
 msgstr ""
 
-#: includes/Core/I18n.php:1592
-#: includes/Core/I18n.php:2518
+#: includes/Core/I18n.php:1603
+#: includes/Core/I18n.php:2529
 msgid "Enable"
 msgstr ""
 
-#: includes/Core/I18n.php:1593
+#: includes/Core/I18n.php:1604
 msgid "Rule Conflict Detected"
 msgstr ""
 
-#: includes/Core/I18n.php:1594
+#: includes/Core/I18n.php:1605
 msgid "Multiple rules apply to the same period. Highest priority rule will take effect."
 msgstr ""
 
-#: includes/Core/I18n.php:1596
+#: includes/Core/I18n.php:1607
 msgid "Price calculation is based on per-person occupancy."
 msgstr ""
 
-#: includes/Core/I18n.php:1597
+#: includes/Core/I18n.php:1608
 msgid "Reservation awaiting payment or admin approval."
 msgstr ""
 
-#: includes/Core/I18n.php:1598
+#: includes/Core/I18n.php:1609
 msgid "Available add-ons to enhance your stay."
 msgstr ""
 
-#: includes/Core/I18n.php:1599
+#: includes/Core/I18n.php:1610
 msgid "Dates available for selection."
 msgstr ""
 
-#: includes/Core/I18n.php:1600
+#: includes/Core/I18n.php:1611
 msgid "Booking finalized and room secured."
 msgstr ""
 
-#: includes/Core/I18n.php:1601
+#: includes/Core/I18n.php:1612
 msgid "Check-out date must be after check-in."
 msgstr ""
 
-#: includes/Core/I18n.php:1603
+#: includes/Core/I18n.php:1614
 msgid "Checkout must be strictly after check-in."
 msgstr ""
 
-#: includes/Core/I18n.php:1604
+#: includes/Core/I18n.php:1615
 msgid "Invalid check-in date."
 msgstr ""
 
-#: includes/Core/I18n.php:1605
+#: includes/Core/I18n.php:1616
 msgid "No rooms of this type available for selection."
 msgstr ""
 
-#: includes/Core/I18n.php:1606
+#: includes/Core/I18n.php:1617
 msgid "Please select both check-in and check-out dates."
 msgstr ""
 
-#: includes/Core/I18n.php:1608
+#: includes/Core/I18n.php:1619
 msgid "Pricing Rules & Schedules"
 msgstr ""
 
-#: includes/Core/I18n.php:1609
+#: includes/Core/I18n.php:1620
 msgid "Define custom seasonal rates, discounts, and holiday surcharges."
 msgstr ""
 
-#: includes/Core/I18n.php:1610
+#: includes/Core/I18n.php:1621
 msgid "Define New Adjustment"
 msgstr ""
 
-#: includes/Core/I18n.php:1611
+#: includes/Core/I18n.php:1622
 msgid "Campaign Name"
 msgstr ""
 
-#: includes/Core/I18n.php:1612
+#: includes/Core/I18n.php:1623
 msgid "e.g. Summer Special 2026"
 msgstr ""
 
-#: includes/Core/I18n.php:1613
+#: includes/Core/I18n.php:1624
 msgid "Active Period"
 msgstr ""
 
-#: includes/Core/I18n.php:1614
+#: includes/Core/I18n.php:1625
 msgctxt "temporal limit"
 msgid "until"
 msgstr ""
 
-#: includes/Core/I18n.php:1615
+#: includes/Core/I18n.php:1626
 msgid "Price Change"
 msgstr ""
 
-#: includes/Core/I18n.php:1616
+#: includes/Core/I18n.php:1627
 msgid "Percentage %"
 msgstr ""
 
-#: includes/Core/I18n.php:1617
+#: includes/Core/I18n.php:1628
 msgid "Positive for surcharges, negative for discounts."
 msgstr ""
 
-#: includes/Core/I18n.php:1618
+#: includes/Core/I18n.php:1629
 msgid "Target Room Type"
 msgstr ""
 
-#: includes/Core/I18n.php:1619
+#: includes/Core/I18n.php:1630
 msgid "All Room Types (Global Rule)"
 msgstr ""
 
-#: includes/Core/I18n.php:1620
+#: includes/Core/I18n.php:1631
 msgid "Create Pricing Rule"
 msgstr ""
 
-#: includes/Core/I18n.php:1621
+#: includes/Core/I18n.php:1632
 msgid "Active & Scheduled Adjustments"
 msgstr ""
 
-#: includes/Core/I18n.php:1622
+#: includes/Core/I18n.php:1633
 msgid "Rule Name"
 msgstr ""
 
-#: includes/Core/I18n.php:1623
+#: includes/Core/I18n.php:1634
 msgid "Validity"
 msgstr ""
 
-#: includes/Core/I18n.php:1624
+#: includes/Core/I18n.php:1635
 msgid "Impact"
 msgstr ""
 
-#: includes/Core/I18n.php:1625
+#: includes/Core/I18n.php:1636
 msgid "Applicability"
 msgstr ""
 
-#: includes/Core/I18n.php:1626
+#: includes/Core/I18n.php:1637
 msgid "No pricing rules defined."
 msgstr ""
 
-#: includes/Core/I18n.php:1627
+#: includes/Core/I18n.php:1638
 msgid "Global (All Types)"
 msgstr ""
 
-#: includes/Core/I18n.php:1628
+#: includes/Core/I18n.php:1639
 msgid "Permanently remove this pricing adjustment?"
 msgstr ""
 
-#: includes/Core/I18n.php:1629
+#: includes/Core/I18n.php:1640
 msgid "Pricing rule created successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1630
+#: includes/Core/I18n.php:1641
 msgid "Pricing rule removed successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1632
-#: includes/Core/I18n.php:2180
-#: includes/Core/I18n.php:2308
+#: includes/Core/I18n.php:1643
+#: includes/Core/I18n.php:2191
+#: includes/Core/I18n.php:2319
 msgid "REST API"
 msgstr ""
 
-#: includes/Core/I18n.php:1636
+#: includes/Core/I18n.php:1647
 msgid "Select a pre-designed visual theme for your booking form."
 msgstr ""
 
-#: includes/Core/I18n.php:1637
+#: includes/Core/I18n.php:1648
 msgid "Midnight Dark"
 msgstr ""
 
-#: includes/Core/I18n.php:1638
+#: includes/Core/I18n.php:1649
 msgid "Sleek dark mode with gold accents."
 msgstr ""
 
-#: includes/Core/I18n.php:1639
+#: includes/Core/I18n.php:1650
 msgid "Forest Emerald"
 msgstr ""
 
-#: includes/Core/I18n.php:1640
+#: includes/Core/I18n.php:1651
 msgid "Natural greens and soft earth tones."
 msgstr ""
 
-#: includes/Core/I18n.php:1641
+#: includes/Core/I18n.php:1652
 msgid "Oceanic Blue"
 msgstr ""
 
-#: includes/Core/I18n.php:1642
+#: includes/Core/I18n.php:1653
 msgid "Deep blues and crisp white contrast."
 msgstr ""
 
-#: includes/Core/I18n.php:1643
+#: includes/Core/I18n.php:1654
 msgid "Ruby Red"
 msgstr ""
 
-#: includes/Core/I18n.php:1644
+#: includes/Core/I18n.php:1655
 msgid "Warm reds and elegant typography."
 msgstr ""
 
-#: includes/Core/I18n.php:1645
+#: includes/Core/I18n.php:1656
 msgid "Urban Slate"
 msgstr ""
 
-#: includes/Core/I18n.php:1646
+#: includes/Core/I18n.php:1657
 msgid "Modern industrial greys and minimalist lines."
 msgstr ""
 
-#: includes/Core/I18n.php:1647
+#: includes/Core/I18n.php:1658
 msgid "Soft Lavender"
 msgstr ""
 
-#: includes/Core/I18n.php:1648
+#: includes/Core/I18n.php:1659
 msgid "Calming purples and light textures."
 msgstr ""
 
-#: includes/Core/I18n.php:1649
+#: includes/Core/I18n.php:1660
 msgid "Custom CSS"
 msgstr ""
 
-#: includes/Core/I18n.php:1650
+#: includes/Core/I18n.php:1661
 msgid "Load your own styles (Advanced users only)."
 msgstr ""
 
-#: includes/Core/I18n.php:1651
+#: includes/Core/I18n.php:1662
 msgid "Custom CSS Editor"
 msgstr ""
 
-#: includes/Core/I18n.php:1652
+#: includes/Core/I18n.php:1663
 msgid "Override any theme styles with your own CSS rules."
 msgstr ""
 
-#: includes/Core/I18n.php:1653
+#: includes/Core/I18n.php:1664
 msgid "Restore Default"
 msgstr ""
 
-#: includes/Core/I18n.php:1657
+#: includes/Core/I18n.php:1668
 msgid "Total Collected Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:1658
+#: includes/Core/I18n.php:1669
 msgid "Occupancy Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:1659
+#: includes/Core/I18n.php:1670
 msgid "RevPAR (Revenue per Available Room)"
 msgstr ""
 
-#: includes/Core/I18n.php:1660
+#: includes/Core/I18n.php:1671
 msgid "ADR (Average Daily Rate)"
 msgstr ""
 
-#: includes/Core/I18n.php:1662
+#: includes/Core/I18n.php:1673
 msgid "Confirmation Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:1663
+#: includes/Core/I18n.php:1674
 msgid "Average Booking Value"
 msgstr ""
 
-#: includes/Core/I18n.php:1664
-#: includes/Core/I18n.php:2764
+#: includes/Core/I18n.php:1675
+#: includes/Core/I18n.php:2775
 msgid "Total Tax Collected"
 msgstr ""
 
-#: includes/Core/I18n.php:1665
+#: includes/Core/I18n.php:1676
 msgctxt "analytic state"
 msgid "Booked"
 msgstr ""
 
-#: includes/Core/I18n.php:1666
+#: includes/Core/I18n.php:1677
 msgctxt "analytic state"
 msgid "Available"
 msgstr ""
 
-#: includes/Core/I18n.php:1667
+#: includes/Core/I18n.php:1678
 msgid "Projected Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:1668
+#: includes/Core/I18n.php:1679
 msgctxt "payment state"
 msgid "Collected"
 msgstr ""
 
-#: includes/Core/I18n.php:1669
+#: includes/Core/I18n.php:1680
 msgctxt "booking state"
 msgid "Completed"
 msgstr ""
 
-#: includes/Core/I18n.php:1670
+#: includes/Core/I18n.php:1681
 msgctxt "booking state"
 msgid "Confirmed"
 msgstr ""
 
-#: includes/Core/I18n.php:1671
+#: includes/Core/I18n.php:1682
 msgid "Cancellation Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:1672
+#: includes/Core/I18n.php:1683
 msgid "Potential Lost Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:1673
+#: includes/Core/I18n.php:1684
 msgid "Counted Cancellations"
 msgstr ""
 
-#: includes/Core/I18n.php:1674
+#: includes/Core/I18n.php:1685
 msgid "The REST API allows external systems to query room availability and manage bookings."
 msgstr ""
 
-#: includes/Core/I18n.php:1676
+#: includes/Core/I18n.php:1687
 #: includes/Pro/CouponAdmin.php:197
 #: includes/Pro/CouponAdmin.php:495
 msgid "Generate"
 msgstr ""
 
-#: includes/Core/I18n.php:1677
+#: includes/Core/I18n.php:1688
 msgid "Include as X-MHBO-API-KEY header for authenticated endpoints."
 msgstr ""
 
-#: includes/Core/I18n.php:1680
-#: includes/Core/I18n.php:1806
-#: includes/Core/I18n.php:2223
+#: includes/Core/I18n.php:1691
+#: includes/Core/I18n.php:1817
+#: includes/Core/I18n.php:2234
 msgid "Webhook URL"
 msgstr ""
 
-#: includes/Core/I18n.php:1681
-#: includes/Core/I18n.php:1807
+#: includes/Core/I18n.php:1692
+#: includes/Core/I18n.php:1818
 msgid "Webhook Secret"
 msgstr ""
 
-#: includes/Core/I18n.php:1682
+#: includes/Core/I18n.php:1693
 msgid "Used to sign webhook payloads using HMAC-SHA256."
 msgstr ""
 
-#: includes/Core/I18n.php:1683
+#: includes/Core/I18n.php:1694
 msgid "Log outgoing deliveries (up to 50 entries)."
 msgstr ""
 
-#: includes/Core/I18n.php:1684
-#: includes/Core/I18n.php:2319
+#: includes/Core/I18n.php:1695
+#: includes/Core/I18n.php:2330
 msgid "Send Test Webhook"
 msgstr ""
 
-#: includes/Core/I18n.php:1685
-#: includes/Core/I18n.php:2318
+#: includes/Core/I18n.php:1696
+#: includes/Core/I18n.php:2329
 msgid "Clear History"
 msgstr ""
 
-#: includes/Core/I18n.php:1686
-#: includes/Core/I18n.php:1706
+#: includes/Core/I18n.php:1697
+#: includes/Core/I18n.php:1717
 msgid "Delivery Logs"
 msgstr ""
 
-#: includes/Core/I18n.php:1687
-#: includes/Core/I18n.php:1707
+#: includes/Core/I18n.php:1698
+#: includes/Core/I18n.php:1718
 msgid "Recent activity (last 50 events)."
 msgstr ""
 
-#: includes/Core/I18n.php:1688
-#: includes/Core/I18n.php:1708
+#: includes/Core/I18n.php:1699
+#: includes/Core/I18n.php:1719
 msgid "Loading logs..."
 msgstr ""
 
-#: includes/Core/I18n.php:1689
-#: includes/Core/I18n.php:1710
+#: includes/Core/I18n.php:1700
+#: includes/Core/I18n.php:1721
 msgid "No activity logs found."
 msgstr ""
 
-#: includes/Core/I18n.php:1690
+#: includes/Core/I18n.php:1701
 msgid "Sending..."
 msgstr ""
 
-#: includes/Core/I18n.php:1691
+#: includes/Core/I18n.php:1702
 msgid "Please enter a Webhook URL first."
 msgstr ""
 
-#: includes/Core/I18n.php:1692
+#: includes/Core/I18n.php:1703
 msgid "Are you sure you want to clear all webhook logs?"
 msgstr ""
 
-#: includes/Core/I18n.php:1693
+#: includes/Core/I18n.php:1704
 msgid "Test webhook sent successfully! Check the delivery logs below."
 msgstr ""
 
-#: includes/Core/I18n.php:1694
+#: includes/Core/I18n.php:1705
 msgid "Webhook history cleared."
 msgstr ""
 
-#: includes/Core/I18n.php:1696
-#: includes/Core/I18n.php:1711
+#: includes/Core/I18n.php:1707
+#: includes/Core/I18n.php:1722
 msgid "Available Endpoints"
 msgstr ""
 
-#: includes/Core/I18n.php:1697
+#: includes/Core/I18n.php:1708
 msgid "Method"
 msgstr ""
 
-#: includes/Core/I18n.php:1699
+#: includes/Core/I18n.php:1710
 msgid "Auth / Access"
 msgstr ""
 
-#: includes/Core/I18n.php:1700
+#: includes/Core/I18n.php:1711
 msgid "Public (Rate Limited)"
 msgstr ""
 
-#: includes/Core/I18n.php:1701
+#: includes/Core/I18n.php:1712
 msgid "Pro (Rate Limited)"
 msgstr ""
 
-#: includes/Core/I18n.php:1702
+#: includes/Core/I18n.php:1713
 msgid "API Key Required"
 msgstr ""
 
-#: includes/Core/I18n.php:1703
+#: includes/Core/I18n.php:1714
 msgid "API Key Required / Admin"
 msgstr ""
 
-#: includes/Core/I18n.php:1709
-#: includes/Core/I18n.php:1717
+#: includes/Core/I18n.php:1720
+#: includes/Core/I18n.php:1728
 msgid "Click to copy"
 msgstr ""
 
-#: includes/Core/I18n.php:1713
+#: includes/Core/I18n.php:1724
 msgctxt "timestamp"
 msgid "Time"
 msgstr ""
 
-#: includes/Core/I18n.php:1714
+#: includes/Core/I18n.php:1725
 msgctxt "log category"
 msgid "Event"
 msgstr ""
 
-#: includes/Core/I18n.php:1716
+#: includes/Core/I18n.php:1727
 msgid "Response"
 msgstr ""
 
-#: includes/Core/I18n.php:1718
+#: includes/Core/I18n.php:1729
 msgid "Network error occurred."
 msgstr ""
 
-#: includes/Core/I18n.php:1721
-#: includes/Core/I18n.php:2879
+#: includes/Core/I18n.php:1732
+#: includes/Core/I18n.php:2890
 msgid "Payment Summary"
 msgstr ""
 
-#: includes/Core/I18n.php:1722
-#: includes/Core/I18n.php:2880
+#: includes/Core/I18n.php:1733
+#: includes/Core/I18n.php:2891
 msgid "Total Amount:"
 msgstr ""
 
-#: includes/Core/I18n.php:1723
-#: includes/Core/I18n.php:2881
+#: includes/Core/I18n.php:1734
+#: includes/Core/I18n.php:2892
 msgid "Deposit Paid:"
 msgstr ""
 
-#: includes/Core/I18n.php:1724
-#: includes/Core/I18n.php:2882
+#: includes/Core/I18n.php:1735
+#: includes/Core/I18n.php:2893
 msgid "Deposit Required:"
 msgstr ""
 
-#: includes/Core/I18n.php:1725
-#: includes/Core/I18n.php:2883
+#: includes/Core/I18n.php:1736
+#: includes/Core/I18n.php:2894
 msgid "Remaining Balance:"
 msgstr ""
 
-#: includes/Core/I18n.php:1726
-#: includes/Core/I18n.php:2884
+#: includes/Core/I18n.php:1737
+#: includes/Core/I18n.php:2895
 msgid "Due at check-in or as per arrival arrangements."
 msgstr ""
 
-#: includes/Core/I18n.php:1727
-#: includes/Core/I18n.php:2885
+#: includes/Core/I18n.php:1738
+#: includes/Core/I18n.php:2896
 msgid "Paid in Full"
 msgstr ""
 
-#: includes/Core/I18n.php:1728
-#: includes/Core/I18n.php:2886
+#: includes/Core/I18n.php:1739
+#: includes/Core/I18n.php:2897
 msgid "Non-Refundable:"
 msgstr ""
 
 #. translators: %s: cancellation deadline date
-#: includes/Core/I18n.php:1731
-#: includes/Core/I18n.php:2889
+#: includes/Core/I18n.php:1742
+#: includes/Core/I18n.php:2900
 #, php-format
 msgid "Refund Deadline: Cancel by %s to qualify for a deposit refund."
 msgstr ""
 
-#: includes/Core/I18n.php:1732
+#: includes/Core/I18n.php:1743
 msgid "Pending Booking"
 msgstr ""
 
-#: includes/Core/I18n.php:1733
+#: includes/Core/I18n.php:1744
 msgid "Confirmed Booking"
 msgstr ""
 
-#: includes/Core/I18n.php:1734
+#: includes/Core/I18n.php:1745
 msgid "Cancelled Booking"
 msgstr ""
 
-#: includes/Core/I18n.php:1736
+#: includes/Core/I18n.php:1747
 msgid "Subject"
 msgstr ""
 
-#: includes/Core/I18n.php:1737
+#: includes/Core/I18n.php:1748
 msgid "Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1740
+#: includes/Core/I18n.php:1751
 msgid "GDPR Compliance & Data Privacy (PRO)"
 msgstr ""
 
-#: includes/Core/I18n.php:1741
+#: includes/Core/I18n.php:1752
 msgid "Enable Pro Privacy Suite"
 msgstr ""
 
-#: includes/Core/I18n.php:1742
+#: includes/Core/I18n.php:1753
 msgid "Enables automated data retention, custom cookie prefixing, and advanced privacy controls."
 msgstr ""
 
-#: includes/Core/I18n.php:1743
+#: includes/Core/I18n.php:1754
 msgid "Require Privacy Consent"
 msgstr ""
 
-#: includes/Core/I18n.php:1744
+#: includes/Core/I18n.php:1755
 msgid "Adds a mandatory checkbox to the booking form for guest consent."
 msgstr ""
 
-#: includes/Core/I18n.php:1745
+#: includes/Core/I18n.php:1756
 msgid "Terms & Conditions Page"
 msgstr ""
 
-#: includes/Core/I18n.php:1746
+#: includes/Core/I18n.php:1757
 msgid "Select the page for your Terms & Conditions. Use the [terms_and_conditions] link in your consent text."
 msgstr ""
 
-#: includes/Core/I18n.php:1747
+#: includes/Core/I18n.php:1758
 msgid "Consent Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1748
+#: includes/Core/I18n.php:1759
 msgid "Text displayed next to the consent checkbox. Use the [privacy_policy] link in your text to link to your policy page."
 msgstr ""
 
-#: includes/Core/I18n.php:1749
+#: includes/Core/I18n.php:1760
 msgid "Automated Data Retention"
 msgstr ""
 
-#: includes/Core/I18n.php:1750
+#: includes/Core/I18n.php:1761
 msgctxt "time duration"
 msgid "days"
 msgstr ""
 
-#: includes/Core/I18n.php:1751
+#: includes/Core/I18n.php:1762
 msgid "Bookings older than this will be automatically anonymized. Set to 0 to disable."
 msgstr ""
 
-#: includes/Core/I18n.php:1752
+#: includes/Core/I18n.php:1763
 msgid "Cookie Name Prefix"
 msgstr ""
 
-#: includes/Core/I18n.php:1753
+#: includes/Core/I18n.php:1764
 msgid "Customize the prefix for all frontend cookies (e.g. for selection persistence). Helps with compatibility and auditing."
 msgstr ""
 
-#: includes/Core/I18n.php:1754
+#: includes/Core/I18n.php:1765
 msgid "— Select a Page —"
 msgstr ""
 
-#: includes/Core/I18n.php:1758
+#: includes/Core/I18n.php:1769
 msgctxt "license status"
 msgid "Free"
 msgstr ""
 
-#: includes/Core/I18n.php:1759
+#: includes/Core/I18n.php:1770
 msgid "Active (Pending Verification)"
 msgstr ""
 
-#: includes/Core/I18n.php:1760
+#: includes/Core/I18n.php:1771
 msgctxt "license status"
 msgid "Expired"
 msgstr ""
 
-#: includes/Core/I18n.php:1761
+#: includes/Core/I18n.php:1772
 msgctxt "license status"
 msgid "Active"
 msgstr ""
 
-#: includes/Core/I18n.php:1762
+#: includes/Core/I18n.php:1773
 msgid "Verification Failed"
 msgstr ""
 
-#: includes/Core/I18n.php:1763
+#: includes/Core/I18n.php:1774
 msgctxt "license status"
 msgid "Inactive"
 msgstr ""
 
-#: includes/Core/I18n.php:1764
-#: includes/Core/I18n.php:2185
+#: includes/Core/I18n.php:1775
+#: includes/Core/I18n.php:2196
 msgid "Pro Feature"
 msgstr ""
 
 #. translators: %s: feature name (e.g., Payment Gateways, Booking Extras)
-#: includes/Core/I18n.php:1766
+#: includes/Core/I18n.php:1777
 #, php-format
 msgid "The %s feature is part of the Modern Hotel Booking Pro Experience."
 msgstr ""
 
-#: includes/Core/I18n.php:1767
+#: includes/Core/I18n.php:1778
 msgid "This feature is part of the Modern Hotel Booking Pro Experience."
 msgstr ""
 
-#: includes/Core/I18n.php:1768
+#: includes/Core/I18n.php:1779
 msgid "Activate Pro Now"
 msgstr ""
 
-#: includes/Core/I18n.php:1771
+#: includes/Core/I18n.php:1782
 msgid "Too many attempts. Please wait a minute before trying again."
 msgstr ""
 
-#: includes/Core/I18n.php:1772
+#: includes/Core/I18n.php:1783
 msgid "License key cannot be empty."
 msgstr ""
 
-#: includes/Core/I18n.php:1773
+#: includes/Core/I18n.php:1784
 msgid "Invalid license key."
 msgstr ""
 
-#: includes/Core/I18n.php:1774
+#: includes/Core/I18n.php:1785
 msgid "Could not connect to the license server."
 msgstr ""
 
-#: includes/Core/I18n.php:1775
+#: includes/Core/I18n.php:1786
 msgid "The webhook URL is considered unsafe and was blocked."
 msgstr ""
 
-#: includes/Core/I18n.php:1776
+#: includes/Core/I18n.php:1787
 msgid "This is a test webhook from your booking system. Hello World!"
 msgstr ""
 
-#: includes/Core/I18n.php:1777
-#: includes/Core/I18n.php:2536
+#: includes/Core/I18n.php:1788
+#: includes/Core/I18n.php:2547
 msgid "Unknown error"
 msgstr ""
 
-#: includes/Core/I18n.php:1778
+#: includes/Core/I18n.php:1789
 msgid "Cache cleared successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1779
+#: includes/Core/I18n.php:1790
 msgid "Failed to clear cache."
 msgstr ""
 
-#: includes/Core/I18n.php:1780
+#: includes/Core/I18n.php:1791
 msgid "Cache class not available."
 msgstr ""
 
-#: includes/Core/I18n.php:1781
+#: includes/Core/I18n.php:1792
 msgid "Permission denied."
 msgstr ""
 
 #. translators: 1: label, 2: rate percentage, 3: formatted amount
-#: includes/Core/I18n.php:1787
+#: includes/Core/I18n.php:1798
 #, php-format
 msgid "%1$s - Accommodation (%2$s%%): %3$s"
 msgstr ""
 
 #. translators: 1: label, 2: rate percentage, 3: formatted amount
-#: includes/Core/I18n.php:1789
+#: includes/Core/I18n.php:1800
 #, php-format
 msgid "%1$s - Extras (%2$s%%): %3$s"
 msgstr ""
 
-#: includes/Core/I18n.php:1792
+#: includes/Core/I18n.php:1803
 msgid "License Warning:"
 msgstr ""
 
-#: includes/Core/I18n.php:1793
+#: includes/Core/I18n.php:1804
 msgid "License Error:"
 msgstr ""
 
-#: includes/Core/I18n.php:1794
-#: includes/Core/I18n.php:2803
+#: includes/Core/I18n.php:1805
+#: includes/Core/I18n.php:2814
 msgid "License verification failed. Pro features have been disabled. Please check your license or contact support."
 msgstr ""
 
-#: includes/Core/I18n.php:1795
+#: includes/Core/I18n.php:1806
 msgid "License Expired:"
 msgstr ""
 
-#: includes/Core/I18n.php:1796
+#: includes/Core/I18n.php:1807
 msgid "Your Pro license has expired. Please renew to continue using Pro features."
 msgstr ""
 
 #. translators: %s: time remaining in grace period (e.g. "3 days")
-#: includes/Core/I18n.php:1798
-#: includes/Core/I18n.php:2802
+#: includes/Core/I18n.php:1809
+#: includes/Core/I18n.php:2813
 #, php-format
 msgid "Could not verify license. Grace period active: %s remaining."
 msgstr ""
 
-#: includes/Core/I18n.php:1803
+#: includes/Core/I18n.php:1814
 msgid "Check License"
 msgstr ""
 
-#: includes/Core/I18n.php:1808
+#: includes/Core/I18n.php:1819
 msgid "Webhook Status"
 msgstr ""
 
-#: includes/Core/I18n.php:1809
+#: includes/Core/I18n.php:1820
 msgid "Last Received"
 msgstr ""
 
-#: includes/Core/I18n.php:1810
+#: includes/Core/I18n.php:1821
 msgid "Webhook connected successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1813
+#: includes/Core/I18n.php:1824
 msgid "Clear Cache"
 msgstr ""
 
-#: includes/Core/I18n.php:1814
+#: includes/Core/I18n.php:1825
 msgid "Cache Status"
 msgstr ""
 
-#: includes/Core/I18n.php:1815
+#: includes/Core/I18n.php:1826
 msgid "Cache Size"
 msgstr ""
 
-#: includes/Core/I18n.php:1816
+#: includes/Core/I18n.php:1827
 msgid "Cache has been cleared successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:1820
+#: includes/Core/I18n.php:1831
 msgid "PHP Version"
 msgstr ""
 
-#: includes/Core/I18n.php:1821
+#: includes/Core/I18n.php:1832
 msgid "WordPress Version"
 msgstr ""
 
-#: includes/Core/I18n.php:1822
+#: includes/Core/I18n.php:1833
 msgid "Server Info"
 msgstr ""
 
-#: includes/Core/I18n.php:1823
+#: includes/Core/I18n.php:1834
 msgid "Memory Limit"
 msgstr ""
 
-#: includes/Core/I18n.php:1826
+#: includes/Core/I18n.php:1837
 msgid "Search Rooms Button"
 msgstr ""
 
-#: includes/Core/I18n.php:1827
+#: includes/Core/I18n.php:1838
 msgid "Check-in Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1828
+#: includes/Core/I18n.php:1839
 msgid "Check-out Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1829
+#: includes/Core/I18n.php:1840
 msgid "Guests Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1830
+#: includes/Core/I18n.php:1841
 msgid "Children Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1831
+#: includes/Core/I18n.php:1842
 msgid "Child Ages Label"
 msgstr ""
 
 #. translators: %d: child number (e.g. 1, 2, 3)
-#: includes/Core/I18n.php:1833
+#: includes/Core/I18n.php:1844
 #, php-format
 msgid "Child %d Age Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1834
+#: includes/Core/I18n.php:1845
 msgid "Select Dates Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1835
+#: includes/Core/I18n.php:1846
 msgid "Dates Selected Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1836
+#: includes/Core/I18n.php:1847
 msgid "Your Selection Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1837
+#: includes/Core/I18n.php:1848
 msgid "Continue to Booking Button"
 msgstr ""
 
-#: includes/Core/I18n.php:1838
+#: includes/Core/I18n.php:1849
 msgid "Dates Not Available Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1839
+#: includes/Core/I18n.php:1850
 msgid "Stay Dates Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1840
+#: includes/Core/I18n.php:1851
 msgid "Select Check-in Guide"
 msgstr ""
 
-#: includes/Core/I18n.php:1841
+#: includes/Core/I18n.php:1852
 msgid "Select Check-out Guide"
 msgstr ""
 
-#: includes/Core/I18n.php:1842
+#: includes/Core/I18n.php:1853
 msgid "Calendar No ID Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1843
+#: includes/Core/I18n.php:1854
 msgid "Calendar Config Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1846
+#: includes/Core/I18n.php:1857
 msgid "Search & Calendar"
 msgstr ""
 
-#: includes/Core/I18n.php:1847
+#: includes/Core/I18n.php:1858
 msgid "Results & Pricing"
 msgstr ""
 
-#: includes/Core/I18n.php:1848
+#: includes/Core/I18n.php:1859
 msgid "Booking Form"
 msgstr ""
 
-#: includes/Core/I18n.php:1849
+#: includes/Core/I18n.php:1860
 msgid "Confirmation Messages"
 msgstr ""
 
-#: includes/Core/I18n.php:1851
+#: includes/Core/I18n.php:1862
 msgid "Tax & Summary"
 msgstr ""
 
-#: includes/Core/I18n.php:1852
+#: includes/Core/I18n.php:1863
 msgctxt "state of entity"
 msgid "Amenities"
 msgstr ""
 
-#: includes/Core/I18n.php:1853
-#: includes/Core/I18n.php:2023
-#: includes/Core/I18n.php:2867
+#: includes/Core/I18n.php:1864
+#: includes/Core/I18n.php:2034
+#: includes/Core/I18n.php:2878
 msgid "Free WiFi"
 msgstr ""
 
-#: includes/Core/I18n.php:1854
-#: includes/Core/I18n.php:2024
-#: includes/Core/I18n.php:2868
+#: includes/Core/I18n.php:1865
+#: includes/Core/I18n.php:2035
+#: includes/Core/I18n.php:2879
 msgid "Air Conditioning"
 msgstr ""
 
-#: includes/Core/I18n.php:1855
-#: includes/Core/I18n.php:2025
-#: includes/Core/I18n.php:2869
+#: includes/Core/I18n.php:1866
+#: includes/Core/I18n.php:2036
+#: includes/Core/I18n.php:2880
 msgid "Smart TV"
 msgstr ""
 
-#: includes/Core/I18n.php:1856
-#: includes/Core/I18n.php:2026
-#: includes/Core/I18n.php:2870
+#: includes/Core/I18n.php:1867
+#: includes/Core/I18n.php:2037
+#: includes/Core/I18n.php:2881
 msgid "Breakfast Included"
 msgstr ""
 
-#: includes/Core/I18n.php:1857
-#: includes/Core/I18n.php:2027
-#: includes/Core/I18n.php:2871
+#: includes/Core/I18n.php:1868
+#: includes/Core/I18n.php:2038
+#: includes/Core/I18n.php:2882
 msgid "Pool View"
 msgstr ""
 
-#: includes/Core/I18n.php:1858
+#: includes/Core/I18n.php:1869
 msgid "Mini Bar"
 msgstr ""
 
-#: includes/Core/I18n.php:1859
+#: includes/Core/I18n.php:1870
 msgid "In-room Safe"
 msgstr ""
 
-#: includes/Core/I18n.php:1860
+#: includes/Core/I18n.php:1871
 msgid "Free Parking"
 msgstr ""
 
-#: includes/Core/I18n.php:1861
+#: includes/Core/I18n.php:1872
 msgid "Private Balcony"
 msgstr ""
 
 #. translators: 1: placeholder example %s, 2: placeholder example %d
-#: includes/Core/I18n.php:1864
+#: includes/Core/I18n.php:1875
 #, php-format
 msgid "Leave a field empty to use the default English text for that language. Use <code>%1$s</code> or <code>%2$d</code> as placeholders where they appear in the default text."
 msgstr ""
 
-#: includes/Core/I18n.php:1866
+#: includes/Core/I18n.php:1877
 msgid "Available Rooms Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1867
+#: includes/Core/I18n.php:1878
 msgid "No Rooms Found Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1868
+#: includes/Core/I18n.php:1879
 msgid "Per Night Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1869
+#: includes/Core/I18n.php:1880
 msgid "Total Nights Price Summary"
 msgstr ""
 
-#: includes/Core/I18n.php:1870
+#: includes/Core/I18n.php:1881
 msgid "Max Guests Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1871
+#: includes/Core/I18n.php:1882
 msgid "Loading Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1872
+#: includes/Core/I18n.php:1883
 msgid "To Separator"
 msgstr ""
 
-#: includes/Core/I18n.php:1873
+#: includes/Core/I18n.php:1884
 msgid "Book Now Button"
 msgstr ""
 
-#: includes/Core/I18n.php:1874
+#: includes/Core/I18n.php:1885
 msgid "Processing Button Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1876
+#: includes/Core/I18n.php:1887
 msgid "Complete Booking Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1877
+#: includes/Core/I18n.php:1888
 msgid "Total Price Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1878
+#: includes/Core/I18n.php:1889
 msgid "Full Name Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1879
+#: includes/Core/I18n.php:1890
 msgid "Email Address Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1880
+#: includes/Core/I18n.php:1891
 msgid "Phone Number Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1881
+#: includes/Core/I18n.php:1892
 msgid "Special Requests Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1882
+#: includes/Core/I18n.php:1893
 msgid "Secure Payment Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1883
+#: includes/Core/I18n.php:1894
 msgid "Security Error Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1884
+#: includes/Core/I18n.php:1895
 msgid "Rate Limit Error Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1885
+#: includes/Core/I18n.php:1896
 msgid "Spam Honeypot Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1886
+#: includes/Core/I18n.php:1897
 msgid "Confirm Booking Button"
 msgstr ""
 
-#: includes/Core/I18n.php:1887
+#: includes/Core/I18n.php:1898
 msgid "Pay & Confirm Button"
 msgstr ""
 
-#: includes/Core/I18n.php:1888
+#: includes/Core/I18n.php:1899
 msgid "Confirm Request Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1889
+#: includes/Core/I18n.php:1900
 msgid "Room Not Found Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1890
+#: includes/Core/I18n.php:1901
 msgid "Name Too Long Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1891
+#: includes/Core/I18n.php:1902
 msgid "Phone Too Long Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1892
+#: includes/Core/I18n.php:1903
 msgid "Max Children Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1893
+#: includes/Core/I18n.php:1904
 msgid "Max Adults Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1894
+#: includes/Core/I18n.php:1905
 msgid "Price Calculation Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1895
+#: includes/Core/I18n.php:1906
 msgid "Missing Fields Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1896
+#: includes/Core/I18n.php:1907
 msgid "Required Field Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1897
+#: includes/Core/I18n.php:1908
 msgid "Spam Detected Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1898
+#: includes/Core/I18n.php:1909
 msgid "Room Already Booked Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1899
+#: includes/Core/I18n.php:1910
 msgid "Invalid Email Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1901
+#: includes/Core/I18n.php:1912
 msgid "Booking Success Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1902
+#: includes/Core/I18n.php:1913
 msgid "Email Sent Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1903
+#: includes/Core/I18n.php:1914
 msgid "Request Received Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1904
+#: includes/Core/I18n.php:1915
 msgid "Request Received Detail"
 msgstr ""
 
-#: includes/Core/I18n.php:1905
+#: includes/Core/I18n.php:1916
 msgid "Pay on Arrival Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1906
+#: includes/Core/I18n.php:1917
 msgid "GDPR Required Warning"
 msgstr ""
 
-#: includes/Core/I18n.php:1907
+#: includes/Core/I18n.php:1918
 msgid "Privacy Policy Link Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1908
+#: includes/Core/I18n.php:1919
 msgid "Terms & Conditions Link Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1909
+#: includes/Core/I18n.php:1920
 msgid "PayPal Required Warning"
 msgstr ""
 
-#: includes/Core/I18n.php:1910
+#: includes/Core/I18n.php:1921
 msgid "Payment Success Confirmation"
 msgstr ""
 
-#: includes/Core/I18n.php:1911
+#: includes/Core/I18n.php:1922
 msgid "Booking arrival confirmation"
 msgstr ""
 
-#: includes/Core/I18n.php:1912
+#: includes/Core/I18n.php:1923
 msgid "Payment Failed Detail"
 msgstr ""
 
-#: includes/Core/I18n.php:1913
+#: includes/Core/I18n.php:1924
 msgid "Booking Received Pending Detail"
 msgstr ""
 
-#: includes/Core/I18n.php:1915
+#: includes/Core/I18n.php:1926
 msgid "Payment Method Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1916
+#: includes/Core/I18n.php:1927
 msgid "Pay on Arrival Option"
 msgstr ""
 
-#: includes/Core/I18n.php:1917
+#: includes/Core/I18n.php:1928
 msgid "Credit Card Option"
 msgstr ""
 
-#: includes/Core/I18n.php:1918
+#: includes/Core/I18n.php:1929
 msgid "PayPal Option"
 msgstr ""
 
-#: includes/Core/I18n.php:1919
+#: includes/Core/I18n.php:1930
 msgid "Payment Status Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1920
+#: includes/Core/I18n.php:1931
 msgid "Paid Badge Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1921
+#: includes/Core/I18n.php:1932
 msgid "Amount Paid Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1922
+#: includes/Core/I18n.php:1933
 msgid "Transaction ID Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1923
+#: includes/Core/I18n.php:1934
 msgid "Failed Badge Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1924
+#: includes/Core/I18n.php:1935
 msgid "Payment Failed Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1925
+#: includes/Core/I18n.php:1936
 msgid "Dates Taken Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1926
+#: includes/Core/I18n.php:1937
 msgid "Invalid Booking Calc Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1927
+#: includes/Core/I18n.php:1938
 msgid "Stripe Not Configured Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1928
+#: includes/Core/I18n.php:1939
 msgid "PayPal Not Configured Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1929
+#: includes/Core/I18n.php:1940
 msgid "PayPal Connection Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1930
+#: includes/Core/I18n.php:1941
 msgid "PayPal Auth Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1931
+#: includes/Core/I18n.php:1942
 msgid "PayPal Order Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1932
+#: includes/Core/I18n.php:1943
 msgid "PayPal Currency Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1933
+#: includes/Core/I18n.php:1944
 msgid "PayPal Generic Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1934
+#: includes/Core/I18n.php:1945
 msgid "Missing Order ID Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1935
+#: includes/Core/I18n.php:1946
 msgid "PayPal Capture Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1936
+#: includes/Core/I18n.php:1947
 msgid "Payment Already Processed Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1937
+#: includes/Core/I18n.php:1948
 msgid "Payment Declined Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1938
+#: includes/Core/I18n.php:1949
 msgid "Stripe Intent Missing Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1939
+#: includes/Core/I18n.php:1950
 msgid "PayPal ID Missing Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1940
+#: includes/Core/I18n.php:1951
 msgid "Payment Required Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1941
+#: includes/Core/I18n.php:1952
 msgid "REST Pro Access Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1942
+#: includes/Core/I18n.php:1953
 msgid "API Rate Limit Error"
 msgstr ""
 
 #. translators: %d: minimum number of nights
-#: includes/Core/I18n.php:1944
+#: includes/Core/I18n.php:1955
 #, php-format
 msgid "Minimum stay is %d nights."
 msgstr ""
 
 #. translators: %d: maximum number of nights
-#: includes/Core/I18n.php:1946
+#: includes/Core/I18n.php:1957
 #, php-format
 msgid "Maximum stay is %d nights."
 msgstr ""
 
 #. translators: %s: earliest valid checkout date (e.g. "May 29")
-#: includes/Core/I18n.php:1948
+#: includes/Core/I18n.php:1959
 #, php-format
 msgid "Please select %s or later as your check-out date."
 msgstr ""
 
 #. translators: %s: latest valid checkout date (e.g. "Jun 2")
-#: includes/Core/I18n.php:1950
+#: includes/Core/I18n.php:1961
 #, php-format
 msgid "Please select %s or earlier as your check-out date."
 msgstr ""
 
 #. translators: %d: minimum number of nights (shown in hover tooltip)
-#: includes/Core/I18n.php:1952
+#: includes/Core/I18n.php:1963
 #, php-format
 msgid "⚠ Min stay: %d nights"
 msgstr ""
 
 #. translators: %d: maximum number of nights (shown in hover tooltip)
-#: includes/Core/I18n.php:1954
+#: includes/Core/I18n.php:1965
 #, php-format
 msgid "⚠ Max stay: %d nights"
 msgstr ""
 
-#: includes/Core/I18n.php:1955
+#: includes/Core/I18n.php:1966
 msgid "Something went wrong. Please try again."
 msgstr ""
 
-#: includes/Core/I18n.php:1956
+#: includes/Core/I18n.php:1967
 msgid "Security check failed. Please refresh the page and try again."
 msgstr ""
 
-#: includes/Core/I18n.php:1957
+#: includes/Core/I18n.php:1968
 msgid "A network error occurred. Please check your connection and try again."
 msgstr ""
 
-#: includes/Core/I18n.php:1958
+#: includes/Core/I18n.php:1969
 msgid "Email: Payment Confirmation Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1959
+#: includes/Core/I18n.php:1970
 msgid "Email: Payment Info Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1960
+#: includes/Core/I18n.php:1971
 msgid "Email: Pay on Arrival Detail"
 msgstr ""
 
-#: includes/Core/I18n.php:1961
+#: includes/Core/I18n.php:1972
 msgid "Email: Amount Due Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1962
+#: includes/Core/I18n.php:1973
 msgid "Email: Payment Date Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1963
+#: includes/Core/I18n.php:1974
 msgid "PayPal Order Creation Failed"
 msgstr ""
 
-#: includes/Core/I18n.php:1964
+#: includes/Core/I18n.php:1975
 msgid "Security Verification Failed"
 msgstr ""
 
-#: includes/Core/I18n.php:1965
+#: includes/Core/I18n.php:1976
 msgid "PayPal Client ID Missing"
 msgstr ""
 
-#: includes/Core/I18n.php:1966
+#: includes/Core/I18n.php:1977
 msgid "PayPal Secret Missing"
 msgstr ""
 
-#: includes/Core/I18n.php:1967
+#: includes/Core/I18n.php:1978
 msgid "API Key Not Configured"
 msgstr ""
 
-#: includes/Core/I18n.php:1968
+#: includes/Core/I18n.php:1979
 msgid "Invalid API Key"
 msgstr ""
 
-#: includes/Core/I18n.php:1969
+#: includes/Core/I18n.php:1980
 msgid "Webhook Signature Required"
 msgstr ""
 
-#: includes/Core/I18n.php:1970
+#: includes/Core/I18n.php:1981
 msgid "Stripe Webhook Secret Missing"
 msgstr ""
 
-#: includes/Core/I18n.php:1971
+#: includes/Core/I18n.php:1982
 msgid "Invalid Stripe Signature Format"
 msgstr ""
 
-#: includes/Core/I18n.php:1972
+#: includes/Core/I18n.php:1983
 msgid "Webhook Expired"
 msgstr ""
 
-#: includes/Core/I18n.php:1973
+#: includes/Core/I18n.php:1984
 msgid "Invalid Stripe Signature"
 msgstr ""
 
-#: includes/Core/I18n.php:1974
+#: includes/Core/I18n.php:1985
 msgid "Missing PayPal Headers"
 msgstr ""
 
-#: includes/Core/I18n.php:1975
+#: includes/Core/I18n.php:1986
 msgid "Invalid Customer Data"
 msgstr ""
 
-#: includes/Core/I18n.php:1976
+#: includes/Core/I18n.php:1987
 msgid "Invalid Booking Dates"
 msgstr ""
 
-#: includes/Core/I18n.php:1977
+#: includes/Core/I18n.php:1988
 msgid "Booking Creation Failed"
 msgstr ""
 
-#: includes/Core/I18n.php:1978
+#: includes/Core/I18n.php:1989
 msgid "Permission Denied"
 msgstr ""
 
-#: includes/Core/I18n.php:1979
+#: includes/Core/I18n.php:1990
 msgid "Stripe PK Missing"
 msgstr ""
 
-#: includes/Core/I18n.php:1980
+#: includes/Core/I18n.php:1991
 msgid "Stripe SK Missing"
 msgstr ""
 
-#: includes/Core/I18n.php:1981
+#: includes/Core/I18n.php:1992
 msgid "Invalid Stripe PK Format"
 msgstr ""
 
-#: includes/Core/I18n.php:1982
+#: includes/Core/I18n.php:1993
 msgid "Credentials Space Warning"
 msgstr ""
 
-#: includes/Core/I18n.php:1983
+#: includes/Core/I18n.php:1994
 msgid "Sandbox/Live Mismatch Warning"
 msgstr ""
 
-#: includes/Core/I18n.php:1984
+#: includes/Core/I18n.php:1995
 msgid "Credentials Expired Warning"
 msgstr ""
 
-#: includes/Core/I18n.php:1985
+#: includes/Core/I18n.php:1996
 msgid "PayPal Success Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1986
+#: includes/Core/I18n.php:1997
 msgid "Stripe Success Message"
 msgstr ""
 
-#: includes/Core/I18n.php:1987
+#: includes/Core/I18n.php:1998
 msgid "Connection Failed Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1988
+#: includes/Core/I18n.php:1999
 msgid "Authentication Failed Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1989
+#: includes/Core/I18n.php:2000
 msgid "Common Causes Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1990
+#: includes/Core/I18n.php:2001
 msgid "Stripe Generic Error"
 msgstr ""
 
-#: includes/Core/I18n.php:1991
+#: includes/Core/I18n.php:2002
 msgid "Per Adult Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1992
+#: includes/Core/I18n.php:2003
 msgid "Per Child Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1993
+#: includes/Core/I18n.php:2004
 msgid "Per Person / Night Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1994
+#: includes/Core/I18n.php:2005
 msgid "Per Adult / Night Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1995
+#: includes/Core/I18n.php:2006
 msgid "Per Child / Night Text"
 msgstr ""
 
-#: includes/Core/I18n.php:1997
+#: includes/Core/I18n.php:2008
 msgid "Booking Summary Title"
 msgstr ""
 
-#: includes/Core/I18n.php:1998
+#: includes/Core/I18n.php:2009
 msgid "Accommodation Row Label"
 msgstr ""
 
-#: includes/Core/I18n.php:1999
+#: includes/Core/I18n.php:2010
 msgid "Extras Row Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2000
+#: includes/Core/I18n.php:2011
 msgid "Tax Breakdown Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2001
+#: includes/Core/I18n.php:2012
 msgid "Tax Total Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2002
+#: includes/Core/I18n.php:2013
 msgid "Tax Registration Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2003
+#: includes/Core/I18n.php:2014
 msgid "Includes Tax Suffix"
 msgstr ""
 
-#: includes/Core/I18n.php:2004
+#: includes/Core/I18n.php:2015
 msgid "Price Includes Tax Note"
 msgstr ""
 
-#: includes/Core/I18n.php:2005
+#: includes/Core/I18n.php:2016
 msgid "Tax Added at Checkout Note"
 msgstr ""
 
-#: includes/Core/I18n.php:2006
+#: includes/Core/I18n.php:2017
 msgid "Subtotal Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2007
+#: includes/Core/I18n.php:2018
 msgid "Room Column Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2008
+#: includes/Core/I18n.php:2019
 msgid "Extras Column Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2009
+#: includes/Core/I18n.php:2020
 msgid "Item Column Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2010
+#: includes/Core/I18n.php:2021
 msgid "Amount Column Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2011
+#: includes/Core/I18n.php:2022
 msgid "Tax Accommodation Rate Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2012
+#: includes/Core/I18n.php:2023
 msgid "Tax Extras Rate Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2013
+#: includes/Core/I18n.php:2024
 msgid "Generic Tax Rate Label"
 msgstr ""
 
 #. translators: %s: tax label (e.g. "VAT")
-#: includes/Core/I18n.php:2015
+#: includes/Core/I18n.php:2026
 #, php-format
 msgid "Tax Note (includes %s)"
 msgstr ""
 
 #. translators: %s: tax label (e.g. "VAT")
-#: includes/Core/I18n.php:2017
+#: includes/Core/I18n.php:2028
 #, php-format
 msgid "Tax Note (plus %s)"
 msgstr ""
 
 #. translators: 1: tax label, 2: accommodation tax rate percentage, 3: extras tax rate percentage
-#: includes/Core/I18n.php:2019
+#: includes/Core/I18n.php:2030
 #, php-format
 msgid "Tax Note Multi (includes %1$s: %2$s%% / %3$s%%)"
 msgstr ""
 
 #. translators: 1: tax label, 2: accommodation tax rate percentage, 3: extras tax rate percentage
-#: includes/Core/I18n.php:2021
+#: includes/Core/I18n.php:2032
 #, php-format
 msgid "Tax Note Multi (plus %1$s: %2$s%% / %3$s%%)"
 msgstr ""
 
-#: includes/Core/I18n.php:2030
+#: includes/Core/I18n.php:2041
 msgid "Manual booking added by admin."
 msgstr ""
 
-#: includes/Core/I18n.php:2033
+#: includes/Core/I18n.php:2044
 msgid "Field ID (slug)"
 msgstr ""
 
-#: includes/Core/I18n.php:2034
+#: includes/Core/I18n.php:2045
 msgctxt "setting category"
 msgid "Type"
 msgstr ""
 
-#: includes/Core/I18n.php:2035
+#: includes/Core/I18n.php:2046
 msgctxt "input type"
 msgid "Text"
 msgstr ""
 
-#: includes/Core/I18n.php:2036
+#: includes/Core/I18n.php:2047
 msgid "Number"
 msgstr ""
 
-#: includes/Core/I18n.php:2037
+#: includes/Core/I18n.php:2048
 msgid "Textarea"
 msgstr ""
 
-#: includes/Core/I18n.php:2038
+#: includes/Core/I18n.php:2049
 msgid "Label (Multilingual)"
 msgstr ""
 
-#: includes/Core/I18n.php:2039
+#: includes/Core/I18n.php:2050
 msgid "Required Field"
 msgstr ""
 
-#: includes/Core/I18n.php:2040
+#: includes/Core/I18n.php:2051
 msgid "+ Add New Guest Field"
 msgstr ""
 
-#: includes/Core/I18n.php:2041
+#: includes/Core/I18n.php:2052
 msgid "Define extra fields for your booking form. Labels support multilingual tags."
 msgstr ""
 
-#: includes/Core/I18n.php:2043
+#: includes/Core/I18n.php:2054
 msgid "Theme reset to default successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2044
+#: includes/Core/I18n.php:2055
 msgid "Active Theme"
 msgstr ""
 
-#: includes/Core/I18n.php:2045
-#: includes/Core/I18n.php:2406
+#: includes/Core/I18n.php:2056
+#: includes/Core/I18n.php:2417
 msgid "Custom Branding"
 msgstr ""
 
 #. translators: %s: plugin version number (e.g. "2.1.0")
-#: includes/Core/I18n.php:2048
+#: includes/Core/I18n.php:2059
 #, php-format
 msgid "Version %s Updates"
 msgstr ""
 
-#: includes/Core/I18n.php:2049
+#: includes/Core/I18n.php:2060
 msgid "View Full Changelog →"
 msgstr ""
 
-#: includes/Core/I18n.php:2050
+#: includes/Core/I18n.php:2061
 msgid "Please check the plugin readme.txt for the latest updates."
 msgstr ""
 
-#: includes/Core/I18n.php:2052
-#: includes/Core/I18n.php:2200
-#: includes/Core/I18n.php:2812
+#: includes/Core/I18n.php:2063
+#: includes/Core/I18n.php:2211
+#: includes/Core/I18n.php:2823
 msgid "Payment Processing"
 msgstr ""
 
-#: includes/Core/I18n.php:2053
-#: includes/Core/I18n.php:2201
-#: includes/Core/I18n.php:2825
+#: includes/Core/I18n.php:2064
+#: includes/Core/I18n.php:2212
+#: includes/Core/I18n.php:2836
 msgid "Tax Management"
 msgstr ""
 
-#: includes/Core/I18n.php:2058
-#: includes/Core/I18n.php:2059
+#: includes/Core/I18n.php:2069
+#: includes/Core/I18n.php:2070
 msgid "Configure"
 msgstr ""
 
-#: includes/Core/I18n.php:2060
-#: includes/Core/I18n.php:2061
+#: includes/Core/I18n.php:2071
+#: includes/Core/I18n.php:2072
 msgctxt "action"
 msgid "View"
 msgstr ""
 
-#: includes/Core/I18n.php:2062
+#: includes/Core/I18n.php:2073
 msgctxt "action"
 msgid "Edit"
 msgstr ""
 
-#: includes/Core/I18n.php:2066
+#: includes/Core/I18n.php:2077
 msgid "Add New"
 msgstr ""
 
-#: includes/Core/I18n.php:2067
-#: includes/Core/I18n.php:2684
+#: includes/Core/I18n.php:2078
+#: includes/Core/I18n.php:2695
 msgid "Update"
 msgstr ""
 
-#: includes/Core/I18n.php:2068
-#: includes/Core/I18n.php:2548
+#: includes/Core/I18n.php:2079
+#: includes/Core/I18n.php:2559
 msgctxt "action"
 msgid "Copy"
 msgstr ""
 
-#: includes/Core/I18n.php:2069
+#: includes/Core/I18n.php:2080
 msgid "Duplicate"
 msgstr ""
 
-#: includes/Core/I18n.php:2070
+#: includes/Core/I18n.php:2081
 msgid "Search"
 msgstr ""
 
-#: includes/Core/I18n.php:2071
+#: includes/Core/I18n.php:2082
 msgid "Filter"
 msgstr ""
 
-#: includes/Core/I18n.php:2072
+#: includes/Core/I18n.php:2083
 msgctxt "action"
 msgid "Reset"
 msgstr ""
 
-#: includes/Core/I18n.php:2073
+#: includes/Core/I18n.php:2084
 msgctxt "selection"
 msgid "All"
 msgstr ""
 
-#: includes/Core/I18n.php:2076
+#: includes/Core/I18n.php:2087
 msgctxt "status"
 msgid "Inactive"
 msgstr ""
 
-#: includes/Core/I18n.php:2077
+#: includes/Core/I18n.php:2088
 msgctxt "status"
 msgid "Enabled"
 msgstr ""
 
-#: includes/Core/I18n.php:2078
+#: includes/Core/I18n.php:2089
 msgctxt "status"
 msgid "Disabled"
 msgstr ""
 
-#: includes/Core/I18n.php:2081
+#: includes/Core/I18n.php:2092
 msgctxt "toggle"
 msgid "On"
 msgstr ""
 
-#: includes/Core/I18n.php:2082
+#: includes/Core/I18n.php:2093
 msgctxt "toggle"
 msgid "Off"
 msgstr ""
 
-#: includes/Core/I18n.php:2085
+#: includes/Core/I18n.php:2096
 msgid "Monday"
 msgstr ""
 
-#: includes/Core/I18n.php:2086
+#: includes/Core/I18n.php:2097
 msgid "Tuesday"
 msgstr ""
 
-#: includes/Core/I18n.php:2087
+#: includes/Core/I18n.php:2098
 msgid "Wednesday"
 msgstr ""
 
-#: includes/Core/I18n.php:2088
+#: includes/Core/I18n.php:2099
 msgid "Thursday"
 msgstr ""
 
-#: includes/Core/I18n.php:2089
+#: includes/Core/I18n.php:2100
 msgid "Friday"
 msgstr ""
 
-#: includes/Core/I18n.php:2090
+#: includes/Core/I18n.php:2101
 msgid "Saturday"
 msgstr ""
 
-#: includes/Core/I18n.php:2091
-msgid "Sunday"
-msgstr ""
-
-#: includes/Core/I18n.php:2092
-msgctxt "month name"
-msgid "January"
-msgstr ""
-
-#: includes/Core/I18n.php:2093
-msgctxt "month name"
-msgid "February"
-msgstr ""
-
-#: includes/Core/I18n.php:2094
-msgctxt "month name"
-msgid "March"
-msgstr ""
-
-#: includes/Core/I18n.php:2095
-msgctxt "month name"
-msgid "April"
-msgstr ""
-
-#: includes/Core/I18n.php:2096
-msgctxt "month name"
-msgid "May"
-msgstr ""
-
-#: includes/Core/I18n.php:2097
-msgctxt "month name"
-msgid "June"
-msgstr ""
-
-#: includes/Core/I18n.php:2098
-msgctxt "month name"
-msgid "July"
-msgstr ""
-
-#: includes/Core/I18n.php:2099
-msgctxt "month name"
-msgid "August"
-msgstr ""
-
-#: includes/Core/I18n.php:2100
-msgctxt "month name"
-msgid "September"
-msgstr ""
-
-#: includes/Core/I18n.php:2101
-msgctxt "month name"
-msgid "October"
-msgstr ""
-
 #: includes/Core/I18n.php:2102
-msgctxt "month name"
-msgid "November"
+msgid "Sunday"
 msgstr ""
 
 #: includes/Core/I18n.php:2103
 msgctxt "month name"
-msgid "December"
+msgid "January"
+msgstr ""
+
+#: includes/Core/I18n.php:2104
+msgctxt "month name"
+msgid "February"
+msgstr ""
+
+#: includes/Core/I18n.php:2105
+msgctxt "month name"
+msgid "March"
 msgstr ""
 
 #: includes/Core/I18n.php:2106
-msgctxt "table column header"
-msgid "Name"
+msgctxt "month name"
+msgid "April"
 msgstr ""
 
 #: includes/Core/I18n.php:2107
-msgctxt "table column header"
-msgid "Email"
+msgctxt "month name"
+msgid "May"
 msgstr ""
 
 #: includes/Core/I18n.php:2108
-msgctxt "table column header"
-msgid "Phone"
+msgctxt "month name"
+msgid "June"
 msgstr ""
 
 #: includes/Core/I18n.php:2109
-msgctxt "table column header"
-msgid "Method"
+msgctxt "month name"
+msgid "July"
 msgstr ""
 
 #: includes/Core/I18n.php:2110
-#: includes/Core/I18n.php:2659
-msgctxt "table column header"
-msgid "Room"
+msgctxt "month name"
+msgid "August"
 msgstr ""
 
 #: includes/Core/I18n.php:2111
-msgctxt "table column header"
-msgid "Item"
+msgctxt "month name"
+msgid "September"
 msgstr ""
 
 #: includes/Core/I18n.php:2112
-msgctxt "table column header"
-msgid "Tax"
+msgctxt "month name"
+msgid "October"
 msgstr ""
 
 #: includes/Core/I18n.php:2113
-#: includes/Core/I18n.php:2453
-msgid "Modern Hotel Booking"
+msgctxt "month name"
+msgid "November"
 msgstr ""
 
 #: includes/Core/I18n.php:2114
-msgctxt "table column header"
-msgid "Type"
-msgstr ""
-
-#: includes/Core/I18n.php:2115
-msgctxt "table column header"
-msgid "Check-in"
-msgstr ""
-
-#: includes/Core/I18n.php:2116
-msgctxt "table column header"
-msgid "Check-out"
+msgctxt "month name"
+msgid "December"
 msgstr ""
 
 #: includes/Core/I18n.php:2117
 msgctxt "table column header"
-msgid "Nights"
+msgid "Name"
 msgstr ""
 
 #: includes/Core/I18n.php:2118
 msgctxt "table column header"
-msgid "Guests"
+msgid "Email"
 msgstr ""
 
 #: includes/Core/I18n.php:2119
 msgctxt "table column header"
-msgid "Created"
+msgid "Phone"
+msgstr ""
+
+#: includes/Core/I18n.php:2120
+msgctxt "table column header"
+msgid "Method"
+msgstr ""
+
+#: includes/Core/I18n.php:2121
+#: includes/Core/I18n.php:2670
+msgctxt "table column header"
+msgid "Room"
+msgstr ""
+
+#: includes/Core/I18n.php:2122
+msgctxt "table column header"
+msgid "Item"
 msgstr ""
 
 #: includes/Core/I18n.php:2123
-msgid "Support & Documentation"
+msgctxt "table column header"
+msgid "Tax"
 msgstr ""
 
 #: includes/Core/I18n.php:2124
-msgid "Need help with your setup? Check our resources below."
+#: includes/Core/I18n.php:2464
+msgid "Modern Hotel Booking"
 msgstr ""
 
 #: includes/Core/I18n.php:2125
-msgid "Official Documentation"
+msgctxt "table column header"
+msgid "Type"
 msgstr ""
 
 #: includes/Core/I18n.php:2126
-msgid "Open Support Ticket"
+msgctxt "table column header"
+msgid "Check-in"
 msgstr ""
 
 #: includes/Core/I18n.php:2127
-msgid "Version"
+msgctxt "table column header"
+msgid "Check-out"
 msgstr ""
 
 #: includes/Core/I18n.php:2128
-msgid "License"
+msgctxt "table column header"
+msgid "Nights"
 msgstr ""
 
 #: includes/Core/I18n.php:2129
+msgctxt "table column header"
+msgid "Guests"
+msgstr ""
+
+#: includes/Core/I18n.php:2130
+msgctxt "table column header"
+msgid "Created"
+msgstr ""
+
+#: includes/Core/I18n.php:2134
+msgid "Support & Documentation"
+msgstr ""
+
+#: includes/Core/I18n.php:2135
+msgid "Need help with your setup? Check our resources below."
+msgstr ""
+
+#: includes/Core/I18n.php:2136
+msgid "Official Documentation"
+msgstr ""
+
+#: includes/Core/I18n.php:2137
+msgid "Open Support Ticket"
+msgstr ""
+
+#: includes/Core/I18n.php:2138
+msgid "Version"
+msgstr ""
+
+#: includes/Core/I18n.php:2139
+msgid "License"
+msgstr ""
+
+#: includes/Core/I18n.php:2140
 msgid "System Stats"
 msgstr ""
 
 #. translators: 1: placeholder example %s, 2: placeholder example %d
-#: includes/Core/I18n.php:2133
+#: includes/Core/I18n.php:2144
 #, php-format
 msgid "Leave a field empty to use the default English text for that language. Use %1$s or %2$d as placeholders where they appear in the default text."
 msgstr ""
 
-#: includes/Core/I18n.php:2134
-#: includes/Core/I18n.php:2844
+#: includes/Core/I18n.php:2145
+#: includes/Core/I18n.php:2855
 msgid "Multilingual settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2136
-#: includes/Core/I18n.php:2845
+#: includes/Core/I18n.php:2147
+#: includes/Core/I18n.php:2856
 msgid "General settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2137
+#: includes/Core/I18n.php:2148
 msgid "Theme settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2138
+#: includes/Core/I18n.php:2149
 msgid "Invalid currency code."
 msgstr ""
 
-#: includes/Core/I18n.php:2141
+#: includes/Core/I18n.php:2152
 msgid "Amenities settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2143
+#: includes/Core/I18n.php:2154
 msgid "API settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2148
+#: includes/Core/I18n.php:2159
 msgid "Deposits settings saved successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2151
+#: includes/Core/I18n.php:2162
 msgid "Global Stay Limits"
 msgstr ""
 
-#: includes/Core/I18n.php:2152
+#: includes/Core/I18n.php:2163
 msgid "Min Nights"
 msgstr ""
 
-#: includes/Core/I18n.php:2153
+#: includes/Core/I18n.php:2164
 msgid "Max Nights"
 msgstr ""
 
-#: includes/Core/I18n.php:2154
+#: includes/Core/I18n.php:2165
 msgid "Default minimum and maximum stay length in nights. Enter 0 to disable. Per-room and per-type calendar overrides always take priority. Use Admin Calendar → Bulk Update for seasonal rules (e.g. 7-night minimum in August)."
 msgstr ""
 
-#: includes/Core/I18n.php:2158
+#: includes/Core/I18n.php:2169
 msgid "Unavailable"
 msgstr ""
 
-#: includes/Core/I18n.php:2159
+#: includes/Core/I18n.php:2170
 msgid "Maintenance"
 msgstr ""
 
-#: includes/Core/I18n.php:2162
+#: includes/Core/I18n.php:2173
 msgid "Shortcode Setup Guide"
 msgstr ""
 
-#: includes/Core/I18n.php:2163
+#: includes/Core/I18n.php:2174
 msgid "Single-room property: Use [mhbo_room_calendar room_id=\"X\"] to display availability for a specific room. Replace X with the Room ID from the table below."
 msgstr ""
 
-#: includes/Core/I18n.php:2164
+#: includes/Core/I18n.php:2175
 msgid "Multi-room property: Use [modern_hotel_booking] to display a search form that shows availability across all room types."
 msgstr ""
 
-#: includes/Core/I18n.php:2165
+#: includes/Core/I18n.php:2176
 msgid "Your Configured Rooms"
 msgstr ""
 
-#: includes/Core/I18n.php:2166
-#: includes/Core/I18n.php:2462
+#: includes/Core/I18n.php:2177
+#: includes/Core/I18n.php:2473
 #: assets/block/room-calendar/block.js:46
 msgid "Room ID"
 msgstr ""
 
-#: includes/Core/I18n.php:2169
-#: includes/Core/I18n.php:2286
+#: includes/Core/I18n.php:2180
+#: includes/Core/I18n.php:2297
 msgid "Shortcode"
 msgstr ""
 
-#: includes/Core/I18n.php:2170
+#: includes/Core/I18n.php:2181
 msgid "No rooms configured yet. Add rooms via the Rooms menu."
 msgstr ""
 
-#: includes/Core/I18n.php:2177
-#: includes/Core/I18n.php:2656
+#: includes/Core/I18n.php:2188
+#: includes/Core/I18n.php:2667
 #: includes/Pro/CouponAdmin.php:83
 msgid "Save Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:2181
+#: includes/Core/I18n.php:2192
 msgid "Help & Support"
 msgstr ""
 
-#: includes/Core/I18n.php:2186
+#: includes/Core/I18n.php:2197
 msgid "Unlock this feature and many more with a Pro license. Get access to payment processing, VAT/TAX management, analytics, and more."
 msgstr ""
 
-#: includes/Core/I18n.php:2194
+#: includes/Core/I18n.php:2205
 msgid "Configure Payment Gateways"
 msgstr ""
 
-#: includes/Core/I18n.php:2195
+#: includes/Core/I18n.php:2206
 msgid "Set Up Tax Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:2197
+#: includes/Core/I18n.php:2208
 msgid "Manage iCal Feeds"
 msgstr ""
 
-#: includes/Core/I18n.php:2206
+#: includes/Core/I18n.php:2217
 msgctxt "status label"
 msgid "New"
 msgstr ""
 
-#: includes/Core/I18n.php:2207
-#: includes/Core/I18n.php:2820
+#: includes/Core/I18n.php:2218
+#: includes/Core/I18n.php:2831
 msgid "Coming Soon"
 msgstr ""
 
-#: includes/Core/I18n.php:2211
-#: includes/Core/I18n.php:2813
+#: includes/Core/I18n.php:2222
+#: includes/Core/I18n.php:2824
 msgid "Stripe Integration"
 msgstr ""
 
-#: includes/Core/I18n.php:2212
-#: includes/Core/I18n.php:2814
+#: includes/Core/I18n.php:2223
+#: includes/Core/I18n.php:2825
 msgid "Accept payments with Stripe including Apple Pay, Google Pay, and link support."
 msgstr ""
 
-#: includes/Core/I18n.php:2213
-#: includes/Core/I18n.php:2815
+#: includes/Core/I18n.php:2224
+#: includes/Core/I18n.php:2826
 msgid "PayPal Integration"
 msgstr ""
 
-#: includes/Core/I18n.php:2214
-#: includes/Core/I18n.php:2816
+#: includes/Core/I18n.php:2225
+#: includes/Core/I18n.php:2827
 msgid "Accept PayPal payments with automatic webhook verification and status updates."
 msgstr ""
 
-#: includes/Core/I18n.php:2215
-#: includes/Core/I18n.php:2817
+#: includes/Core/I18n.php:2226
+#: includes/Core/I18n.php:2828
 msgid "Invoicing System"
 msgstr ""
 
-#: includes/Core/I18n.php:2216
+#: includes/Core/I18n.php:2227
 msgid "Professional PDF invoices generated automatically."
 msgstr ""
 
-#: includes/Core/I18n.php:2217
-#: includes/Core/I18n.php:2821
+#: includes/Core/I18n.php:2228
+#: includes/Core/I18n.php:2832
 msgid "Partial Payments"
 msgstr ""
 
-#: includes/Core/I18n.php:2218
-#: includes/Core/I18n.php:2822
+#: includes/Core/I18n.php:2229
+#: includes/Core/I18n.php:2833
 msgid "Accept deposits or split payments. Complete control over payment thresholds."
 msgstr ""
 
-#: includes/Core/I18n.php:2221
+#: includes/Core/I18n.php:2232
 msgctxt "table column header"
 msgid "API Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2222
+#: includes/Core/I18n.php:2233
 msgid "Generate New Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2224
+#: includes/Core/I18n.php:2235
 msgid "Webhook Secret (HMAC)"
 msgstr ""
 
-#: includes/Core/I18n.php:2225
+#: includes/Core/I18n.php:2236
 msgid "Enter secret for validation"
 msgstr ""
 
-#: includes/Core/I18n.php:2226
+#: includes/Core/I18n.php:2237
 msgid "Debug Logging"
 msgstr ""
 
-#: includes/Core/I18n.php:2227
-#: includes/Core/I18n.php:2458
-#: includes/Core/I18n.php:2828
+#: includes/Core/I18n.php:2238
+#: includes/Core/I18n.php:2469
+#: includes/Core/I18n.php:2839
 msgid "Business Information"
 msgstr ""
 
-#: includes/Core/I18n.php:2228
+#: includes/Core/I18n.php:2239
 msgid "Configure your company details, contact info, and payment methods. All fields are optional."
 msgstr ""
 
-#: includes/Core/I18n.php:2229
+#: includes/Core/I18n.php:2240
 msgid "Company"
 msgstr ""
 
-#: includes/Core/I18n.php:2231
+#: includes/Core/I18n.php:2242
 msgid "Bank Transfer"
 msgstr ""
 
-#: includes/Core/I18n.php:2232
+#: includes/Core/I18n.php:2243
 msgid "Revolut"
 msgstr ""
 
-#: includes/Core/I18n.php:2233
+#: includes/Core/I18n.php:2244
 msgid "Shortcodes & Blocks"
 msgstr ""
 
-#: includes/Core/I18n.php:2235
+#: includes/Core/I18n.php:2246
 msgid "Company Name"
 msgstr ""
 
-#: includes/Core/I18n.php:2236
+#: includes/Core/I18n.php:2247
 msgid "Contact Name"
 msgstr ""
 
-#: includes/Core/I18n.php:2237
+#: includes/Core/I18n.php:2248
 msgid "Address Line 1"
 msgstr ""
 
-#: includes/Core/I18n.php:2238
+#: includes/Core/I18n.php:2249
 msgid "Address Line 2"
 msgstr ""
 
-#: includes/Core/I18n.php:2239
+#: includes/Core/I18n.php:2250
 msgctxt "customer detail"
 msgid "City"
 msgstr ""
 
-#: includes/Core/I18n.php:2240
+#: includes/Core/I18n.php:2251
 msgid "State / Region"
 msgstr ""
 
-#: includes/Core/I18n.php:2241
+#: includes/Core/I18n.php:2252
 msgid "Postcode / ZIP"
 msgstr ""
 
-#: includes/Core/I18n.php:2242
+#: includes/Core/I18n.php:2253
 msgid "Country"
 msgstr ""
 
-#: includes/Core/I18n.php:2243
+#: includes/Core/I18n.php:2254
 msgid "Telephone"
 msgstr ""
 
-#: includes/Core/I18n.php:2245
+#: includes/Core/I18n.php:2256
 msgid "Website URL"
 msgstr ""
 
-#: includes/Core/I18n.php:2246
+#: includes/Core/I18n.php:2257
 msgid "Tax / VAT ID"
 msgstr ""
 
-#: includes/Core/I18n.php:2247
+#: includes/Core/I18n.php:2258
 msgid "Registration No."
 msgstr ""
 
-#: includes/Core/I18n.php:2248
+#: includes/Core/I18n.php:2259
 msgid "Company Logo"
 msgstr ""
 
-#: includes/Core/I18n.php:2249
+#: includes/Core/I18n.php:2260
 msgid "Select Logo"
 msgstr ""
 
-#: includes/Core/I18n.php:2250
+#: includes/Core/I18n.php:2261
 msgid "Enable WhatsApp"
 msgstr ""
 
-#: includes/Core/I18n.php:2251
+#: includes/Core/I18n.php:2262
 msgid "Enable WhatsApp contact button"
 msgstr ""
 
-#: includes/Core/I18n.php:2252
+#: includes/Core/I18n.php:2263
 msgid "Phone Number"
 msgstr ""
 
-#: includes/Core/I18n.php:2253
+#: includes/Core/I18n.php:2264
 msgid "International format with country code."
 msgstr ""
 
-#: includes/Core/I18n.php:2254
+#: includes/Core/I18n.php:2265
 msgid "Default Message"
 msgstr ""
 
-#: includes/Core/I18n.php:2255
+#: includes/Core/I18n.php:2266
 msgid "Button Text"
 msgstr ""
 
-#: includes/Core/I18n.php:2256
+#: includes/Core/I18n.php:2267
 msgid "Display Style"
 msgstr ""
 
-#: includes/Core/I18n.php:2257
+#: includes/Core/I18n.php:2268
 msgid "Floating Position"
 msgstr ""
 
-#: includes/Core/I18n.php:2258
+#: includes/Core/I18n.php:2269
 msgid "Enable Bank Transfer"
 msgstr ""
 
-#: includes/Core/I18n.php:2259
+#: includes/Core/I18n.php:2270
 msgid "Show bank transfer details to guests"
 msgstr ""
 
-#: includes/Core/I18n.php:2260
+#: includes/Core/I18n.php:2271
 msgid "Bank Name"
 msgstr ""
 
-#: includes/Core/I18n.php:2261
+#: includes/Core/I18n.php:2272
 msgid "Account Holder Name"
 msgstr ""
 
-#: includes/Core/I18n.php:2262
+#: includes/Core/I18n.php:2273
 msgid "Account Number"
 msgstr ""
 
-#: includes/Core/I18n.php:2263
+#: includes/Core/I18n.php:2274
 msgctxt "financial detail"
 msgid "IBAN"
 msgstr ""
 
-#: includes/Core/I18n.php:2264
+#: includes/Core/I18n.php:2275
 msgid "SWIFT / BIC"
 msgstr ""
 
-#: includes/Core/I18n.php:2265
+#: includes/Core/I18n.php:2276
 msgid "Sort Code"
 msgstr ""
 
-#: includes/Core/I18n.php:2266
+#: includes/Core/I18n.php:2277
 msgid "Branch Address"
 msgstr ""
 
-#: includes/Core/I18n.php:2267
+#: includes/Core/I18n.php:2278
 msgid "Reference Prefix"
 msgstr ""
 
-#: includes/Core/I18n.php:2268
+#: includes/Core/I18n.php:2279
 msgid "e.g. \"BOOKING-\" produces \"BOOKING-1234\"."
 msgstr ""
 
-#: includes/Core/I18n.php:2269
-#: includes/Core/I18n.php:2278
+#: includes/Core/I18n.php:2280
+#: includes/Core/I18n.php:2289
 msgid "Payment Instructions"
 msgstr ""
 
-#: includes/Core/I18n.php:2270
+#: includes/Core/I18n.php:2281
 msgid "Enable Revolut"
 msgstr ""
 
-#: includes/Core/I18n.php:2271
+#: includes/Core/I18n.php:2282
 msgid "Show Revolut payment option"
 msgstr ""
 
-#: includes/Core/I18n.php:2272
+#: includes/Core/I18n.php:2283
 msgid "Revolut Name"
 msgstr ""
 
-#: includes/Core/I18n.php:2273
+#: includes/Core/I18n.php:2284
 msgid "Revolut Tag"
 msgstr ""
 
-#: includes/Core/I18n.php:2274
+#: includes/Core/I18n.php:2285
 msgid "Revolut IBAN"
 msgstr ""
 
-#: includes/Core/I18n.php:2275
+#: includes/Core/I18n.php:2286
 msgid "Revolut.me Link"
 msgstr ""
 
-#: includes/Core/I18n.php:2276
+#: includes/Core/I18n.php:2287
 msgid "QR Code"
 msgstr ""
 
-#: includes/Core/I18n.php:2277
+#: includes/Core/I18n.php:2288
 msgid "Select QR Code"
 msgstr ""
 
-#: includes/Core/I18n.php:2280
+#: includes/Core/I18n.php:2291
 #: assets/block/whatsapp-button/block.js:36
 msgid "Inline Button"
 msgstr ""
 
-#: includes/Core/I18n.php:2281
+#: includes/Core/I18n.php:2292
 #: assets/block/whatsapp-button/block.js:37
 msgid "Floating Button"
 msgstr ""
 
-#: includes/Core/I18n.php:2282
+#: includes/Core/I18n.php:2293
 #: assets/block/whatsapp-button/block.js:38
 msgid "Text Link"
 msgstr ""
 
-#: includes/Core/I18n.php:2287
+#: includes/Core/I18n.php:2298
 msgid "Attributes"
 msgstr ""
 
-#: includes/Core/I18n.php:2288
-#: includes/Core/I18n.php:2830
+#: includes/Core/I18n.php:2299
+#: includes/Core/I18n.php:2841
 msgid "WhatsApp Integration"
 msgstr ""
 
-#: includes/Core/I18n.php:2289
-#: includes/Core/I18n.php:2831
+#: includes/Core/I18n.php:2300
+#: includes/Core/I18n.php:2842
 msgid "Direct inquiry button and chat functionality for faster guest communication."
 msgstr ""
 
-#: includes/Core/I18n.php:2290
-#: includes/Core/I18n.php:2832
+#: includes/Core/I18n.php:2301
+#: includes/Core/I18n.php:2843
 msgid "Country-Specific VAT"
 msgstr ""
 
-#: includes/Core/I18n.php:2291
-#: includes/Core/I18n.php:2833
+#: includes/Core/I18n.php:2302
+#: includes/Core/I18n.php:2844
 msgid "Set different VAT rates per country for international guests."
 msgstr ""
 
-#: includes/Core/I18n.php:2292
-#: includes/Core/I18n.php:2834
+#: includes/Core/I18n.php:2303
+#: includes/Core/I18n.php:2845
 msgid "Tax Breakdown Display"
 msgstr ""
 
-#: includes/Core/I18n.php:2293
+#: includes/Core/I18n.php:2304
 msgid "Detailed tax display by item in booking confirmations."
 msgstr ""
 
-#: includes/Core/I18n.php:2294
-#: includes/Core/I18n.php:2837
+#: includes/Core/I18n.php:2305
+#: includes/Core/I18n.php:2848
 msgid "Seasonal Pricing"
 msgstr ""
 
-#: includes/Core/I18n.php:2295
-#: includes/Core/I18n.php:2838
+#: includes/Core/I18n.php:2306
+#: includes/Core/I18n.php:2849
 msgid "Set automated weekend and holiday multipliers for dynamic pricing."
 msgstr ""
 
-#: includes/Core/I18n.php:2297
+#: includes/Core/I18n.php:2308
 msgid "Offer guided tours, airport transfers, and local experiences."
 msgstr ""
 
-#: includes/Core/I18n.php:2299
+#: includes/Core/I18n.php:2310
 msgid "Bi-directional sync with platforms like Airbnb and Booking.com."
 msgstr ""
 
-#: includes/Core/I18n.php:2300
+#: includes/Core/I18n.php:2311
 msgid "Analytics Dashboard"
 msgstr ""
 
-#: includes/Core/I18n.php:2301
+#: includes/Core/I18n.php:2312
 msgid "Track occupancy rates and ADR (Average Daily Rate) trends."
 msgstr ""
 
-#: includes/Core/I18n.php:2302
+#: includes/Core/I18n.php:2313
 msgid "GDPR Compliance"
 msgstr ""
 
-#: includes/Core/I18n.php:2303
+#: includes/Core/I18n.php:2314
 msgid "Automated data retention and user consent management tools."
 msgstr ""
 
-#: includes/Core/I18n.php:2304
+#: includes/Core/I18n.php:2315
 msgid "Theme Customization"
 msgstr ""
 
-#: includes/Core/I18n.php:2305
+#: includes/Core/I18n.php:2316
 msgid "Designer presets and custom branding for the booking form."
 msgstr ""
 
-#: includes/Core/I18n.php:2307
+#: includes/Core/I18n.php:2318
 msgid "Native translation support and compatibility with WPML/Polylang."
 msgstr ""
 
-#: includes/Core/I18n.php:2309
+#: includes/Core/I18n.php:2320
 msgid "Full programmatic access for external integrations."
 msgstr ""
 
-#: includes/Core/I18n.php:2312
+#: includes/Core/I18n.php:2323
 msgid "The REST API allows external systems to query room availability and manage bookings. API base:"
 msgstr ""
 
-#: includes/Core/I18n.php:2313
+#: includes/Core/I18n.php:2324
 msgid "Include as X-MHBO-API-KEY header for authenticated endpoints (GET /bookings, etc.)."
 msgstr ""
 
-#: includes/Core/I18n.php:2314
+#: includes/Core/I18n.php:2325
 msgid "Receive a JSON POST for booking events: booking_created, booking_confirmed, booking_cancelled."
 msgstr ""
 
-#: includes/Core/I18n.php:2315
+#: includes/Core/I18n.php:2326
 msgid "Used to sign webhook payloads using HMAC-SHA256. Recommendation: Use a separate secret from your API key."
 msgstr ""
 
-#: includes/Core/I18n.php:2316
+#: includes/Core/I18n.php:2327
 msgid "Enable Debug Logging"
 msgstr ""
 
-#: includes/Core/I18n.php:2317
+#: includes/Core/I18n.php:2328
 msgid "Log outgoing deliveries (up to 50 entries). Disable this for slightly better performance if not debugging."
 msgstr ""
 
-#: includes/Core/I18n.php:2320
+#: includes/Core/I18n.php:2331
 msgid "Return to Default"
 msgstr ""
 
-#: includes/Core/I18n.php:2321
+#: includes/Core/I18n.php:2332
 msgid "Save Changes"
 msgstr ""
 
-#: includes/Core/I18n.php:2322
+#: includes/Core/I18n.php:2333
 msgid "Apply Theme"
 msgstr ""
 
-#: includes/Core/I18n.php:2323
+#: includes/Core/I18n.php:2334
 msgid "Reset all theme settings to default?"
 msgstr ""
 
-#: includes/Core/I18n.php:2329
+#: includes/Core/I18n.php:2340
 msgid "Holiday Pricing"
 msgstr ""
 
-#: includes/Core/I18n.php:2332
-#: includes/Core/I18n.php:2650
+#: includes/Core/I18n.php:2343
+#: includes/Core/I18n.php:2661
 msgid "Conflict Resolution"
 msgstr ""
 
-#: includes/Core/I18n.php:2333
+#: includes/Core/I18n.php:2344
 msgid "Define which days are considered weekends and set the adjustment."
 msgstr ""
 
-#: includes/Core/I18n.php:2334
+#: includes/Core/I18n.php:2345
 msgid "Add specific dates that should trigger holiday pricing."
 msgstr ""
 
-#: includes/Core/I18n.php:2335
+#: includes/Core/I18n.php:2346
 msgid "Multiplier (1.2 = +20%)"
 msgstr ""
 
-#: includes/Core/I18n.php:2336
+#: includes/Core/I18n.php:2347
 msgid "Percentage (20 = +20%)"
 msgstr ""
 
-#: includes/Core/I18n.php:2337
+#: includes/Core/I18n.php:2348
 msgid "Fixed Amount (20 = +$20)"
 msgstr ""
 
-#: includes/Core/I18n.php:2338
+#: includes/Core/I18n.php:2349
 msgid "Use larger of weekend vs holiday adjustment if they overlap"
 msgstr ""
 
-#: includes/Core/I18n.php:2345
+#: includes/Core/I18n.php:2356
 msgid "VAT Inclusive"
 msgstr ""
 
-#: includes/Core/I18n.php:2346
+#: includes/Core/I18n.php:2357
 msgid "Sales Tax Exclusive"
 msgstr ""
 
-#: includes/Core/I18n.php:2348
+#: includes/Core/I18n.php:2359
 msgid "Prices include tax (EU, UK, Australia). Shows breakdown: Net + Tax = Gross."
 msgstr ""
 
-#: includes/Core/I18n.php:2349
+#: includes/Core/I18n.php:2360
 msgid "Tax added on top of prices (US, Canada). Shows: Subtotal + Tax = Total."
 msgstr ""
 
-#: includes/Core/I18n.php:2350
+#: includes/Core/I18n.php:2361
 msgid "Tax Registration Number"
 msgstr ""
 
-#: includes/Core/I18n.php:2351
+#: includes/Core/I18n.php:2362
 msgid "Your VAT ID, GSTIN, or tax registration number. Displayed on invoices and receipts."
 msgstr ""
 
-#: includes/Core/I18n.php:2352
+#: includes/Core/I18n.php:2363
 msgid "Accommodation Tax Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:2353
+#: includes/Core/I18n.php:2364
 msgid "Tax rate for rooms and children charges. Example: 10 for 10%"
 msgstr ""
 
-#: includes/Core/I18n.php:2354
+#: includes/Core/I18n.php:2365
 msgid "Extras Tax Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:2355
+#: includes/Core/I18n.php:2366
 msgid "Tax rate for extras (add-ons like breakfast, transfers). Set same as accommodation if unsure."
 msgstr ""
 
-#: includes/Core/I18n.php:2356
+#: includes/Core/I18n.php:2367
 msgid "Display Options"
 msgstr ""
 
-#: includes/Core/I18n.php:2357
+#: includes/Core/I18n.php:2368
 msgid "Show tax breakdown on frontend booking form"
 msgstr ""
 
-#: includes/Core/I18n.php:2358
+#: includes/Core/I18n.php:2369
 msgid "Show tax breakdown in confirmation emails"
 msgstr ""
 
-#: includes/Core/I18n.php:2359
+#: includes/Core/I18n.php:2370
 msgid "Rounding Mode"
 msgstr ""
 
-#: includes/Core/I18n.php:2360
+#: includes/Core/I18n.php:2371
 msgid "Per Total (Recommended)"
 msgstr ""
 
-#: includes/Core/I18n.php:2361
+#: includes/Core/I18n.php:2372
 msgid "Per Line Item"
 msgstr ""
 
-#: includes/Core/I18n.php:2362
+#: includes/Core/I18n.php:2373
 msgid "Per Total: Round tax on final total. Per Line: Round each item's tax separately."
 msgstr ""
 
-#: includes/Core/I18n.php:2363
+#: includes/Core/I18n.php:2374
 msgid "Decimal Places"
 msgstr ""
 
-#: includes/Core/I18n.php:2364
+#: includes/Core/I18n.php:2375
 msgid "Number of decimal places for tax amounts (usually 2)."
 msgstr ""
 
-#: includes/Core/I18n.php:2365
+#: includes/Core/I18n.php:2376
 msgid "Tax Name"
 msgstr ""
 
-#: includes/Core/I18n.php:2366
-#: includes/Core/I18n.php:2381
+#: includes/Core/I18n.php:2377
+#: includes/Core/I18n.php:2392
 msgid "Number of days before check-in when the deposit becomes non-refundable (if not already marked as such)."
 msgstr ""
 
-#: includes/Core/I18n.php:2367
+#: includes/Core/I18n.php:2378
 msgid "Examples: VAT, GST, Sales Tax, IVA, MwSt, TVA"
 msgstr ""
 
-#: includes/Core/I18n.php:2370
+#: includes/Core/I18n.php:2381
 msgid "Deposit & Partial Payments"
 msgstr ""
 
-#: includes/Core/I18n.php:2371
+#: includes/Core/I18n.php:2382
 msgid "Configure how deposits and partial payments are handled during checkout."
 msgstr ""
 
-#: includes/Core/I18n.php:2372
+#: includes/Core/I18n.php:2383
 msgid "Enable Deposits"
 msgstr ""
 
-#: includes/Core/I18n.php:2373
+#: includes/Core/I18n.php:2384
 msgid "If enabled, guests can pay a deposit instead of the full amount at checkout."
 msgstr ""
 
-#: includes/Core/I18n.php:2374
+#: includes/Core/I18n.php:2385
 msgid "Deposit Type"
 msgstr ""
 
-#: includes/Core/I18n.php:2375
+#: includes/Core/I18n.php:2386
 msgid "Percentage of Total"
 msgstr ""
 
-#: includes/Core/I18n.php:2376
+#: includes/Core/I18n.php:2387
 #: includes/Pro/CouponAdmin.php:513
 msgid "Fixed Amount"
 msgstr ""
 
-#: includes/Core/I18n.php:2378
+#: includes/Core/I18n.php:2389
 msgid "Deposit Value"
 msgstr ""
 
-#: includes/Core/I18n.php:2379
+#: includes/Core/I18n.php:2390
 msgid "Non-Refundable"
 msgstr ""
 
-#: includes/Core/I18n.php:2380
+#: includes/Core/I18n.php:2391
 msgid "Mark this deposit as non-refundable in emails and checkout."
 msgstr ""
 
-#: includes/Core/I18n.php:2382
+#: includes/Core/I18n.php:2393
 msgid "days before check-in"
 msgstr ""
 
-#: includes/Core/I18n.php:2383
+#: includes/Core/I18n.php:2394
 msgid "Allow Guest Choice"
 msgstr ""
 
-#: includes/Core/I18n.php:2384
+#: includes/Core/I18n.php:2395
 msgid "If enabled, guests can choose between paying the deposit or the full amount."
 msgstr ""
 
-#: includes/Core/I18n.php:2387
+#: includes/Core/I18n.php:2398
 msgid "Manage the list of amenities available for rooms. Once added, you can translate them in the \\\"Frontend Labels\\\" tab."
 msgstr ""
 
-#: includes/Core/I18n.php:2388
-#: includes/Core/I18n.php:2874
+#: includes/Core/I18n.php:2399
+#: includes/Core/I18n.php:2885
 msgid "Add New Amenity"
 msgstr ""
 
-#: includes/Core/I18n.php:2389
+#: includes/Core/I18n.php:2400
 msgid "e.g. Hot Tub"
 msgstr ""
 
-#: includes/Core/I18n.php:2390
+#: includes/Core/I18n.php:2401
 msgid "Key (Internal)"
 msgstr ""
 
-#: includes/Core/I18n.php:2391
-#: includes/Core/I18n.php:2875
+#: includes/Core/I18n.php:2402
+#: includes/Core/I18n.php:2886
 msgid "No amenities found."
 msgstr ""
 
-#: includes/Core/I18n.php:2392
+#: includes/Core/I18n.php:2403
 msgid "Enable Object Caching"
 msgstr ""
 
-#: includes/Core/I18n.php:2393
+#: includes/Core/I18n.php:2404
 msgid "Clear Plugin Cache"
 msgstr ""
 
-#: includes/Core/I18n.php:2396
+#: includes/Core/I18n.php:2407
 msgid "Enter your license key to activate Pro features and receive automatic updates."
 msgstr ""
 
-#: includes/Core/I18n.php:2397
+#: includes/Core/I18n.php:2408
 msgid "Pro status activated successfully! Thank you for your support."
 msgstr ""
 
-#: includes/Core/I18n.php:2398
+#: includes/Core/I18n.php:2409
 msgid "License key updated. Please re-activate if necessary."
 msgstr ""
 
-#: includes/Core/I18n.php:2399
+#: includes/Core/I18n.php:2410
 msgid "License key removed and deactivated."
 msgstr ""
 
-#: includes/Core/I18n.php:2402
+#: includes/Core/I18n.php:2413
 msgid "Theme Presets"
 msgstr ""
 
-#: includes/Core/I18n.php:2403
+#: includes/Core/I18n.php:2414
 msgid "Choose a professional color palette for your booking frontend."
 msgstr ""
 
-#: includes/Core/I18n.php:2404
+#: includes/Core/I18n.php:2415
 msgid "Custom Theme"
 msgstr ""
 
-#: includes/Core/I18n.php:2405
+#: includes/Core/I18n.php:2416
 msgid "Define your own brand colors below."
 msgstr ""
 
-#: includes/Core/I18n.php:2407
+#: includes/Core/I18n.php:2418
 msgid "Primary Color"
 msgstr ""
 
-#: includes/Core/I18n.php:2408
+#: includes/Core/I18n.php:2419
 msgid "Secondary Color"
 msgstr ""
 
-#: includes/Core/I18n.php:2409
+#: includes/Core/I18n.php:2420
 msgid "Accent Color"
 msgstr ""
 
-#: includes/Core/I18n.php:2410
+#: includes/Core/I18n.php:2421
 msgid "Advanced Custom CSS"
 msgstr ""
 
-#: includes/Core/I18n.php:2411
+#: includes/Core/I18n.php:2422
 msgid "Inject additional CSS directly into the booking frontend."
 msgstr ""
 
-#: includes/Core/I18n.php:2412
+#: includes/Core/I18n.php:2423
 msgid "Midnight Coast"
 msgstr ""
 
-#: includes/Core/I18n.php:2413
+#: includes/Core/I18n.php:2424
 msgid "Our signature classic luxury look."
 msgstr ""
 
-#: includes/Core/I18n.php:2414
-#: includes/Core/I18n.php:2634
+#: includes/Core/I18n.php:2425
+#: includes/Core/I18n.php:2645
 msgid "Emerald Forest"
 msgstr ""
 
-#: includes/Core/I18n.php:2415
+#: includes/Core/I18n.php:2426
 msgid "Rich greens for nature-inspired properties."
 msgstr ""
 
-#: includes/Core/I18n.php:2416
-#: includes/Core/I18n.php:2636
+#: includes/Core/I18n.php:2427
+#: includes/Core/I18n.php:2647
 msgid "Oceanic Drift"
 msgstr ""
 
-#: includes/Core/I18n.php:2417
+#: includes/Core/I18n.php:2428
 msgid "Deep blues and bright highlights."
 msgstr ""
 
-#: includes/Core/I18n.php:2418
-#: includes/Core/I18n.php:2638
+#: includes/Core/I18n.php:2429
+#: includes/Core/I18n.php:2649
 msgid "Ruby Sunset"
 msgstr ""
 
-#: includes/Core/I18n.php:2419
+#: includes/Core/I18n.php:2430
 msgid "Warm tones for cozy boutiques."
 msgstr ""
 
-#: includes/Core/I18n.php:2420
+#: includes/Core/I18n.php:2431
 msgid "Urban Modern"
 msgstr ""
 
-#: includes/Core/I18n.php:2421
+#: includes/Core/I18n.php:2432
 msgid "Minimalist grays for city lofts."
 msgstr ""
 
-#: includes/Core/I18n.php:2422
+#: includes/Core/I18n.php:2433
 msgid "Lavender Breeze"
 msgstr ""
 
-#: includes/Core/I18n.php:2423
+#: includes/Core/I18n.php:2434
 msgid "Elegant purples for spa and wellness."
 msgstr ""
 
-#: includes/Core/I18n.php:2426
+#: includes/Core/I18n.php:2437
 msgid "Booking {status} - #{booking_id}"
 msgstr ""
 
-#: includes/Core/I18n.php:2427
+#: includes/Core/I18n.php:2438
 msgid "Hello {customer_name}, your booking #{booking_id} status is now {status}."
 msgstr ""
 
-#: includes/Core/I18n.php:2428
+#: includes/Core/I18n.php:2439
 msgid "Payment Confirmation - Booking #{booking_id}"
 msgstr ""
 
 #. translators: %s: customer name
-#: includes/Core/I18n.php:2431
+#: includes/Core/I18n.php:2442
 #, php-format
 msgid "Dear %s,"
 msgstr ""
 
-#: includes/Core/I18n.php:2432
+#: includes/Core/I18n.php:2443
 msgid "Thank you for your payment. Your booking has been confirmed."
 msgstr ""
 
-#: includes/Core/I18n.php:2434
+#: includes/Core/I18n.php:2445
 msgid "Booking ID:"
 msgstr ""
 
-#: includes/Core/I18n.php:2435
+#: includes/Core/I18n.php:2446
 msgid "Check-in:"
 msgstr ""
 
-#: includes/Core/I18n.php:2436
+#: includes/Core/I18n.php:2447
 msgid "Check-out:"
 msgstr ""
 
-#: includes/Core/I18n.php:2437
+#: includes/Core/I18n.php:2448
 msgid "If you have any questions, please don't hesitate to contact us."
 msgstr ""
 
-#: includes/Core/I18n.php:2438
+#: includes/Core/I18n.php:2449
 msgid "Best regards,"
 msgstr ""
 
-#: includes/Core/I18n.php:2439
+#: includes/Core/I18n.php:2450
 msgid "Payment Details"
 msgstr ""
 
-#: includes/Core/I18n.php:2441
+#: includes/Core/I18n.php:2452
 msgid "Transaction ID:"
 msgstr ""
 
-#: includes/Core/I18n.php:2442
+#: includes/Core/I18n.php:2453
 msgid "Payment Method:"
 msgstr ""
 
-#: includes/Core/I18n.php:2443
+#: includes/Core/I18n.php:2454
 msgid "Payment Date:"
 msgstr ""
 
 #. translators: 1: tax label, 2: accommodation tax rate percentage, 3: extras tax rate percentage
-#: includes/Core/I18n.php:2445
+#: includes/Core/I18n.php:2456
 #, php-format
 msgid "Price includes %1$s - Accommodation: %2$s%%, Extras: %3$s%%"
 msgstr ""
 
 #. translators: 1: tax label, 2: accommodation tax rate percentage, 3: extras tax rate percentage
-#: includes/Core/I18n.php:2447
+#: includes/Core/I18n.php:2458
 #, php-format
 msgid "%1$s added at checkout - Accommodation: %2$s%%, Extras: %3$s%%"
 msgstr ""
 
 #. translators: %d: booking ID number
-#: includes/Core/I18n.php:2450
+#: includes/Core/I18n.php:2461
 #, php-format
 msgid "Hotel Booking #%d"
 msgstr ""
 
-#: includes/Core/I18n.php:2454
+#: includes/Core/I18n.php:2465
 msgid "This plugin collects and displays the following information:"
 msgstr ""
 
-#: includes/Core/I18n.php:2455
+#: includes/Core/I18n.php:2466
 msgid "Guest Data"
 msgstr ""
 
-#: includes/Core/I18n.php:2456
+#: includes/Core/I18n.php:2467
 msgid "Name, Email, and Phone Number"
 msgstr ""
 
-#: includes/Core/I18n.php:2457
+#: includes/Core/I18n.php:2468
 msgid "Booking Dates and Room Preferences"
 msgstr ""
 
-#: includes/Core/I18n.php:2459
+#: includes/Core/I18n.php:2470
 msgid "The site administrator may configure business details (Company Name, Address, Tax ID) and payment information (Bank Transfer IBAN, Revolut Tag) to be displayed on the frontend and in booking emails."
 msgstr ""
 
-#: includes/Core/I18n.php:2460
+#: includes/Core/I18n.php:2471
 msgid "This data is stored in the WordPress options table and is used solely for facilitation of the booking process."
 msgstr ""
 
-#: includes/Core/I18n.php:2463
+#: includes/Core/I18n.php:2474
 msgid "Check-in Date"
 msgstr ""
 
-#: includes/Core/I18n.php:2464
+#: includes/Core/I18n.php:2475
 msgid "Check-out Date"
 msgstr ""
 
-#: includes/Core/I18n.php:2468
+#: includes/Core/I18n.php:2479
 msgid "Customer Phone"
 msgstr ""
 
-#: includes/Core/I18n.php:2470
+#: includes/Core/I18n.php:2481
 msgid "Custom Fields"
 msgstr ""
 
-#: includes/Core/I18n.php:2472
+#: includes/Core/I18n.php:2483
 msgid "Payment Error Logs"
 msgstr ""
 
-#: includes/Core/I18n.php:2473
+#: includes/Core/I18n.php:2484
 msgid "Hotel Bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:2480
+#: includes/Core/I18n.php:2491
 msgid "Payment Gateways"
 msgstr ""
 
-#: includes/Core/I18n.php:2481
+#: includes/Core/I18n.php:2492
 msgid "Enable and configure payment methods for your guests."
 msgstr ""
 
-#: includes/Core/I18n.php:2484
+#: includes/Core/I18n.php:2495
 msgid "Stripe (Credit/Debit Cards)"
 msgstr ""
 
-#: includes/Core/I18n.php:2485
+#: includes/Core/I18n.php:2496
 msgid "Accept credit/debit card payments via Stripe"
 msgstr ""
 
-#: includes/Core/I18n.php:2486
+#: includes/Core/I18n.php:2497
 msgid "Test Publishable Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2487
+#: includes/Core/I18n.php:2498
 msgid "Test Secret Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2488
+#: includes/Core/I18n.php:2499
 msgid "Live Publishable Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2489
+#: includes/Core/I18n.php:2500
 msgid "Live Secret Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2490
+#: includes/Core/I18n.php:2501
 msgid "Test Webhook Secret"
 msgstr ""
 
-#: includes/Core/I18n.php:2491
+#: includes/Core/I18n.php:2502
 msgid "Live Webhook Secret"
 msgstr ""
 
 #. translators: %s: environment (Test/Live)
-#: includes/Core/I18n.php:2493
+#: includes/Core/I18n.php:2504
 #, php-format
 msgid "Stripe %s credentials are valid."
 msgstr ""
 
 #. translators: %s: currency code (e.g. USD)
-#: includes/Core/I18n.php:2495
+#: includes/Core/I18n.php:2506
 #, php-format
 msgid "Account default: %s"
 msgstr ""
 
 #. translators: 1: plugin currency code, 2: Stripe account currency code
-#: includes/Core/I18n.php:2497
+#: includes/Core/I18n.php:2508
 #, php-format
 msgid "The plugin currency (%1$s) does not match your Stripe account's default currency (%2$s). This may cause payment processing issues."
 msgstr ""
 
-#: includes/Core/I18n.php:2501
+#: includes/Core/I18n.php:2512
 msgid "Accept payments via PayPal"
 msgstr ""
 
-#: includes/Core/I18n.php:2502
+#: includes/Core/I18n.php:2513
 msgid "Webhook URL for PayPal Dashboard:"
 msgstr ""
 
-#: includes/Core/I18n.php:2503
+#: includes/Core/I18n.php:2514
 msgid "Copy this URL to your PayPal App settings. For local testing, use a service like ngrok or Local by Flywheel \"Live Links\" to provide an HTTPS tunnel."
 msgstr ""
 
-#: includes/Core/I18n.php:2504
+#: includes/Core/I18n.php:2515
 msgid "Sandbox Client ID"
 msgstr ""
 
-#: includes/Core/I18n.php:2505
+#: includes/Core/I18n.php:2516
 msgid "Sandbox Secret"
 msgstr ""
 
-#: includes/Core/I18n.php:2506
+#: includes/Core/I18n.php:2517
 msgid "Sandbox Webhook ID"
 msgstr ""
 
-#: includes/Core/I18n.php:2507
+#: includes/Core/I18n.php:2518
 msgid "Live Client ID"
 msgstr ""
 
-#: includes/Core/I18n.php:2508
+#: includes/Core/I18n.php:2519
 msgid "Live Secret"
 msgstr ""
 
-#: includes/Core/I18n.php:2509
+#: includes/Core/I18n.php:2520
 msgid "Live Webhook ID"
 msgstr ""
 
-#: includes/Core/I18n.php:2510
+#: includes/Core/I18n.php:2521
 msgid "Required for automated payment verification."
 msgstr ""
 
-#: includes/Core/I18n.php:2515
+#: includes/Core/I18n.php:2526
 msgid "Pay on Arrival"
 msgstr ""
 
-#: includes/Core/I18n.php:2519
+#: includes/Core/I18n.php:2530
 msgctxt "setting"
 msgid "Mode"
 msgstr ""
 
-#: includes/Core/I18n.php:2520
+#: includes/Core/I18n.php:2531
 msgctxt "gateway mode"
 msgid "Test"
 msgstr ""
 
-#: includes/Core/I18n.php:2521
+#: includes/Core/I18n.php:2532
 msgctxt "gateway mode"
 msgid "Live"
 msgstr ""
 
-#: includes/Core/I18n.php:2522
+#: includes/Core/I18n.php:2533
 msgid "Sandbox"
 msgstr ""
 
-#: includes/Core/I18n.php:2523
+#: includes/Core/I18n.php:2534
 msgid "Secret key is stored securely. Enter a new value to update."
 msgstr ""
 
-#: includes/Core/I18n.php:2524
+#: includes/Core/I18n.php:2535
 msgid "SDK Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:2526
+#: includes/Core/I18n.php:2537
 msgid "Optional: Forces a specific language/region for the PayPal interface (e.g., en_US, ro_RO). Leave blank for auto-detection."
 msgstr ""
 
-#: includes/Core/I18n.php:2527
+#: includes/Core/I18n.php:2538
 msgid "PayPal SDK Custom Arguments"
 msgstr ""
 
-#: includes/Core/I18n.php:2528
+#: includes/Core/I18n.php:2539
 msgid "Advanced: Add custom query parameters to the PayPal SDK URL. Use this to force a language or disable problematic features."
 msgstr ""
 
-#: includes/Core/I18n.php:2529
+#: includes/Core/I18n.php:2540
 msgid "Test Stripe Credentials"
 msgstr ""
 
-#: includes/Core/I18n.php:2532
+#: includes/Core/I18n.php:2543
 msgctxt "sync format"
 msgid "iCal"
 msgstr ""
 
-#: includes/Core/I18n.php:2534
+#: includes/Core/I18n.php:2545
 msgid "Booking.com Reservation"
 msgstr ""
 
-#: includes/Core/I18n.php:2537
+#: includes/Core/I18n.php:2548
 msgid "Go to your Airbnb listing → Calendar → Availability"
 msgstr ""
 
-#: includes/Core/I18n.php:2538
+#: includes/Core/I18n.php:2549
 msgid "Under \"Connect calendars,\" click \"Export Calendar\""
 msgstr ""
 
-#: includes/Core/I18n.php:2539
+#: includes/Core/I18n.php:2550
 msgid "Copy the iCal URL and add it as a new connection above"
 msgstr ""
 
-#: includes/Core/I18n.php:2540
+#: includes/Core/I18n.php:2551
 msgid "To import YOUR calendar into Airbnb, use the Export URL above in Airbnb's import field"
 msgstr ""
 
-#: includes/Core/I18n.php:2541
+#: includes/Core/I18n.php:2552
 msgid "Go to Booking.com Extranet → Rates & Availability → Sync calendars"
 msgstr ""
 
-#: includes/Core/I18n.php:2542
+#: includes/Core/I18n.php:2553
 msgid "Copy the export URL from Booking.com and add it as a new connection above"
 msgstr ""
 
-#: includes/Core/I18n.php:2543
+#: includes/Core/I18n.php:2554
 msgid "To export YOUR calendar to Booking.com, use the Export URL above in Booking.com's import field"
 msgstr ""
 
-#: includes/Core/I18n.php:2544
+#: includes/Core/I18n.php:2555
 msgid "How to set up calendar sync"
 msgstr ""
 
-#: includes/Core/I18n.php:2545
+#: includes/Core/I18n.php:2556
 msgid "Sync your availability with external platforms like Airbnb and Booking.com."
 msgstr ""
 
 #. translators: %s: human-readable time elapsed (e.g. "5 minutes")
-#: includes/Core/I18n.php:2547
+#: includes/Core/I18n.php:2558
 #, php-format
 msgid "%s ago"
 msgstr ""
 
-#: includes/Core/I18n.php:2549
-#: includes/Core/I18n.php:2645
+#: includes/Core/I18n.php:2560
+#: includes/Core/I18n.php:2656
 msgctxt "action"
 msgid "Sync"
 msgstr ""
 
-#: includes/Core/I18n.php:2552
-#: includes/Core/I18n.php:2667
+#: includes/Core/I18n.php:2563
+#: includes/Core/I18n.php:2678
 msgid "SSRF Protection: URL blocklisted or invalid"
 msgstr ""
 
-#: includes/Core/I18n.php:2553
+#: includes/Core/I18n.php:2564
 msgid "Connection added successfully"
 msgstr ""
 
-#: includes/Core/I18n.php:2554
+#: includes/Core/I18n.php:2565
 msgid "Failed to add connection"
 msgstr ""
 
-#: includes/Core/I18n.php:2555
+#: includes/Core/I18n.php:2566
 msgid "Connection updated successfully"
 msgstr ""
 
-#: includes/Core/I18n.php:2556
+#: includes/Core/I18n.php:2567
 msgid "Failed to update connection"
 msgstr ""
 
-#: includes/Core/I18n.php:2557
+#: includes/Core/I18n.php:2568
 msgid "Connection deleted successfully"
 msgstr ""
 
-#: includes/Core/I18n.php:2558
+#: includes/Core/I18n.php:2569
 msgid "Failed to delete connection"
 msgstr ""
 
-#: includes/Core/I18n.php:2559
+#: includes/Core/I18n.php:2570
 msgid "Invalid iCal format"
 msgstr ""
 
-#: includes/Core/I18n.php:2560
+#: includes/Core/I18n.php:2571
 msgid "Connection successful"
 msgstr ""
 
-#: includes/Core/I18n.php:2561
+#: includes/Core/I18n.php:2572
 msgid "Settings saved successfully"
 msgstr ""
 
-#: includes/Core/I18n.php:2564
+#: includes/Core/I18n.php:2575
 msgid "Import Only"
 msgstr ""
 
-#: includes/Core/I18n.php:2565
+#: includes/Core/I18n.php:2576
 msgid "Export Only"
 msgstr ""
 
-#: includes/Core/I18n.php:2566
+#: includes/Core/I18n.php:2577
 msgid "Bidirectional"
 msgstr ""
 
-#: includes/Core/I18n.php:2567
-#: includes/Core/I18n.php:2647
+#: includes/Core/I18n.php:2578
+#: includes/Core/I18n.php:2658
 msgid "📅 iCal Calendar Sync"
 msgstr ""
 
-#: includes/Core/I18n.php:2568
+#: includes/Core/I18n.php:2579
 msgid "Export URL"
 msgstr ""
 
-#: includes/Core/I18n.php:2569
+#: includes/Core/I18n.php:2580
 msgid "Share this URL with Airbnb, Booking.com, or other platforms to export your availability."
 msgstr ""
 
-#: includes/Core/I18n.php:2570
+#: includes/Core/I18n.php:2581
 msgid "Calendar Connections"
 msgstr ""
 
 #. translators: %s: human-readable time elapsed (e.g. "5 minutes")
-#: includes/Core/I18n.php:2572
+#: includes/Core/I18n.php:2583
 #, php-format
 msgid "Synced %s ago"
 msgstr ""
 
-#: includes/Core/I18n.php:2574
+#: includes/Core/I18n.php:2585
 msgid "+ Add Connection"
 msgstr ""
 
-#: includes/Core/I18n.php:2575
+#: includes/Core/I18n.php:2586
 msgid "Sync All"
 msgstr ""
 
-#: includes/Core/I18n.php:2576
-#: includes/Core/I18n.php:2646
+#: includes/Core/I18n.php:2587
+#: includes/Core/I18n.php:2657
 msgid "All rooms have been synced."
 msgstr ""
 
 #. translators: %s: room number or name
-#: includes/Core/I18n.php:2578
+#: includes/Core/I18n.php:2589
 #, php-format
 msgid "Room #%s has been synced."
 msgstr ""
 
-#: includes/Core/I18n.php:2579
+#: includes/Core/I18n.php:2590
 msgid "External"
 msgstr ""
 
 #. translators: 1: first name, 2: last name, 3: booking/reference number
-#: includes/Core/I18n.php:2581
+#: includes/Core/I18n.php:2592
 #, php-format
 msgid "%1$s %2$s #%3$s"
 msgstr ""
 
 #. translators: 1: imported count, 2: updated count, 3: cancelled count, 4: skipped count
-#: includes/Core/I18n.php:2583
-#: includes/Core/I18n.php:2601
+#: includes/Core/I18n.php:2594
+#: includes/Core/I18n.php:2612
 #, php-format
 msgid "Imported: %1$d, Updated: %2$d, Cancelled: %3$d, Skipped: %4$d"
 msgstr ""
 
-#: includes/Core/I18n.php:2586
+#: includes/Core/I18n.php:2597
 msgid "⚙️ Sync Settings"
 msgstr ""
 
-#: includes/Core/I18n.php:2587
+#: includes/Core/I18n.php:2598
 msgid "Enable Auto Sync"
 msgstr ""
 
-#: includes/Core/I18n.php:2588
+#: includes/Core/I18n.php:2599
 msgid "Automatically sync calendars"
 msgstr ""
 
-#: includes/Core/I18n.php:2589
+#: includes/Core/I18n.php:2600
 #: includes/Pro/ICalManager.php:1935
 msgid "Sync Interval"
 msgstr ""
 
-#: includes/Core/I18n.php:2590
+#: includes/Core/I18n.php:2601
 msgid "Every 5 Minutes"
 msgstr ""
 
-#: includes/Core/I18n.php:2591
+#: includes/Core/I18n.php:2602
 msgid "Every 15 Minutes"
 msgstr ""
 
-#: includes/Core/I18n.php:2592
+#: includes/Core/I18n.php:2603
 msgid "Every Hour"
 msgstr ""
 
-#: includes/Core/I18n.php:2593
+#: includes/Core/I18n.php:2604
 msgid "Every 6 Hours"
 msgstr ""
 
-#: includes/Core/I18n.php:2594
+#: includes/Core/I18n.php:2605
 msgctxt "frequency"
 msgid "Daily"
 msgstr ""
 
-#: includes/Core/I18n.php:2595
+#: includes/Core/I18n.php:2606
 msgid "Enable Retry Logic"
 msgstr ""
 
-#: includes/Core/I18n.php:2596
+#: includes/Core/I18n.php:2607
 msgid "Retry failed syncs with exponential backoff (1h, 2h, 4h)"
 msgstr ""
 
-#: includes/Core/I18n.php:2597
+#: includes/Core/I18n.php:2608
 #: includes/Pro/ICalManager.php:1986
 msgid "Email Notifications"
 msgstr ""
 
-#: includes/Core/I18n.php:2598
+#: includes/Core/I18n.php:2609
 msgid "Send email on sync failure"
 msgstr ""
 
-#: includes/Core/I18n.php:2604
+#: includes/Core/I18n.php:2615
 msgid "Pro Features Teaser"
 msgstr ""
 
-#: includes/Core/I18n.php:2605
+#: includes/Core/I18n.php:2616
 msgid "Behavior & Defaults"
 msgstr ""
 
-#: includes/Core/I18n.php:2606
+#: includes/Core/I18n.php:2617
 msgid "Theme & Branding"
 msgstr ""
 
-#: includes/Core/I18n.php:2607
+#: includes/Core/I18n.php:2618
 msgid "VAT / Tax Management"
 msgstr ""
 
-#: includes/Core/I18n.php:2608
+#: includes/Core/I18n.php:2619
 msgid "Pricing & Holiday Rules"
 msgstr ""
 
-#: includes/Core/I18n.php:2610
+#: includes/Core/I18n.php:2621
 msgid "API & Webhooks"
 msgstr ""
 
-#: includes/Core/I18n.php:2611
+#: includes/Core/I18n.php:2622
 msgid "GDPR & Data Privacy"
 msgstr ""
 
-#: includes/Core/I18n.php:2612
+#: includes/Core/I18n.php:2623
 msgid "Business & Contact Info"
 msgstr ""
 
-#: includes/Core/I18n.php:2613
+#: includes/Core/I18n.php:2624
 msgid "Appearance & UX"
 msgstr ""
 
-#: includes/Core/I18n.php:2614
+#: includes/Core/I18n.php:2625
 msgid "Performance & Status"
 msgstr ""
 
-#: includes/Core/I18n.php:2615
+#: includes/Core/I18n.php:2626
 msgid "License & Updates"
 msgstr ""
 
-#: includes/Core/I18n.php:2617
+#: includes/Core/I18n.php:2628
 msgid "Premium Feature Grid"
 msgstr ""
 
-#: includes/Core/I18n.php:2618
+#: includes/Core/I18n.php:2629
 msgid "Unlock professional workflows for high-conversion booking management."
 msgstr ""
 
-#: includes/Core/I18n.php:2619
+#: includes/Core/I18n.php:2630
 msgid "Payment Logic & Gateways"
 msgstr ""
 
-#: includes/Core/I18n.php:2620
+#: includes/Core/I18n.php:2631
 msgid "Multi-gateway support, partial payments, and automatic verification."
 msgstr ""
 
-#: includes/Core/I18n.php:2621
+#: includes/Core/I18n.php:2632
 msgid "Inventory & Sync Control"
 msgstr ""
 
-#: includes/Core/I18n.php:2622
+#: includes/Core/I18n.php:2633
 msgid "Bi-directional iCal sync with Airbnb, Booking.com, and Google Calendar."
 msgstr ""
 
-#: includes/Core/I18n.php:2623
+#: includes/Core/I18n.php:2634
 msgid "Dynamic Pricing Engine"
 msgstr ""
 
-#: includes/Core/I18n.php:2624
+#: includes/Core/I18n.php:2635
 msgid "Weekend multipliers, holiday rules, and bulk season adjustments."
 msgstr ""
 
-#: includes/Core/I18n.php:2625
+#: includes/Core/I18n.php:2636
 msgid "Analytics & Reporting"
 msgstr ""
 
-#: includes/Core/I18n.php:2626
+#: includes/Core/I18n.php:2637
 msgid "Track occupancy, ADR, and revenue trends in a centralized dashboard."
 msgstr ""
 
-#: includes/Core/I18n.php:2627
+#: includes/Core/I18n.php:2638
 msgid "Premium Presence & Branding"
 msgstr ""
 
-#: includes/Core/I18n.php:2628
+#: includes/Core/I18n.php:2639
 msgid "Visual theme designer, custom icons, and advanced CSS overrides."
 msgstr ""
 
-#: includes/Core/I18n.php:2629
+#: includes/Core/I18n.php:2640
 msgid "Global Infrastructure"
 msgstr ""
 
-#: includes/Core/I18n.php:2630
+#: includes/Core/I18n.php:2641
 msgid "Developer REST API, HMAC webhooks, and advanced object caching."
 msgstr ""
 
-#: includes/Core/I18n.php:2632
+#: includes/Core/I18n.php:2643
 msgid "Midnight Coast (Default)"
 msgstr ""
 
-#: includes/Core/I18n.php:2633
+#: includes/Core/I18n.php:2644
 msgid "Luxurious dark blue and gold aesthetic."
 msgstr ""
 
-#: includes/Core/I18n.php:2635
+#: includes/Core/I18n.php:2646
 msgid "Deep greens for nature and eco-lodges."
 msgstr ""
 
-#: includes/Core/I18n.php:2637
+#: includes/Core/I18n.php:2648
 msgid "Bright blues for coastal and summer vibes."
 msgstr ""
 
-#: includes/Core/I18n.php:2639
+#: includes/Core/I18n.php:2650
 msgid "Warm tones for boutique and romantic stays."
 msgstr ""
 
-#: includes/Core/I18n.php:2640
+#: includes/Core/I18n.php:2651
 msgid "Urban Industrial"
 msgstr ""
 
-#: includes/Core/I18n.php:2641
+#: includes/Core/I18n.php:2652
 msgid "Modern concrete and charcoal for city lofts."
 msgstr ""
 
-#: includes/Core/I18n.php:2648
+#: includes/Core/I18n.php:2659
 msgid "Failure Email Threshold"
 msgstr ""
 
-#: includes/Core/I18n.php:2649
+#: includes/Core/I18n.php:2660
 msgid "Send email only after X consecutive failures."
 msgstr ""
 
-#: includes/Core/I18n.php:2651
+#: includes/Core/I18n.php:2662
 msgid "Local Wins (Skip External)"
 msgstr ""
 
-#: includes/Core/I18n.php:2652
+#: includes/Core/I18n.php:2663
 msgid "External Wins (Overwrite Local)"
 msgstr ""
 
-#: includes/Core/I18n.php:2653
+#: includes/Core/I18n.php:2664
 msgid "Determines what happens when an external event overlaps with an internal booking."
 msgstr ""
 
-#: includes/Core/I18n.php:2654
+#: includes/Core/I18n.php:2665
 msgid "Success Notifications"
 msgstr ""
 
-#: includes/Core/I18n.php:2655
+#: includes/Core/I18n.php:2666
 msgid "Notify when a sync succeeds after a failure."
 msgstr ""
 
-#: includes/Core/I18n.php:2657
+#: includes/Core/I18n.php:2668
 msgid "Sync All Rooms"
 msgstr ""
 
-#: includes/Core/I18n.php:2658
+#: includes/Core/I18n.php:2669
 msgid "Sync all rooms? This may take a moment."
 msgstr ""
 
-#: includes/Core/I18n.php:2660
+#: includes/Core/I18n.php:2671
 msgctxt "table column header"
 msgid "Room Type"
 msgstr ""
 
-#: includes/Core/I18n.php:2661
+#: includes/Core/I18n.php:2672
 msgctxt "table column header"
 msgid "Platforms"
 msgstr ""
 
-#: includes/Core/I18n.php:2662
+#: includes/Core/I18n.php:2673
 msgctxt "table column header"
 msgid "Connections"
 msgstr ""
 
-#: includes/Core/I18n.php:2663
+#: includes/Core/I18n.php:2674
 msgctxt "table column header"
 msgid "Last Synced"
 msgstr ""
 
-#: includes/Core/I18n.php:2664
+#: includes/Core/I18n.php:2675
 msgctxt "table column header"
 msgid "Export URL"
 msgstr ""
 
-#: includes/Core/I18n.php:2665
+#: includes/Core/I18n.php:2676
 msgctxt "table column header"
 msgid "Actions"
 msgstr ""
 
-#: includes/Core/I18n.php:2666
+#: includes/Core/I18n.php:2677
 msgid "No rooms found. Create rooms first."
 msgstr ""
 
-#: includes/Core/I18n.php:2668
+#: includes/Core/I18n.php:2679
 msgid "Invalid Room ID."
 msgstr ""
 
-#: includes/Core/I18n.php:2671
+#: includes/Core/I18n.php:2682
 msgid "Collected (MTD)"
 msgstr ""
 
-#: includes/Core/I18n.php:2672
+#: includes/Core/I18n.php:2683
 msgid "Outstanding Balance"
 msgstr ""
 
-#: includes/Core/I18n.php:2673
+#: includes/Core/I18n.php:2684
 msgid "Guests Now"
 msgstr ""
 
-#: includes/Core/I18n.php:2674
+#: includes/Core/I18n.php:2685
 msgid "pending bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:2675
+#: includes/Core/I18n.php:2686
 msgid "partially paid"
 msgstr ""
 
-#: includes/Core/I18n.php:2676
+#: includes/Core/I18n.php:2687
 msgid "View Full Analytics →"
 msgstr ""
 
-#: includes/Core/I18n.php:2677
+#: includes/Core/I18n.php:2688
 msgid "Analytics Intelligence"
 msgstr ""
 
-#: includes/Core/I18n.php:2678
+#: includes/Core/I18n.php:2689
 msgctxt "7 days abbreviation"
 msgid "7D"
 msgstr ""
 
-#: includes/Core/I18n.php:2679
+#: includes/Core/I18n.php:2690
 msgctxt "30 days abbreviation"
 msgid "30D"
 msgstr ""
 
-#: includes/Core/I18n.php:2680
+#: includes/Core/I18n.php:2691
 msgctxt "90 days abbreviation"
 msgid "90D"
 msgstr ""
 
-#: includes/Core/I18n.php:2681
+#: includes/Core/I18n.php:2692
 msgctxt "time period"
 msgid "Year"
 msgstr ""
 
-#: includes/Core/I18n.php:2682
+#: includes/Core/I18n.php:2693
 msgid "Starts"
 msgstr ""
 
-#: includes/Core/I18n.php:2683
+#: includes/Core/I18n.php:2694
 msgctxt "temporal limit"
 msgid "Ends"
 msgstr ""
 
-#: includes/Core/I18n.php:2685
+#: includes/Core/I18n.php:2696
 msgid "Key Performance Indicators"
 msgstr ""
 
-#: includes/Core/I18n.php:2686
+#: includes/Core/I18n.php:2697
 msgid "vs previous period"
 msgstr ""
 
-#: includes/Core/I18n.php:2687
+#: includes/Core/I18n.php:2698
 msgid "Includes"
 msgstr ""
 
-#: includes/Core/I18n.php:2688
+#: includes/Core/I18n.php:2699
 msgctxt "noun"
 msgid "tax"
 msgstr ""
 
-#: includes/Core/I18n.php:2689
+#: includes/Core/I18n.php:2700
 msgid "of total"
 msgstr ""
 
-#: includes/Core/I18n.php:2690
+#: includes/Core/I18n.php:2701
 msgid "Pending payments"
 msgstr ""
 
-#: includes/Core/I18n.php:2691
+#: includes/Core/I18n.php:2702
 msgid "nights"
 msgstr ""
 
-#: includes/Core/I18n.php:2692
+#: includes/Core/I18n.php:2703
 msgid "Average Daily Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:2693
+#: includes/Core/I18n.php:2704
 msgid "Revenue Per Available Room"
 msgstr ""
 
-#: includes/Core/I18n.php:2694
+#: includes/Core/I18n.php:2705
 msgid "confirmed"
 msgstr ""
 
-#: includes/Core/I18n.php:2695
+#: includes/Core/I18n.php:2706
 msgid "Per booking"
 msgstr ""
 
-#: includes/Core/I18n.php:2696
+#: includes/Core/I18n.php:2707
 msgid "VAT / Sales Tax"
 msgstr ""
 
-#: includes/Core/I18n.php:2697
+#: includes/Core/I18n.php:2708
 msgid "Revenue Trends"
 msgstr ""
 
-#: includes/Core/I18n.php:2698
+#: includes/Core/I18n.php:2709
 msgid "Occupancy by Day of Week"
 msgstr ""
 
-#: includes/Core/I18n.php:2699
+#: includes/Core/I18n.php:2710
 msgid "30-Day Occupancy Forecast"
 msgstr ""
 
-#: includes/Core/I18n.php:2700
+#: includes/Core/I18n.php:2711
 msgid "Booking Sources"
 msgstr ""
 
-#: includes/Core/I18n.php:2701
+#: includes/Core/I18n.php:2712
 msgid "No booking data available"
 msgstr ""
 
-#: includes/Core/I18n.php:2702
+#: includes/Core/I18n.php:2713
 msgid "Revenue by Source"
 msgstr ""
 
-#: includes/Core/I18n.php:2703
+#: includes/Core/I18n.php:2714
 msgid "Source"
 msgstr ""
 
-#: includes/Core/I18n.php:2705
+#: includes/Core/I18n.php:2716
 msgid "Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:2706
+#: includes/Core/I18n.php:2717
 msgid "Collected"
 msgstr ""
 
-#: includes/Core/I18n.php:2707
+#: includes/Core/I18n.php:2718
 msgid "Room Type Performance"
 msgstr ""
 
-#: includes/Core/I18n.php:2708
+#: includes/Core/I18n.php:2719
 msgid "No room performance data available"
 msgstr ""
 
-#: includes/Core/I18n.php:2710
+#: includes/Core/I18n.php:2721
 msgid "Occupancy"
 msgstr ""
 
-#: includes/Core/I18n.php:2711
+#: includes/Core/I18n.php:2722
 msgid "Tax / VAT Analytics"
 msgstr ""
 
-#: includes/Core/I18n.php:2712
+#: includes/Core/I18n.php:2723
 msgid "Tax Breakdown by Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:2713
+#: includes/Core/I18n.php:2724
 msgid "Tax Rate"
 msgstr ""
 
-#: includes/Core/I18n.php:2714
+#: includes/Core/I18n.php:2725
 msgid "Tax Collected"
 msgstr ""
 
-#: includes/Core/I18n.php:2715
+#: includes/Core/I18n.php:2726
 msgid "Payment Methods"
 msgstr ""
 
-#: includes/Core/I18n.php:2716
+#: includes/Core/I18n.php:2727
 msgid "No payment data available"
 msgstr ""
 
-#: includes/Core/I18n.php:2717
+#: includes/Core/I18n.php:2728
 msgid "Payment Status Breakdown"
 msgstr ""
 
-#: includes/Core/I18n.php:2719
+#: includes/Core/I18n.php:2730
 msgctxt "column header"
 msgid "Count"
 msgstr ""
 
-#: includes/Core/I18n.php:2720
+#: includes/Core/I18n.php:2731
 msgctxt "column header"
 msgid "Total"
 msgstr ""
 
-#: includes/Core/I18n.php:2721
+#: includes/Core/I18n.php:2732
 msgid "Real-time Activity"
 msgstr ""
 
-#: includes/Core/I18n.php:2722
+#: includes/Core/I18n.php:2733
 msgid "Recent Bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:2723
+#: includes/Core/I18n.php:2734
 msgid "No recent bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:2724
+#: includes/Core/I18n.php:2735
 msgid "Today's Operations"
 msgstr ""
 
-#: includes/Core/I18n.php:2725
+#: includes/Core/I18n.php:2736
 msgid "Check-ins"
 msgstr ""
 
-#: includes/Core/I18n.php:2726
+#: includes/Core/I18n.php:2737
 msgid "Check-outs"
 msgstr ""
 
-#: includes/Core/I18n.php:2727
+#: includes/Core/I18n.php:2738
 msgid "No check-ins or check-outs today"
 msgstr ""
 
-#: includes/Core/I18n.php:2728
+#: includes/Core/I18n.php:2739
 msgid "Alerts"
 msgstr ""
 
-#: includes/Core/I18n.php:2729
+#: includes/Core/I18n.php:2740
 msgid "Failed Payments"
 msgstr ""
 
-#: includes/Core/I18n.php:2730
+#: includes/Core/I18n.php:2741
 msgid "Recent Cancellations"
 msgstr ""
 
-#: includes/Core/I18n.php:2731
+#: includes/Core/I18n.php:2742
 msgid "Monthly Demand"
 msgstr ""
 
-#: includes/Core/I18n.php:2732
+#: includes/Core/I18n.php:2743
 msgid "Lead Time Analysis"
 msgstr ""
 
-#: includes/Core/I18n.php:2733
+#: includes/Core/I18n.php:2744
 msgid "No lead time data available"
 msgstr ""
 
-#: includes/Core/I18n.php:2734
+#: includes/Core/I18n.php:2745
 msgid "Lead Time"
 msgstr ""
 
-#: includes/Core/I18n.php:2735
+#: includes/Core/I18n.php:2746
 msgid "Cancellation Tracking"
 msgstr ""
 
-#: includes/Core/I18n.php:2736
+#: includes/Core/I18n.php:2747
 msgid "From cancelled bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:2737
+#: includes/Core/I18n.php:2748
 msgid "Total cancelled"
 msgstr ""
 
-#: includes/Core/I18n.php:2738
+#: includes/Core/I18n.php:2749
 msgid "Cancellations by Lead Time"
 msgstr ""
 
-#: includes/Core/I18n.php:2739
+#: includes/Core/I18n.php:2750
 msgid "Revenue Impact"
 msgstr ""
 
-#: includes/Core/I18n.php:2740
+#: includes/Core/I18n.php:2751
 msgid "Export Financial Report (CSV)"
 msgstr ""
 
-#: includes/Core/I18n.php:2741
+#: includes/Core/I18n.php:2752
 msgid "Export Occupancy Report (CSV)"
 msgstr ""
 
-#: includes/Core/I18n.php:2742
+#: includes/Core/I18n.php:2753
 msgid "Export Tax Report (CSV)"
 msgstr ""
 
-#: includes/Core/I18n.php:2743
+#: includes/Core/I18n.php:2754
 msgid "Export Payments (CSV)"
 msgstr ""
 
-#: includes/Core/I18n.php:2746
+#: includes/Core/I18n.php:2757
 msgid "There is no changelog available."
 msgstr ""
 
-#: includes/Core/I18n.php:2747
+#: includes/Core/I18n.php:2758
 msgid "View details"
 msgstr ""
 
 #. translators: %s: Plugin name
-#: includes/Core/I18n.php:2749
+#: includes/Core/I18n.php:2760
 #, php-format
 msgid "More information about %s"
 msgstr ""
 
-#: includes/Core/I18n.php:2750
+#: includes/Core/I18n.php:2761
 msgid "Check for updates"
 msgstr ""
 
 #. translators: %s: plugin name
-#: includes/Core/I18n.php:2752
+#: includes/Core/I18n.php:2763
 #, php-format
 msgid "The %s plugin is up to date."
 msgstr ""
 
 #. translators: %s: plugin name
-#: includes/Core/I18n.php:2754
+#: includes/Core/I18n.php:2765
 #, php-format
 msgid "A new version of the %s plugin is available."
 msgstr ""
 
 #. translators: %s: plugin name
-#: includes/Core/I18n.php:2756
+#: includes/Core/I18n.php:2767
 #, php-format
 msgid "Could not determine if updates are available for %s."
 msgstr ""
 
 #. translators: %s: update checker status string
-#: includes/Core/I18n.php:2758
+#: includes/Core/I18n.php:2769
 #, php-format
 msgid "Unknown update checker status \"%s\""
 msgstr ""
 
-#: includes/Core/I18n.php:2759
+#: includes/Core/I18n.php:2770
 msgid "Net Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:2760
+#: includes/Core/I18n.php:2771
 msgid "Gross Revenue"
 msgstr ""
 
-#: includes/Core/I18n.php:2761
+#: includes/Core/I18n.php:2772
 msgid "Before tax"
 msgstr ""
 
-#: includes/Core/I18n.php:2762
+#: includes/Core/I18n.php:2773
 msgid "Including tax"
 msgstr ""
 
-#: includes/Core/I18n.php:2763
+#: includes/Core/I18n.php:2774
 msgid "taxed bookings"
 msgstr ""
 
-#: includes/Core/I18n.php:2765
+#: includes/Core/I18n.php:2776
 msgid "Insufficient permissions for this administrative action."
 msgstr ""
 
-#: includes/Core/I18n.php:2786
+#: includes/Core/I18n.php:2797
 msgid "Room Updated!"
 msgstr ""
 
-#: includes/Core/I18n.php:2787
+#: includes/Core/I18n.php:2798
 msgid "Room Added!"
 msgstr ""
 
-#: includes/Core/I18n.php:2790
+#: includes/Core/I18n.php:2801
 msgid "No extras defined yet. Create your first service add-on below."
 msgstr ""
 
-#: includes/Core/I18n.php:2791
+#: includes/Core/I18n.php:2802
 msgid "Add breakfast, airport transfers, tour packages, or custom experiences."
 msgstr ""
 
-#: includes/Core/I18n.php:2794
+#: includes/Core/I18n.php:2805
 msgctxt "time elapsed"
 msgid "ago"
 msgstr ""
 
-#: includes/Core/I18n.php:2796
+#: includes/Core/I18n.php:2807
 msgid "New Room Registration"
 msgstr ""
 
-#: includes/Core/I18n.php:2804
+#: includes/Core/I18n.php:2815
 msgid "Invalid license key format."
 msgstr ""
 
-#: includes/Core/I18n.php:2805
+#: includes/Core/I18n.php:2816
 msgid "Unexpected response format from server. Please contact support."
 msgstr ""
 
-#: includes/Core/I18n.php:2806
+#: includes/Core/I18n.php:2817
 msgid "Invalid license key or server error."
 msgstr ""
 
-#: includes/Core/I18n.php:2809
+#: includes/Core/I18n.php:2820
 msgid "Hotel: Business Info"
 msgstr ""
 
-#: includes/Core/I18n.php:2818
+#: includes/Core/I18n.php:2829
 msgid "Professional PDF invoices generated automatically. Access via booking management."
 msgstr ""
 
-#: includes/Core/I18n.php:2823
+#: includes/Core/I18n.php:2834
 msgid "HMAC Webhooks"
 msgstr ""
 
-#: includes/Core/I18n.php:2824
+#: includes/Core/I18n.php:2835
 msgid "Secure HMAC-signed webhooks with delivery logging, payload inspector, and connection testing tools."
 msgstr ""
 
-#: includes/Core/I18n.php:2826
+#: includes/Core/I18n.php:2837
 msgid "VAT/TAX System"
 msgstr ""
 
-#: includes/Core/I18n.php:2827
+#: includes/Core/I18n.php:2838
 msgid "Three modes: VAT inclusive, Sales Tax exclusive, or Disabled. Flexible configuration."
 msgstr ""
 
-#: includes/Core/I18n.php:2829
+#: includes/Core/I18n.php:2840
 msgid "Display company details, bank transfer info, and Revolut details on invoices."
 msgstr ""
 
-#: includes/Core/I18n.php:2835
+#: includes/Core/I18n.php:2846
 msgid "Detailed tax display by room, children, and extras in booking confirmations."
 msgstr ""
 
-#: includes/Core/I18n.php:2840
+#: includes/Core/I18n.php:2851
 msgid "Offer guided tours, airport transfers, breakfast packages, and local experiences."
 msgstr ""
 
-#: includes/Core/I18n.php:2846
+#: includes/Core/I18n.php:2857
 msgid "Amenity removed successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2847
+#: includes/Core/I18n.php:2858
 msgid "Amenity added successfully."
 msgstr ""
 
-#: includes/Core/I18n.php:2850
+#: includes/Core/I18n.php:2861
 msgctxt "action"
 msgid "Add"
 msgstr ""
 
-#: includes/Core/I18n.php:2851
+#: includes/Core/I18n.php:2862
 msgctxt "table column header"
 msgid "Label"
 msgstr ""
 
-#: includes/Core/I18n.php:2852
+#: includes/Core/I18n.php:2863
 msgctxt "table column header"
 msgid "Internal Key"
 msgstr ""
 
-#: includes/Core/I18n.php:2853
+#: includes/Core/I18n.php:2864
 msgctxt "table column header"
 msgid "Action"
 msgstr ""
 
-#: includes/Core/I18n.php:2857
+#: includes/Core/I18n.php:2868
 msgid "Displays the property company information."
 msgstr ""
 
-#: includes/Core/I18n.php:2858
+#: includes/Core/I18n.php:2869
 msgid "Displays a WhatsApp contact button."
 msgstr ""
 
-#: includes/Core/I18n.php:2859
+#: includes/Core/I18n.php:2870
 msgid "Displays bank transfer details for manual payments."
 msgstr ""
 
-#: includes/Core/I18n.php:2860
+#: includes/Core/I18n.php:2871
 msgid "Displays Revolut payment details and QR code."
 msgstr ""
 
-#: includes/Core/I18n.php:2861
+#: includes/Core/I18n.php:2872
 msgid "Displays a modern business card with property info."
 msgstr ""
 
-#: includes/Core/I18n.php:2862
+#: includes/Core/I18n.php:2873
 msgid "Displays all available manual payment methods for a booking."
 msgstr ""
 
-#: includes/Core/I18n.php:2863
+#: includes/Core/I18n.php:2874
 msgid "Default ALT text for room images if not provided."
 msgstr ""
 
-#: includes/Core/I18n.php:2873
+#: includes/Core/I18n.php:2884
 msgid "Manage the list of amenities available for rooms. After adding here, you can translate them in the \"Frontend Labels\" tab."
 msgstr ""
 
-#: includes/Core/I18n.php:2892
+#: includes/Core/I18n.php:2903
 msgid "License system not configured. Please contact support."
 msgstr ""
 
-#: includes/Core/I18n.php:2893
+#: includes/Core/I18n.php:2904
 msgctxt "time unit"
 msgid "day"
 msgstr ""
 
-#: includes/Core/I18n.php:2894
+#: includes/Core/I18n.php:2905
 msgctxt "time unit"
 msgid "days"
 msgstr ""
 
-#: includes/Core/I18n.php:2895
+#: includes/Core/I18n.php:2906
 msgctxt "time unit"
 msgid "hour"
 msgstr ""
 
-#: includes/Core/I18n.php:2896
+#: includes/Core/I18n.php:2907
 msgctxt "time unit"
 msgid "hours"
 msgstr ""
 
-#: includes/Core/I18n.php:2897
+#: includes/Core/I18n.php:2908
 msgid "connection"
 msgstr ""
 
-#: includes/Core/I18n.php:2898
+#: includes/Core/I18n.php:2909
 msgid "connections"
 msgstr ""
 
-#: includes/Core/I18n.php:2901
+#: includes/Core/I18n.php:2912
 msgid "Amenities Hub"
 msgstr ""
 
-#: includes/Core/I18n.php:2902
+#: includes/Core/I18n.php:2913
 msgid "Booking Table Headers"
 msgstr ""
 
-#: includes/Core/I18n.php:2903
+#: includes/Core/I18n.php:2914
 msgid "Stripe Currency Warnings"
 msgstr ""
 
-#: includes/Core/I18n.php:2904
+#: includes/Core/I18n.php:2915
 msgid "iCal Module Description"
 msgstr ""
 
-#: includes/Core/I18n.php:2905
+#: includes/Core/I18n.php:2916
 msgid "Session Timeout Warning"
 msgstr ""
 
-#: includes/Core/I18n.php:2908
+#: includes/Core/I18n.php:2919
 msgid "The email address you provided doesn't look quite right. Could you please double-check it?"
 msgstr ""
 
 #. translators: 1: Room name, 2: Check-in date, 3: Check-out date
-#: includes/Core/I18n.php:2910
+#: includes/Core/I18n.php:2921
 #, php-format
 msgctxt "ai feedback"
 msgid "I've successfully booked the %1$s for you from %2$s to %3$s."
 msgstr ""
 
-#: includes/Core/I18n.php:2911
+#: includes/Core/I18n.php:2922
 msgid "I encountered a slight issue while processing your booking. Let me try that again."
 msgstr ""
 
-#: includes/Core/I18n.php:2915
+#: includes/Core/I18n.php:2926
 msgid "Available placeholders: {customer_name}, {customer_email}, {customer_phone}, {site_name}, {booking_id}, {booking_token}, {status}, {check_in}, {check_out}, {check_in_time}, {check_out_time}, {nights}, {total_price}, {guests}, {children}, {children_ages}, {room_name}, {custom_fields}, {booking_extras}, {payment_details}, {tax_breakdown}, {tax_breakdown_text}, {tax_total}, {tax_registration_number}, {company_name}, {company_address}, {company_phone}, {company_email}, {company_website}, {company_registration}, {whatsapp_number}, {whatsapp_link}, {view_url}, {special_requests}, {arrival_time}"
 msgstr ""
 
-#: includes/Core/I18n.php:2918
+#: includes/Core/I18n.php:2929
 msgid "Available placeholders: {customer_name}, {customer_email}, {customer_phone}, {site_name}, {booking_id}, {booking_token}, {status}, {check_in}, {check_out}, {check_in_time}, {check_out_time}, {nights}, {total_price}, {guests}, {children}, {children_ages}, {room_name}, {custom_fields}, {booking_extras}, {payment_details}, {tax_breakdown}, {tax_breakdown_text}, {tax_total}, {tax_registration_number}, {company_name}, {company_address}, {company_phone}, {company_email}, {company_website}, {company_registration}, {whatsapp_number}, {whatsapp_link}, {view_url}, {special_requests}, {arrival_time}, {company_info}, {whatsapp_contact}, {banking_details}, {revolut_details}, {business_card}"
 msgstr ""
 

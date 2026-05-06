@@ -1029,6 +1029,17 @@ if (!defined('ABSPATH')) {
             'ai_handoff_whatsapp'       => __('WhatsApp', 'modern-hotel-booking'),
             'ai_handoff_email'          => _x('Email', 'contact method', 'modern-hotel-booking'),
             'ai_handoff_phone'          => __('Call Us', 'modern-hotel-booking'),
+            // Voice controls.
+            'ai_widget_start_voice'     => __('Start voice input', 'modern-hotel-booking'),
+            'ai_widget_stop_voice'      => __('Stop voice input', 'modern-hotel-booking'),
+            'ai_widget_toggle_voice'    => __('Toggle voice output', 'modern-hotel-booking'),
+            'ai_widget_voice_not_supported' => __('Voice input is not supported in your browser.', 'modern-hotel-booking'),
+            'ai_widget_voice_denied'    => __('Microphone access denied. Please allow microphone access to use voice input.', 'modern-hotel-booking'),
+            // Proactive (Einstein dwell-time) greetings — shown by the chat widget
+            // after the configured idle time on pages with booking-relevant content.
+            'ai_proactive_default'      => __('Hi there! 👋 Can I help you plan your stay?', 'modern-hotel-booking'),
+            'ai_proactive_booking'      => __('Hi! I can answer questions about availability or pricing. Just ask!', 'modern-hotel-booking'),
+            'ai_proactive_rooms'        => __('Looking for the perfect room? I can help you choose!', 'modern-hotel-booking'),
             'ai_status_analyzing'       => __('Analyzing your request...', 'modern-hotel-booking'),
             'ai_status_refining'        => __('Refining details...', 'modern-hotel-booking'),
             'ai_error_invalid_nonce'    => __('Invalid nonce.', 'modern-hotel-booking'),

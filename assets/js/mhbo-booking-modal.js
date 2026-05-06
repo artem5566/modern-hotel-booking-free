@@ -206,10 +206,6 @@
         const restBase = (window.mhbo_vars && window.mhbo_vars.rest_url)
             || (window.mhbo_calendar && window.mhbo_calendar.rest_url && window.mhbo_calendar.rest_url.replace(/\/[^/]+$/, ''))
             || '/wp-json/mhbo/v1';
-        const nonce = (window.mhbo_vars && window.mhbo_vars.nonce)
-            || (window.mhbo_calendar && window.mhbo_calendar.nonce)
-            || (window.mhboChat && window.mhboChat.restNonce)
-            || '';
 
         const params = new URLSearchParams({
             room_id:        d.room_id        || '',
@@ -224,22 +220,15 @@
             customer_phone: d.customer_phone || '',
         });
 
-        fetch(restBase.replace(/\/$/, '') + '/modal/booking-form?' + params.toString(), {
-            method: 'GET',
-            headers: {
-                'X-WP-Nonce': nonce,
-                'Accept':     'application/json',
-            },
-            credentials: 'same-origin',
-        })
-        .then(function (res) {
-            if (!res.ok) {
-                return res.json().then(function (err) {
-                    throw new Error((err && err.message) || res.statusText);
-                });
-            }
-            return res.json();
-        })
+        /* 2026 BP: Public endpoint (permission_callback => __return_true) — do NOT
+           send X-WP-Nonce.  A stale nonce baked into a Cloudflare/Redis-cached page
+           triggers WP core rest_cookie_check_errors() → 403 "Cookie check failed"
+           even though no auth is needed.  Omitting the header lets the public
+           permission_callback pass without cookie-auth interference. */
+        _fetchModalEndpoint(
+            restBase.replace(/\/$/, '') + '/modal/booking-form?' + params.toString(),
+            restBase
+        )
         .then(function (data) {
             if (!data || !data.html) {
                 throw new Error('Empty response from server.');
@@ -256,6 +245,52 @@
         });
     });
 
+    /* ── Shared fetch helper for public modal endpoints ─────────── */
+    /* 2026 BP: No X-WP-Nonce header for public endpoints.  On 403 (e.g. a
+       WAF rule or edge-case cookie-auth mismatch) retry once with cache-busted
+       headers to recover without a page reload. */
+    var _modalRetried = false;
+    function _fetchModalEndpoint(url, restBase) {
+        return fetch(url, {
+            method:  'GET',
+            headers: { 'Accept': 'application/json' },
+        })
+        .then(function (res) {
+            if (!res.ok) {
+                if (res.status === 403 && !_modalRetried) {
+                    _modalRetried = true;
+                    /* Attempt a nonce-refresh: even though these endpoints are
+                       public, some WAF/security plugins may require a valid
+                       session.  Refresh then retry with credentials. */
+                    return fetch((restBase || '/wp-json/mhbo/v1').replace(/\/$/, '') + '/nonce', {
+                        cache: 'no-store',
+                        credentials: 'same-origin',
+                    })
+                    .then(function () { return fetch(url, {
+                        method:  'GET',
+                        headers: { 'Accept': 'application/json' },
+                        credentials: 'same-origin',
+                    }); })
+                    .then(function (r2) {
+                        _modalRetried = false;
+                        if (!r2.ok) {
+                            return r2.json().then(function (err) {
+                                throw new Error((err && err.message) || r2.statusText);
+                            });
+                        }
+                        return r2.json();
+                    });
+                }
+                _modalRetried = false;
+                return res.json().then(function (err) {
+                    throw new Error((err && err.message) || res.statusText);
+                });
+            }
+            _modalRetried = false;
+            return res.json();
+        });
+    }
+
     /* ── Booking complete → fetch confirmation panel ─────────────── */
     document.addEventListener('mhboBookingComplete', function (e) {
         const d = e.detail || {};
@@ -264,28 +299,17 @@
 
         const restBase = (window.mhbo_vars && window.mhbo_vars.rest_url)
             || '/wp-json/mhbo/v1';
-        const nonce = (window.mhbo_vars && window.mhbo_vars.nonce)
-            || (window.mhbo_calendar && window.mhbo_calendar.nonce)
-            || '';
 
         const params = new URLSearchParams({
             booking_token: d.booking_token || '',
             status:        d.status        || 'confirmed',
         });
 
-        fetch(restBase.replace(/\/$/, '') + '/modal/confirmation?' + params.toString(), {
-            method:      'GET',
-            headers:     { 'X-WP-Nonce': nonce, 'Accept': 'application/json' },
-            credentials: 'same-origin',
-        })
-        .then(function (res) {
-            if (!res.ok) {
-                return res.json().then(function (err) {
-                    throw new Error((err && err.message) || res.statusText);
-                });
-            }
-            return res.json();
-        })
+        /* 2026 BP: Public endpoint — no X-WP-Nonce needed. */
+        _fetchModalEndpoint(
+            restBase.replace(/\/$/, '') + '/modal/confirmation?' + params.toString(),
+            restBase
+        )
         .then(function (data) {
             if (!data || !data.html) {
                 throw new Error('Empty confirmation response.');

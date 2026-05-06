@@ -80,7 +80,7 @@ class Loader {
         // across Complianz, Cookie Notice, Cookie Caterer, and similar plugins.
         // These hooks are no-ops when the consent plugin is not active.
         add_filter( 'cmplz_safe_scripts',         [ self::class, 'cmplz_safe_scripts' ] );
-        add_filter( 'cmplz_deny_assets',          [ self::class, 'cmplz_deny_assets'  ] ); // prevent Complianz from blocking
+        add_filter( 'cmplz_known_script_tags',     [ self::class, 'cmplz_safe_scripts' ] );
         add_filter( 'cmplz_accepted_cookie_types', [ self::class, 'cmplz_safe_scripts' ] );
         add_filter( 'cn_cookie_whitelist',         [ self::class, 'cmplz_safe_scripts' ] );
         add_filter( 'cookie_cat_required_scripts', [ self::class, 'cmplz_safe_scripts' ] );
@@ -95,9 +95,12 @@ class Loader {
     }
     
     /**
-     * Cookie-consent compatibility: declare chat widget scripts as functional/required.
+     * Cookie-consent compatibility: declare ALL MHBO scripts as functional/required.
      * Works with Complianz, Cookie Notice, Cookie Caterer, and similar plugins.
      * Safe to call even if these plugins are not active — hook simply won't fire.
+     *
+     * 2026 BP: Include every MHBO script handle — not just AI — so that
+     * Complianz never blocks the booking modal, calendar, or payment forms.
      *
      * @param array<string|int,mixed> $scripts
      * @return array<string|int,mixed>
@@ -105,6 +108,11 @@ class Loader {
     public static function cmplz_safe_scripts( array $scripts ): array {
         $scripts[] = 'mhbo-chat-widget';
         $scripts[] = 'mhbo-voice';
+        $scripts[] = 'mhbo-booking-modal-js';
+        $scripts[] = 'mhbo-booking-form';
+        $scripts[] = 'mhbo-frontend';
+        $scripts[] = 'mhbo-calendar';
+        $scripts[] = 'mhbo-stripe';
         return $scripts;
     }
 
