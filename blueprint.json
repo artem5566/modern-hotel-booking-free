@@ -3,7 +3,7 @@
   "meta": {
     "title": "Modern Hotel Booking - Azure Bay Showcase",
     "description": "Experience the full luxury resort setup with pre-seeded rooms and custom layouts",
-    "author": "Antigravity Architect"
+    "author": "StartMySuccess"
   },
   "preferredVersions": {
     "php": "8.3",
@@ -23,14 +23,8 @@
     {
       "step": "setSiteOptions",
       "options": {
-        "blogname": "Azure Bay Resort & Spa",
-        "blogdescription": "Luxury Vacation Rentals & Suites",
         "permalink_structure": "/%postname%/"
       }
-    },
-    {
-      "step": "runPHP",
-      "code": "<?php \nrequire_once '/wordpress/wp-load.php';\n\n// 1. Activate Plugin\nactivate_plugin('/wordpress/wp-content/plugins/modern-hotel-booking/modern-hotel-booking.php');\n\n// 2. Initialize DB\nif (class_exists('MHBO\\Core\\Activator')) {\n    \\MHBO\\Core\\Activator::activate();\n}\n\n// 3. Create Marketing Pages\n$home_id = wp_insert_post([\n    'post_title'   => 'Azure Bay Experience',\n    'post_content' => '<!-- wp:heading --><h2>Welcome to Paradise</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Book your stay at our premium suites overlooking the Azure Bay.</p><!-- /wp:paragraph --><!-- wp:shortcode -->[mhbo_calendar]<!-- /wp:shortcode -->',\n    'post_status'  => 'publish',\n    'post_type'    => 'page'\n]);\n\n$booking_id = wp_insert_post([\n    'post_title'   => 'Book Now',\n    'post_content' => '<!-- wp:shortcode -->[mhbo_booking_form]<!-- /wp:shortcode -->',\n    'post_status'  => 'publish',\n    'post_type'    => 'page'\n]);\n\nupdate_option('show_on_front', 'page');\nupdate_option('page_on_front', $home_id);\nupdate_option('mhbo_booking_page', $booking_id);\n\n// 4. Seed Luxury Content\nglobal $wpdb;\n$table_types = $wpdb->prefix . 'mhbo_room_types';\n$table_rooms = $wpdb->prefix . 'mhbo_rooms';\n\n// Deluxe Suite\n$wpdb->insert($table_types, [\n    'name' => 'Azure Deluxe Suite',\n    'description' => 'A spacious 120sqm suite with a private balcony and panoramic ocean views.',\n    'base_price' => 299,\n    'max_adults' => 2,\n    'max_children' => 2,\n    'image_url' => 'https://images.unsplash.com/photo-1590490360182-c33d57733427?auto=format&fit=crop&w=800&q=80'\n]);\n$type1 = $wpdb->insert_id;\n\n// Ocean View Room\n$wpdb->insert($table_types, [\n    'name' => 'Ocean View King',\n    'description' => 'Modern luxury meets the sea. Perfect for couples seeking a romantic getaway.',\n    'base_price' => 199,\n    'max_adults' => 2,\n    'max_children' => 0,\n    'image_url' => 'https://images.unsplash.com/photo-1566665797739-1674de7a421a?auto=format&fit=crop&w=800&q=80'\n]);\n$type2 = $wpdb->insert_id;\n\n// Seed Rooms\nfor ($i = 101; $i <= 103; $i++) {\n    $wpdb->insert($table_rooms, [\n        'type_id' => $type1,\n        'room_number' => (string)$i,\n        'status' => 'available'\n    ]);\n}\nfor ($i = 201; $i <= 202; $i++) {\n    $wpdb->insert($table_rooms, [\n        'type_id' => $type2,\n        'room_number' => (string)$i,\n        'status' => 'available'\n    ]);\n}\n\n// Force Styles\nupdate_option('mhbo_primary_color', '#1a365d');\nupdate_option('mhbo_accent_color', '#d4af37');\n"
     }
   ]
 }
