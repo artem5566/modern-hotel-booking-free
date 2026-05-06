@@ -203,7 +203,15 @@ class Calendar
                     'checkin_only_error' => I18n::get_label('label_checkin_only'),
                     'api_err_min_stay'   => I18n::get_label('api_err_min_stay'),
                     'api_err_max_stay'   => I18n::get_label('api_err_max_stay'),
-                    
+                    /* BUILD_PRO_START */
+                    'min_stay_hint'      => I18n::get_label('min_stay_hint'),
+                    'max_stay_hint'      => I18n::get_label('max_stay_hint'),
+                    'tooltip_min_hint'   => I18n::get_label('tooltip_min_hint'),
+                    'tooltip_max_hint'   => I18n::get_label('tooltip_max_hint'),
+                    'reason_booked'      => I18n::get_label('calendar_reason_booked'),
+                    'reason_manual'      => I18n::get_label('calendar_reason_manual'),
+                    'reason_maintenance' => I18n::get_label('calendar_reason_maintenance'),
+                    /* BUILD_PRO_END */
                 ],
                 'current_lang' => $current_lang
             ]);
@@ -345,7 +353,9 @@ class Calendar
                             <!-- Room Type and Guests selections are deliberately deferred to the subsequent pages -->
                             <input type="hidden" name="type_id" class="mhbo-cal-type-id" value="0">
                             <input type="hidden" name="guests" class="mhbo-cal-guests" value="2">
-                            
+                            <?php /* BUILD_PRO_START */ ?>
+                            <input type="hidden" name="children" class="mhbo-cal-children" value="0">
+                            <?php /* BUILD_PRO_END */ ?>
                         <?php endif; ?>
                     </div>
 

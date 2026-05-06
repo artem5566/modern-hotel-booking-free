@@ -27,6 +27,7 @@ use function gmdate;
 use function number_format;
 use function defined;
 
+
 if ( ! \defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -59,8 +60,11 @@ class KnowledgeBase {
 
         $scarcity_rule = "- SCARCITY URGENCY: If inventory for a requested date is low (less than 3 units), EXPLICITLY highlight this urgency in your response using bold or ALL CAPS (e.g., \"ONLY 2 ROOMS LEFT!\").\n";
         $scarcity_rule .= "- PERSUASION: Use professional, high-hospitality language.\n";
+        /* BUILD_PRO_START */
+        $scarcity_rule .= "- LOYALTY: If a guest provides an email or mentions being a repeat visitor, proactively use 'get_guest_history' to personalize the welcome.\n";
+        /* BUILD_PRO_END */
 
-$rules_text   = self::get_instruction_rules();
+        $rules_text   = self::get_instruction_rules();
 
         return "You are {$persona_name}, the AI concierge for {$hotel_name}.{$custom_block}\n" .
                "\n" .
@@ -87,8 +91,19 @@ $rules_text   = self::get_instruction_rules();
         $deposit_line = self::get_deposit_prompt_line();
 
         $stay_limits_line = '';
+        /* BUILD_PRO_START */
+        $global_min_stay = (int) \get_option( 'mhbo_global_min_stay', 0 );
+        $global_max_stay = (int) \get_option( 'mhbo_global_max_stay', 0 );
+        if ( $global_min_stay > 1 ) {
+            $checkout_guess = \gmdate( 'Y-m-d', \strtotime( "+{$global_min_stay} days" ) );
+            $stay_limits_line .= "   - MINIMUM STAY: The hotel requires a minimum stay of {$global_min_stay} nights. If you must assume dates (e.g., guest asks 'check availability' without dates), ALWAYS default to a {$global_min_stay}-night stay (e.g., today to {$checkout_guess}).\n";
+        }
+        if ( $global_max_stay > 0 ) {
+            $stay_limits_line .= "   - MAXIMUM STAY: The hotel allows a maximum stay of {$global_max_stay} nights.\n";
+        }
+        /* BUILD_PRO_END */
 
-return "=== CONCIERGE RULEBOOK (2026) ===\n" .
+        return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "1. AGENTIC FINALIZATION & PROACTIVE MANDATE: You are a booking agent, not just a link provider. If a guest confirms dates and guest count, immediately call `check_availability` to start the booking flow. IF YOU HAVE ALL REQUIRED PARAMETERS FOR A TOOL (like Name, Email, Phone for a booking), YOU MUST CALL THE TOOL IMMEDIATELY. DO NOT ASK FOR PERMISSION TO EXECUTE A TOOL IF YOU HAVE THE DATA. PROCEED WITHOUT HESITATION.\n" .
                "\n" .
                "2. BOOKING FLOW PROTOCOL:\n" .
@@ -113,9 +128,23 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "   e. If bank transfer or Revolut is available, present payment details with reference info.\n" .
                "   f. For booking changes or cancellations, call `get_business_card` and provide contact information.\n" .
                "\n" .
-               "   \n" .
+               "   /* BUILD_PRO_START */\n" .
+               "   PRO PROTOCOL:\n" .
+               "   a. After availability results, collect full details including child ages and special requests.\n" .
+               "   b. Call `create_booking_draft` to complete the booking directly.\n" .
+               "   c. Confirm the booking number and that a confirmation email has been sent.\n" .
+               "   d. Present the payment URL (Stripe/PayPal) or banking details with reference BOOKING-[ID].\n" .
+               "   e. For existing bookings, verify with booking_id + email, then modify/cancel/promo.\n" .
+               "   f. Check `get_guest_history` for returning guests and personalize the welcome.\n" .
+               "   /* BUILD_PRO_END */\n" .
                "\n" .
-               "   \n" .
+               "   /* BUILD_PRO_START */\n" .
+               "3. ATOMIC MULTI-ROOM BOOKING: \n" .
+               "   - If a guest requires multiple rooms (as suggested by the 'Check Room Availability' tool), you MUST book ALL rooms simultaneously in a single call to `create_booking_draft` by passing the distribution into the `rooms` array.\n" .
+               "   - Defer to Tool Logic: Do not perform your own capacity checks once a tool has provided a valid multi-room distribution.\n" .
+               "   - Confirmation: Tell the guest: \"I've secured [X] rooms for you. Since these are separate reservations, you will receive [X] confirmation emails shortly.\"\n" .
+               "   - Scarcity Urgency: When units_remaining < 3, emphasize stock levels to drive conversion.\n" .
+               "   /* BUILD_PRO_END */\n" .
                "\n" .
                "4. PAYMENT PRESENTATION RULES:\n" .
                "   - When generating a booking link/draft, rely on the summary card logic. DO NOT call `get_business_card` or list manual banking/contact/phone details in your text unless the guest specifically asks for \"manual transfer info\" or \"alternative payment methods\".\n" .
@@ -131,7 +160,17 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "   - Always present the full price breakdown: base price, deposit, and tax.\n" .
                "   - If extras are available (breakfast, spa, transport), suggest ONE relevant extra naturally.\n" .
                "\n" .
-               "   \n" .
+               "   /* BUILD_PRO_START */\n" .
+               "6. LOYALTY RECOGNITION & IDENTITY HANDSHAKE:\n" .
+               "   - For every guest with an email, call `get_guest_history`. If they have past bookings, welcome them back warmly.\n" .
+               "   - PRIORITY RESUMPTION: If `get_guest_history` returns a booking for personal records with a `payment_url`, offer it as the primary action.\n" .
+               "   - IDENTITY HANDSHAKE PROTOCOL: If you access sensitive guest data (confirmation resends, history, modifications, cancellations), you MUST follow this strictly:\n" .
+               "     a. If you received `requires_action: verify_identity`, ask the guest for their email (if not known) and immediately call `send_verification_code`.\n" .
+               "     b. Inform the guest: \"For your security, I've sent a 6-digit code to [email]. Please enter it here to proceed. The code expires in 20 minutes.\"\n" .
+               "     c. Once they provide a code, call `verify_identity`.\n" .
+               "     d. ONLY proceed with the sensitive task AFTER you receive a successful result from `verify_identity`.\n" .
+               "     e. Maximum of 10 failed attempts allowed before lockout.\n" .
+               "   /* BUILD_PRO_END */\n" .
                "\n" .
                "7. SENTIMENT & ESCALATION:\n" .
                "   - Detect frustration, confusion, or reports of technical errors. \n" .
@@ -142,7 +181,9 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "\n" .
                "9. PERSONALIZATION:\n" .
                "   - Always address the guest by their first name once they have provided it.\n" .
-               "   \n" .
+               "   /* BUILD_PRO_START */\n" .
+               "   - When `create_booking_draft` is called, confirm a summary email has been sent.\n" .
+               "   /* BUILD_PRO_END */\n" .
                "\n" .
                "10. FORMATTING, LINKS & TTS:\n" .
                "   - PROHIBITED: Never use markdown asterisks (*) for lists or bolding. Use simple dashes (-) and plain text.\n" .
@@ -247,7 +288,22 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
             self::def_get_business_card(),
         ];
 
-return $tools;
+        /* BUILD_PRO_START */
+        if ( $include_pro && License::is_pro_active() ) {
+            $tools[] = self::def_create_booking_draft();
+            $tools[] = self::def_modify_booking();
+            $tools[] = self::def_cancel_booking();
+            if ( (bool)(int) get_option( 'mhbo_coupon_ai_enabled', 1 ) && (bool)(int) get_option( 'mhbo_coupons_enabled', 1 ) ) {
+                $tools[] = self::def_apply_promo_code();
+            }
+            $tools[] = self::def_get_guest_history();
+            $tools[] = self::def_resend_confirmation();
+            $tools[] = self::def_send_verification_code();
+            $tools[] = self::def_verify_identity();
+        }
+        /* BUILD_PRO_END */
+
+        return $tools;
     }
 
     // -------------------------------------------------------------------------
@@ -333,7 +389,175 @@ return $tools;
         ];
     }
 
-/** @return array<mixed> */
+    /* BUILD_PRO_START */
+
+    /** @return array<mixed> */
+    private static function def_create_booking_draft(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'create_booking_draft',
+                'description' => 'Create a pending booking reservation for a guest. Only call this when the guest has confirmed all details.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'room_id'          => [ 'type' => 'string', 'description' => 'Room ID (integer) to book.' ],
+                        'check_in'         => [ 'type' => 'string', 'format' => 'date', 'description' => 'Check-in date.' ],
+                        'check_out'        => [ 'type' => 'string', 'format' => 'date', 'description' => 'Check-out date.' ],
+                        'adults'           => [ 'type' => 'integer', 'minimum' => 1 ],
+                        'children'         => [ 'type' => 'integer', 'minimum' => 0 ],
+                        'child_ages'       => [
+                            'type'        => 'array',
+                            'items'       => [ 'type' => 'integer', 'minimum' => 0 ],
+                            'description' => 'Age of each child in years. Required for accurate pricing.',
+                        ],
+                        'guest_name'       => [ 'type' => 'string', 'description' => 'Full name of the primary guest.' ],
+                        'guest_email'      => [ 'type' => 'string', 'format' => 'email', 'description' => 'Guest email address.' ],
+                        'guest_phone'      => [ 'type' => 'string', 'description' => 'Guest phone number.' ],
+                        'special_requests' => [ 'type' => 'string', 'description' => 'Any special requests from the guest.' ],
+                    ],
+                    'required' => [ 'room_id', 'check_in', 'check_out', 'adults', 'guest_name', 'guest_email', 'guest_phone' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_modify_booking(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'modify_booking',
+                'description' => 'Modify an existing booking (dates or room type). Guest email required for verification.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'booking_id'   => [ 'type' => 'string', 'description' => 'The booking ID to modify.' ],
+                        'guest_email'  => [ 'type' => 'string', 'format' => 'email', 'description' => 'Guest email for verification.' ],
+                        'new_check_in' => [ 'type' => 'string', 'format' => 'date' ],
+                        'new_check_out'=> [ 'type' => 'string', 'format' => 'date' ],
+                        'new_room_id'  => [ 'type' => 'string' ],
+                    ],
+                    'required' => [ 'booking_id', 'guest_email' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_cancel_booking(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'cancel_booking',
+                'description' => 'Cancel an existing booking. Guest email required for verification.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'booking_id'  => [ 'type' => 'string' ],
+                        'guest_email' => [ 'type' => 'string', 'format' => 'email' ],
+                        'reason'      => [ 'type' => 'string', 'description' => 'Reason for cancellation.' ],
+                    ],
+                    'required' => [ 'booking_id', 'guest_email' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_apply_promo_code(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'apply_promo_code',
+                'description' => 'Apply a promotional discount code to a booking draft.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'booking_draft_id' => [ 'type' => 'string' ],
+                        'promo_code'       => [ 'type' => 'string' ],
+                    ],
+                    'required' => [ 'booking_draft_id', 'promo_code' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_get_guest_history(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'get_guest_history',
+                'description' => 'Retrieve past bookings for a returning guest. Returns booking details, status, and payment resumption URLs (payment_url) if pending.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'guest_email' => [ 'type' => 'string', 'format' => 'email' ],
+                    ],
+                    'required' => [ 'guest_email' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_resend_confirmation(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'resend_confirmation',
+                'description' => 'Resend a booking confirmation email for an existing reservation. For security, this tool strictly uses the verified email already bound to the guest\'s session.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'booking_id' => [ 'type' => 'integer', 'description' => 'The ID of the booking to resend.' ],
+                    ],
+                    'required' => [ 'booking_id' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_send_verification_code(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'send_verification_code',
+                'description' => 'Generates and sends a 6-digit verification code to the guest\'s email. Essential for identity verification before accessing sensitive data.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'email' => [ 'type' => 'string', 'format' => 'email', 'description' => 'Guest email address to verify.' ],
+                    ],
+                    'required' => [ 'email' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_verify_identity(): array {
+        return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'verify_identity',
+                'description' => 'Validates the 6-digit code provided by the guest. Marks the session as verified upon success.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => [
+                        'code' => [ 'type' => 'string', 'description' => 'The 6-digit code provided by the guest.' ],
+                    ],
+                    'required' => [ 'code' ],
+                ],
+            ],
+        ];
+    }
+
+    /* BUILD_PRO_END */
+
+    /** @return array<mixed> */
     private static function def_get_local_tips(): array {
         return [
             'type'     => 'function',

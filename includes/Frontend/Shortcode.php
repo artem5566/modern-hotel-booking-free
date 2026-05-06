@@ -13,6 +13,9 @@ use MHBO\Core\Tax;
 use MHBO\Core\License;
 use MHBO\Core\Security;
 use MHBO\Core\Cache;
+/* BUILD_PRO_START */
+use MHBO\Pro\PaymentGateways;
+/* BUILD_PRO_END */
 
 class Shortcode
 {
@@ -65,10 +68,201 @@ class Shortcode
         // Using add_action('init', ..., 10) here would NEVER fire because priority 10
         // has already passed. We must call these directly.
         $this->handle_form_submissions();
-        
+        /* BUILD_PRO_START */
+        $this->handle_stripe_redirect();
+        $this->handle_ai_booking_resume();
+        /* BUILD_PRO_END */
     }
 
-/**
+    /* BUILD_PRO_START */
+    /**
+     * Handle return from Stripe redirect (e.g. 3DS authentication).
+     */
+    public function handle_stripe_redirect(): void
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Stripe redirects are stateless; verified via Stripe API callback below.
+        if (filter_input(INPUT_GET, 'mhbo_payment_return') !== 'stripe') {
+            return;
+        }
+
+        // Stripe redirect callback verified via Stripe API later in this method
+        $pi_id = (string) filter_input(INPUT_GET, 'payment_intent', FILTER_SANITIZE_SPECIAL_CHARS);
+        if ('' === $pi_id) {
+            return;
+        }
+
+        global $wpdb;
+
+        // 1. Check if booking already exists for this PI
+        $cache_key = 'mhbo_booking_pi_' . $pi_id;
+        $booking = wp_cache_get($cache_key, 'mhbo_bookings');
+
+        if (false === $booking) {
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- 2026 BP: Querying custom mhbo_bookings table; version-based caching managed via MHBO\Core\Cache.
+            $booking = $wpdb->get_row($wpdb->prepare(
+                "SELECT id, status, room_id, booking_token FROM {$wpdb->prefix}mhbo_bookings WHERE payment_transaction_id = %s",
+                $pi_id
+            ));
+            wp_cache_set($cache_key, $booking, 'mhbo_bookings', 300);
+        }
+
+        if (null === $booking) {
+            // 2. If not, verify PI with Stripe and create booking from metadata
+            if (class_exists(PaymentGateways::class)) {
+                $gateway = new PaymentGateways();
+                $mode = get_option('mhbo_stripe_mode', 'test');
+                $secret_key = ('live' === $mode)
+                    ? $gateway->get_decrypted_secret(get_option('mhbo_stripe_live_secret_key', ''))
+                    : $gateway->get_decrypted_secret(get_option('mhbo_stripe_test_secret_key', ''));
+
+                $response = wp_safe_remote_get('https://api.stripe.com/v1/payment_intents/' . $pi_id, array(
+                    'headers' => array(
+                        'Authorization' => 'Bearer ' . $secret_key,
+                        'Stripe-Version' => PaymentGateways::STRIPE_API_VERSION,
+                    ),
+                    'timeout' => 30,
+                ));
+
+                if (!is_wp_error($response)) {
+                    $pi = json_decode(wp_remote_retrieve_body($response), true);
+                    if (isset($pi['status']) && $pi['status'] === 'succeeded') {
+                        $currency = strtoupper((string) get_option('mhbo_currency_code', 'USD'));
+                        $amount_cents = (int) ($pi['amount_received'] ?? 0);
+                        $money = Money::fromCents($amount_cents, $currency);
+
+                        $booking_id = PaymentGateways::create_booking_from_metadata(
+                            $pi['metadata'] ?? array(),
+                            $pi_id,
+                            'stripe',
+                            $money
+                        );
+
+                        if ($booking_id) {
+                            $cache_key_id = 'mhbo_booking_' . $booking_id;
+                            $booking = wp_cache_get($cache_key_id, 'mhbo_bookings');
+                            
+                            if (false === $booking) {
+                                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- 2026 BP: Fetching localized booking data for redirection after external payment webhook.
+                                $booking = $wpdb->get_row($wpdb->prepare(
+                                    "SELECT id, status, booking_token FROM {$wpdb->prefix}mhbo_bookings WHERE id = %d",
+                                    $booking_id
+                                ));
+                                wp_cache_set($cache_key_id, $booking, 'mhbo_bookings', 300);
+                            }
+                        }
+                    }
+                }
+            }
+        }
+
+        // 3. Redirect to success page if booking is confirmed
+        if (null !== $booking && ($booking->status === 'confirmed' || $booking->status === 'pending')) {
+            // Modal re-entry: Stripe 3DS redirected away from the modal page; land back with token so JS re-opens the drawer.
+            $is_modal_return = filter_input(INPUT_GET, 'mhbo_modal_return') === '1';
+            if ($is_modal_return && '' !== (string) ($booking->booking_token ?? '')) {
+                // Return just the receipt via modal.
+                $modal_url = add_query_arg([
+                    'mhbo_modal_booking' => $booking->booking_token,
+                    'mhbo_modal_status'  => $booking->status,
+                ], remove_query_arg(['mhbo_payment_return', 'payment_intent', 'payment_intent_client_secret', 'mhbo_modal_return']));
+                wp_safe_redirect($modal_url);
+                exit;
+            }
+
+            $success_nonce = wp_create_nonce('mhbo_success_display');
+            $success_url = add_query_arg([
+                'mhbo_success'       => 1,
+                'mhbo_success_nonce' => $success_nonce,
+                'mhbo_status'        => $booking->status,
+            ], remove_query_arg(['mhbo_payment_return', 'payment_intent', 'payment_intent_client_secret']));
+
+            wp_safe_redirect($success_url);
+            exit;
+        }
+    }
+
+    /**
+     * Handle resuming an AI-drafted booking via a secure link.
+     * 
+     * @since 2.4.1
+     * @return void
+     */
+    public function handle_ai_booking_resume(): void
+    {
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Rationale: Secure redirect handler for email-initiated booking resumes; uses 64-char dynamic tokens to prevent unauthorized access.
+        $booking_id = isset($_GET['mhbo_booking']) ? absint($_GET['mhbo_booking']) : 0;
+        // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+        $token = isset($_GET['token']) ? sanitize_text_field(wp_unslash($_GET['token'])) : '';
+
+        if (0 === $booking_id || '' === $token) {
+            return;
+        }
+
+        // DEBUG TRAP
+        // wp_die('Handler reached for ID: ' . esc_html((string)$booking_id));
+
+        global $wpdb;
+        $cache_key = 'mhbo_booking_resume_' . $booking_id;
+        $booking = wp_cache_get($cache_key, 'mhbo_bookings');
+
+        if (false === $booking) {
+            // RATIONALE: Verify both ID and secure 64-char token to prevent IDOR scanning.
+            // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+            $booking = $wpdb->get_row($wpdb->prepare(
+                "SELECT * FROM %i WHERE id = %d AND booking_token = %s AND status = 'pending'",
+                $wpdb->prefix . 'mhbo_bookings',
+                $booking_id,
+                $token
+            ));
+            if (null !== $booking) {
+                wp_cache_set($cache_key, $booking, 'mhbo_bookings', 60);
+            }
+        }
+
+        if (null === $booking) {
+            return;
+        }
+
+        // Re-inflate parameters for the booking form (PRG pattern)
+        $nonce = wp_create_nonce('mhbo_auto_action');
+        $args = [
+            'mhbo_auto_book' => 1,
+            'mhbo_nonce'     => $nonce,
+            'room_id'        => $booking->room_id,
+            'check_in'       => $booking->check_in,
+            'check_out'      => $booking->check_out,
+            'guests'         => $booking->guests,
+            'children'       => $booking->children,
+            'customer_name'  => $booking->customer_name,
+            'customer_email' => $booking->customer_email,
+            'customer_phone' => $booking->customer_phone,
+            'total_price'    => $booking->total_price,
+            'exclude_id'     => $booking->id,
+            'mhbo_update_id' => $booking->id, // SIGNAL: This is a resumption that should update the existing record
+        ];
+
+        // Handle multi-room context if applicable
+        if ((bool) ($booking->is_multi_room ?? false)) {
+            $args['mhbo_multi_parent'] = $booking->multi_room_parent;
+        }
+
+        // Handle child ages persistence
+        $child_ages = json_decode((string)($booking->children_ages ?? '[]'), true);
+        if (is_array($child_ages) && [] !== $child_ages) {
+            set_transient('mhbo_child_ages_' . $nonce, wp_json_encode($child_ages), 300);
+        }
+
+        $redirect_url = add_query_arg($args, self::get_checkout_url());
+        
+        // SECURITY: Never include the token in the final checkout URL to prevent leakage in referers.
+        $redirect_url = remove_query_arg(['mhbo_booking', 'token'], $redirect_url);
+
+        wp_safe_redirect($redirect_url);
+        exit;
+    }
+    /* BUILD_PRO_END */
+
+    /**
      * Entry point for standard POST form submissions.
      * 2026 BP: Always active to support both direct POST and AJAX registration context.
      * All actions are strictly guarded by mhbo_confirm_action nonces.
@@ -312,7 +506,28 @@ class Shortcode
             wp_enqueue_script('mhbo-booking-form', MHBO_PLUGIN_URL . 'assets/js/mhbo-booking-form.js', ['jquery', 'mhbo-frontend'], MHBO_VERSION, true);
         }
 
-// Add localization data (only once)
+        /* BUILD_PRO_START */
+        // Enqueue deposit checkout assets if enabled
+        if (MHBO_IS_PRO && get_option('mhbo_deposits_enabled', 0)) {
+            wp_enqueue_style('mhbo-deposit-checkout', MHBO_PLUGIN_URL . 'assets/css/pro/mhbo-deposit-checkout.css', ['mhbo-style'], MHBO_VERSION);
+            wp_enqueue_script('mhbo-deposit-checkout', MHBO_PLUGIN_URL . 'assets/js/pro/mhbo-deposit-checkout.js', ['jquery'], MHBO_VERSION, true);
+        }
+
+        // Enqueue coupon UI assets if coupons are enabled
+        if (MHBO_IS_PRO && (bool)(int)get_option('mhbo_coupons_enabled', 1) && !wp_script_is('mhbo-coupons', 'enqueued')) {
+            wp_enqueue_script('mhbo-coupons', MHBO_PLUGIN_URL . 'assets/js/mhbo-coupons.js', ['jquery'], MHBO_VERSION, true);
+            wp_localize_script('mhbo-coupons', 'mhbo_coupon', [
+                'ajax_url'         => admin_url('admin-ajax.php'),
+                'nonce'            => wp_create_nonce('mhbo_coupon_nonce'),
+                'label_enter_code' => __('Please enter a coupon code.', 'modern-hotel-booking'),
+                'label_validating' => __("Validating\xe2\x80\xa6", 'modern-hotel-booking'),
+                'label_error'      => __('An error occurred. Please try again.', 'modern-hotel-booking'),
+                'label_coupon'     => __('Coupon', 'modern-hotel-booking'),
+            ]);
+        }
+        /* BUILD_PRO_END */
+
+        // Add localization data (only once)
         if (!wp_script_is('mhbo-frontend', 'done')) {
             $localized_data = array(
                 'pay_confirm' => I18n::get_label('btn_pay_confirm'),
@@ -411,7 +626,28 @@ class Shortcode
         // Booking form interactions
         wp_enqueue_script('mhbo-booking-form', MHBO_PLUGIN_URL . 'assets/js/mhbo-booking-form.js', ['jquery', 'mhbo-frontend'], MHBO_VERSION, true);
 
-// Localize script for JS strings
+        /* BUILD_PRO_START */
+        // Enqueue deposit checkout assets if enabled
+        if (MHBO_IS_PRO && get_option('mhbo_deposits_enabled', 0)) {
+            wp_enqueue_style('mhbo-deposit-checkout', MHBO_PLUGIN_URL . 'assets/css/pro/mhbo-deposit-checkout.css', ['mhbo-style'], MHBO_VERSION);
+            wp_enqueue_script('mhbo-deposit-checkout', MHBO_PLUGIN_URL . 'assets/js/pro/mhbo-deposit-checkout.js', ['jquery'], MHBO_VERSION, true);
+        }
+
+        // Enqueue coupon UI assets if coupons are enabled (modal path)
+        if (MHBO_IS_PRO && (bool)(int)get_option('mhbo_coupons_enabled', 1) && !wp_script_is('mhbo-coupons', 'enqueued')) {
+            wp_enqueue_script('mhbo-coupons', MHBO_PLUGIN_URL . 'assets/js/mhbo-coupons.js', ['jquery'], MHBO_VERSION, true);
+            wp_localize_script('mhbo-coupons', 'mhbo_coupon', [
+                'ajax_url'         => admin_url('admin-ajax.php'),
+                'nonce'            => wp_create_nonce('mhbo_coupon_nonce'),
+                'label_enter_code' => __('Please enter a coupon code.', 'modern-hotel-booking'),
+                'label_validating' => __("Validating\xe2\x80\xa6", 'modern-hotel-booking'),
+                'label_error'      => __('An error occurred. Please try again.', 'modern-hotel-booking'),
+                'label_coupon'     => __('Coupon', 'modern-hotel-booking'),
+            ]);
+        }
+        /* BUILD_PRO_END */
+
+        // Localize script for JS strings
         $localized_data = array(
             'pay_confirm' => I18n::get_label('btn_pay_confirm'),
             'confirm' => I18n::get_label('btn_confirm_booking'),
@@ -499,7 +735,28 @@ class Shortcode
             true
         );
 
-$localized_data = [
+        /* BUILD_PRO_START */
+        if (MHBO_IS_PRO && get_option('mhbo_deposits_enabled', 0)) {
+            wp_enqueue_style('mhbo-deposit-checkout', MHBO_PLUGIN_URL . 'assets/css/pro/mhbo-deposit-checkout.css', ['mhbo-style'], MHBO_VERSION);
+            wp_enqueue_script('mhbo-deposit-checkout', MHBO_PLUGIN_URL . 'assets/js/pro/mhbo-deposit-checkout.js', ['jquery'], MHBO_VERSION, true);
+        }
+
+        // Enqueue coupon UI assets for modal — must be loaded on calendar-only pages
+        // so the coupon field works when the booking form is injected via the modal REST endpoint.
+        if (MHBO_IS_PRO && (bool)(int)get_option('mhbo_coupons_enabled', 1) && !wp_script_is('mhbo-coupons', 'enqueued')) {
+            wp_enqueue_script('mhbo-coupons', MHBO_PLUGIN_URL . 'assets/js/mhbo-coupons.js', ['jquery'], MHBO_VERSION, true);
+            wp_localize_script('mhbo-coupons', 'mhbo_coupon', [
+                'ajax_url'         => admin_url('admin-ajax.php'),
+                'nonce'            => wp_create_nonce('mhbo_coupon_nonce'),
+                'label_enter_code' => __('Please enter a coupon code.', 'modern-hotel-booking'),
+                'label_validating' => __("Validating\xe2\x80\xa6", 'modern-hotel-booking'),
+                'label_error'      => __('An error occurred. Please try again.', 'modern-hotel-booking'),
+                'label_coupon'     => __('Coupon', 'modern-hotel-booking'),
+            ]);
+        }
+        /* BUILD_PRO_END */
+
+        $localized_data = [
             'pay_confirm'                        => I18n::get_label('btn_pay_confirm'),
             'confirm'                            => I18n::get_label('btn_confirm_booking'),
             'processing'                         => I18n::get_label('btn_processing'),
@@ -701,7 +958,52 @@ $localized_data = [
                 </div>
             <?php endif; ?>
 
-</div>
+            <?php
+            /* BUILD_PRO_START */
+            $tax_breakdown_rendered = false;
+            if (Tax::is_enabled() && (int) $booking->tax_enabled > 0) {
+                $tax_breakdown = Tax::get_tax_breakdown((int) $booking->id);
+                if (is_array($tax_breakdown) && [] !== $tax_breakdown) {
+                    if (
+                        'completed' === $booking->payment_status &&
+                        null !== $booking->payment_amount &&
+                        (float) $booking->payment_amount > 0 &&
+                        'full' === ($booking->payment_type ?? 'full')
+                    ) {
+                        $stored_gross = (float) ($tax_breakdown['totals']['total_gross'] ?? 0);
+                        $paid_amount  = (float) $booking->payment_amount;
+                        if (abs($stored_gross - $paid_amount) > 0.009) {
+                            $tax_breakdown['totals']['total_gross'] = $paid_amount;
+                        }
+                    }
+                    $meta = [
+                        'guests'            => $booking->guests,
+                        'children'          => $booking->children,
+                        'payment_type'      => $booking->payment_type ?? 'full',
+                        'payment_status'    => $booking->payment_status ?? '',
+                        'deposit_amount'    => $booking->deposit_amount ?? 0,
+                        'remaining_balance' => $booking->remaining_balance ?? 0,
+                        'coupon_code'       => $booking->coupon_code ?? '',
+                        'coupon_discount'   => $booking->coupon_discount ?? '',
+                    ];
+                    echo wp_kses_post(Tax::render_breakdown_html($tax_breakdown, null, false, $meta, false));
+                    $tax_breakdown_rendered = true;
+                }
+            }
+            if (!$tax_breakdown_rendered && 'arrival' !== ($booking->payment_method ?? '')) {
+                $fb_currency = Pricing::get_currency_code();
+                $fb_children = Money::fromDecimal((string) ($booking->children_total_net ?? 0), $fb_currency);
+                $fb_total    = Money::fromDecimal((string) ($booking->total_price ?? 0), $fb_currency);
+                if ($fb_children->isPositive() && $fb_total->isPositive()) {
+                    echo '<div class="mhbo-booking-cost-summary" style="margin-top:12px; padding:10px; background:#f9f9f9; border-radius:4px;">';
+                    echo '<p style="margin:4px 0;"><span>' . esc_html(I18n::get_label('label_children')) . ':</span> ' . esc_html($fb_children->format()) . '</p>';
+                    echo '<p style="margin:4px 0;"><strong>' . esc_html(I18n::get_label('label_total')) . ':</strong> ' . esc_html($fb_total->format()) . '</p>';
+                    echo '</div>';
+                }
+            }
+            /* BUILD_PRO_END */
+            ?>
+        </div>
         <?php
         return (string) ob_get_clean();
     }
@@ -891,7 +1193,58 @@ $localized_data = [
                     }
                     
                     // Show tax breakdown using shared renderer
-                    
+                    /* BUILD_PRO_START */
+                    $tax_breakdown_rendered = false;
+                    if (Tax::is_enabled() && (int) $booking->tax_enabled > 0) {
+                        $tax_breakdown = Tax::get_tax_breakdown((int) $booking->id);
+                        if (is_array($tax_breakdown) && [] !== $tax_breakdown) {
+                            // When booking is completed and the stored total_gross differs from the
+                            // actual payment_amount (e.g. 3DS redirect stripped POST data causing
+                            // an under-calculated DB save), override the display total so the
+                            // summary matches what was charged. The authoritative payment record
+                            // (payment_amount / transaction_id) is already shown above.
+                            // 2026 BP: Do NOT override total_gross for deposit bookings — payment_amount
+                            // is only the deposit (partial payment), not the full booking total.
+                            if (
+                                'completed' === $booking->payment_status &&
+                                null !== $booking->payment_amount &&
+                                (float) $booking->payment_amount > 0 &&
+                                'full' === ($booking->payment_type ?? 'full')
+                            ) {
+                                $stored_gross = (float) ($tax_breakdown['totals']['total_gross'] ?? 0);
+                                $paid_amount  = (float) $booking->payment_amount;
+                                if (abs($stored_gross - $paid_amount) > 0.009) {
+                                    $tax_breakdown['totals']['total_gross'] = $paid_amount;
+                                }
+                            }
+                            $meta = [
+                                'guests' => $booking->guests,
+                                'children' => $booking->children,
+                                'payment_type' => $booking->payment_type ?? 'full',
+                                'payment_status' => $booking->payment_status ?? '',
+                                'deposit_amount' => $booking->deposit_amount ?? 0,
+                                'remaining_balance' => $booking->remaining_balance ?? 0,
+                                'coupon_code'     => $booking->coupon_code ?? '',
+                                'coupon_discount' => $booking->coupon_discount ?? '',
+                            ];
+                            echo wp_kses_post(Tax::render_breakdown_html($tax_breakdown, null, false, $meta, false));
+                            $tax_breakdown_rendered = true;
+                        }
+                    }
+                    // Fallback: when tax breakdown is not rendered (tax disabled or not stored), always
+                    // show children accommodation + total so the confirmed amount is never hidden.
+                    if (!$tax_breakdown_rendered && 'arrival' !== ($booking->payment_method ?? '')) {
+                        $fb_currency = Pricing::get_currency_code();
+                        $fb_children = Money::fromDecimal((string) ($booking->children_total_net ?? 0), $fb_currency);
+                        $fb_total    = Money::fromDecimal((string) ($booking->total_price ?? 0), $fb_currency);
+                        if ($fb_children->isPositive() && $fb_total->isPositive()) {
+                            echo '<div class="mhbo-booking-cost-summary" style="margin-top:12px; padding:10px; background:#f9f9f9; border-radius:4px;">';
+                            echo '<p style="margin:4px 0;"><span>' . esc_html(I18n::get_label('label_children')) . ':</span> ' . esc_html($fb_children->format()) . '</p>';
+                            echo '<p style="margin:4px 0;"><strong>' . esc_html(I18n::get_label('label_total')) . ':</strong> ' . esc_html($fb_total->format()) . '</p>';
+                            echo '</div>';
+                        }
+                    }
+                    /* BUILD_PRO_END */
                 }
             } else {
                 // Fallback for when booking ID is missing but success flag is present
@@ -912,8 +1265,11 @@ $localized_data = [
                 echo '<script>window.addEventListener("DOMContentLoaded", function() { const err = document.querySelector(".mhbo-error, .mhbo-message.mhbo-error"); if(err) err.scrollIntoView({behavior: "smooth", block: "center"}); });</script>';
             }
 
-            // handle_booking_process handles the DISPLAY branches (search/form/etc)
-            $this->handle_booking_process($atts);
+            // 2026 BP: Skip fallback rendering if the calendar was already requested for a specific room.
+            // This prevents duplicate UI and redundant "Book Now" buttons on single-room pages.
+            if (!($show_calendar && (int)$atts['room_id'] > 0)) {
+                $this->handle_booking_process($atts);
+            }
         }
         
         echo '</div>';
@@ -963,7 +1319,22 @@ $localized_data = [
 
             $redirect_url = add_query_arg($redirect_args, $this->get_booking_page_url());
 
-wp_safe_redirect($redirect_url);
+            /* BUILD_PRO_START */
+            // 2026 BP: Persist child_ages across the PRG redirect via a short-lived transient.
+            // Arrays cannot be cleanly passed in URL query strings. The nonce is unique per
+            // redirect and provides a safe, collision-free key. phpcs:ignore WordPress.Security.NonceVerification.Missing -- Nonce verified above.
+            $child_ages_redirect = isset($_POST['child_ages']) && is_array($_POST['child_ages'])
+                ? array_map('absint', wp_unslash($_POST['child_ages'])) : [];
+            if ([] !== $child_ages_redirect) {
+                set_transient(
+                    'mhbo_child_ages_' . $redirect_args['mhbo_nonce'],
+                    wp_json_encode($child_ages_redirect),
+                    300
+                );
+            }
+            /* BUILD_PRO_END */
+
+            wp_safe_redirect($redirect_url);
             exit;
         }
 
@@ -1039,8 +1410,20 @@ wp_safe_redirect($redirect_url);
                         // 2026 BP: Recover child_ages BEFORE price recalculation so
                         // the displayed price accounts for children charges.
                         $recovered_child_ages = [];
+                        /* BUILD_PRO_START */
+                        // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- Nonce already verified above; used only as transient key.
+                        $nonce_key = isset($_GET['mhbo_nonce']) ? sanitize_key(wp_unslash($_GET['mhbo_nonce'])) : '';
+                        if ('' !== $nonce_key) {
+                            $raw_ages = get_transient('mhbo_child_ages_' . $nonce_key);
+                            if (false !== $raw_ages) {
+                                delete_transient('mhbo_child_ages_' . $nonce_key);
+                                $decoded = json_decode((string) $raw_ages, true);
+                                $recovered_child_ages = is_array($decoded) ? array_map('absint', $decoded) : [];
+                            }
+                        }
+                        /* BUILD_PRO_END */
 
-// 2026 BP: ALWAYS recalculate price server-side for the form display.
+                        // 2026 BP: ALWAYS recalculate price server-side for the form display.
                         // Never trust the total_price from the URL — it could be tampered.
                         // Pass children + child_ages so children supplements are included.
                         // Extras are not pre-selected from the URL — compulsory extras auto-inject
@@ -1057,7 +1440,9 @@ wp_safe_redirect($redirect_url);
                             'guests'         => max(1, $guests),
                             'children'       => $children,
                             'exclude_id'     => $exclude_id,
-                            
+                            /* BUILD_PRO_START */
+                            'child_ages'     => $recovered_child_ages,
+                            /* BUILD_PRO_END */
                             'total_price'    => $total,
                             'customer_name'  => isset($_GET['customer_name']) ? sanitize_text_field(wp_unslash($_GET['customer_name'])) : '',
                             'customer_email' => isset($_GET['customer_email']) ? sanitize_email(wp_unslash($_GET['customer_email'])) : '',
@@ -1191,7 +1576,24 @@ wp_safe_redirect($redirect_url);
             wp_cache_set($cache_key, $available_rooms, 'mhbo_bookings', 300); // Cache for 5 minutes
         }
 
-echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_in, $check_out)) . '</h3>';
+        /* BUILD_PRO_START */
+        if (class_exists('MHBO\Pro\AdminCalendar') && [] !== $available_rooms) {
+            $nights_for_filter = (new \DateTime($check_in))->diff(new \DateTime($check_out))->days;
+            $available_rooms = array_values(array_filter($available_rooms, function ($room) use ($check_in, $nights_for_filter) {
+                $eff_min = \MHBO\Pro\AdminCalendar::resolve_min_stay((int) $room->id, $check_in);
+                $eff_max = \MHBO\Pro\AdminCalendar::resolve_max_stay((int) $room->id, $check_in);
+                if (null !== $eff_min && $nights_for_filter < $eff_min) {
+                    return false;
+                }
+                if (null !== $eff_max && $nights_for_filter > $eff_max) {
+                    return false;
+                }
+                return true;
+            }));
+        }
+        /* BUILD_PRO_END */
+
+        echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_in, $check_out)) . '</h3>';
         if ([] === $available_rooms) {
             echo '<p>' . esc_html(I18n::get_label('label_no_rooms')) . '</p>';
             $this->render_search_form();
@@ -1315,7 +1717,26 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
             return;
         }
 
-$cache_key = 'mhbo_room_details_' . md5((string)$room_id);
+        /* BUILD_PRO_START */
+        if (class_exists('MHBO\Pro\AdminCalendar') && $room_id > 0 && '' !== $check_in && '' !== $check_out) {
+            $nights_count   = (new \DateTime($check_in))->diff(new \DateTime($check_out))->days;
+            $eff_min        = \MHBO\Pro\AdminCalendar::resolve_min_stay($room_id, $check_in);
+            $eff_max        = \MHBO\Pro\AdminCalendar::resolve_max_stay($room_id, $check_in);
+
+            if (null !== $eff_min && $nights_count < $eff_min) {
+                echo '<div class="mhbo-error">' . esc_html(sprintf(I18n::get_label('api_err_min_stay'), $eff_min)) . '</div>';
+                $this->render_search_form();
+                return;
+            }
+            if (null !== $eff_max && $nights_count > $eff_max) {
+                echo '<div class="mhbo-error">' . esc_html(sprintf(I18n::get_label('api_err_max_stay'), $eff_max)) . '</div>';
+                $this->render_search_form();
+                return;
+            }
+        }
+        /* BUILD_PRO_END */
+
+        $cache_key = 'mhbo_room_details_' . md5((string)$room_id);
         $room = wp_cache_get($cache_key, 'mhbo_bookings');
         if (false === $room) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table
@@ -1349,9 +1770,12 @@ $cache_key = 'mhbo_room_details_' . md5((string)$room_id);
         $total = ( false !== $calc ) ? $calc['total'] : Money::fromCents(0, Pricing::get_currency_code());
 
         $is_pro_active = false;
+        /* BUILD_PRO_START */
+        $is_pro_active = License::is_pro_active();
+        /* BUILD_PRO_END */
 
-$deposit_data = null;
-        if (MHBO_IS_PRO && get_option('mhbo_deposits_enabled', 0)) {
+        $deposit_data = null;
+        if ($is_pro_active && get_option('mhbo_deposits_enabled', 0)) {
             $currency = $total->getCurrency();
             // 2026 BP: For 'first_night' deposit type, use room-rate-only calc (no extras, no children)
             // to match the industry standard meaning of "first night's rate" (accommodation only).
@@ -1488,7 +1912,47 @@ $deposit_data = null;
                     </select>
                 </div>
 
-<div class="mhbo-form-group">
+                <?php /* BUILD_PRO_START */ ?>
+                <?php
+                $max_children = isset($room->max_children) ? intval($room->max_children) : 0;
+                if ($max_children > 0):
+                    // Use pre-validated $calc_children parameter
+                    $selected_children = $calc_children;
+                    ?>
+                    <div class="mhbo-form-group">
+                        <label><?php echo esc_html(I18n::get_label('label_children')); ?></label>
+                        <select name="children" class="mhbo-booking-children">
+                            <?php for ($i = 0; $i <= $max_children; $i++): ?>
+                                <option value="<?php echo esc_attr((string) $i); ?>" <?php selected($selected_children, $i); ?>>
+                                    <?php echo esc_html((string) $i); ?>
+                                </option>
+                            <?php endfor; ?>
+                        </select>
+                    </div>
+                    <div class="mhbo-child-ages-container"
+                        style="display:<?php echo esc_attr($selected_children > 0 ? 'block' : 'none'); ?>;">
+                        <label><?php echo esc_html(I18n::get_label('label_child_ages')); ?></label>
+                        <div class="mhbo-child-ages-inputs">
+                            <?php
+                            // Re-populate if returning from failed validation or redirect
+                            if ($selected_children > 0 && [] !== $calc_child_ages) {
+                                $child_ages_data = $calc_child_ages;
+                                foreach ($child_ages_data as $idx => $age) {
+                                    if ($idx >= $selected_children)
+                                        break;
+                                    echo '<div class="mhbo-child-age-group">';
+                                    printf('<label>' . esc_html(I18n::get_label('label_child_n_age')) . ' <span class="required">*</span></label>', esc_html((string) ($idx + 1)));
+                                    echo '<input type="number" name="child_ages[]" value="' . esc_attr((string) absint($age)) . '" min="0" max="17" step="any" required class="mhbo-child-age-input">';
+                                    echo '</div>';
+                                }
+                            }
+                            ?>
+                        </div>
+                    </div>
+                <?php endif; ?>
+                <?php /* BUILD_PRO_END */ ?>
+
+                <div class="mhbo-form-group">
                     <label><?php echo esc_html(I18n::get_label('label_phone')); ?> <span class="required">*</span></label><input
                         type="tel" name="customer_phone" value="<?php echo esc_attr($customer_phone); ?>" required>
                 </div>
@@ -1501,7 +1965,8 @@ $deposit_data = null;
                 // Note: Honeypot removed for compliance. Security is handled via nonces.
                 ?>
 
-<?php
+
+                <?php
                 // Render Custom Fields
                 $custom_fields = get_option('mhbo_custom_fields', []);
                 if ([] !== $custom_fields) {
@@ -1524,7 +1989,14 @@ $deposit_data = null;
                 }
                 ?>
 
-<?php do_action('mhbo_booking_form_after_inputs', $total, $calc); ?>
+
+                <?php
+                /* BUILD_PRO_START */
+                // The deposit selection UI is now hooked into mhbo_booking_form_after_inputs
+                /* BUILD_PRO_END */
+                ?>
+
+                <?php do_action('mhbo_booking_form_after_inputs', $total, $calc); ?>
 
                 <!-- Inline error notification area for payment/booking errors -->
                 <div class="mhbo-booking-errors mhbo-inline-errors" style="display:none;"></div>
@@ -1544,7 +2016,31 @@ $deposit_data = null;
                             ]
                         ];
 
-echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), false));
+                        /* BUILD_PRO_START */
+                        // Re-calculate deposit data for UI breakdown if enabled
+                        $deposit_data = null;
+                        if (License::is_pro_active() && get_option('mhbo_deposits_enabled', 0)) {
+                            // 2026 BP: For 'first_night' deposit type, use room-rate-only 1-night calc
+                            // (no extras, no children) — ensures tax is included in all modes and
+                            // matches the industry meaning of "first night's rate" (accommodation only).
+                            $fn_dt_bd   = (string) get_option('mhbo_deposit_type', 'percentage');
+                            $fn_end_bd  = gmdate('Y-m-d', strtotime($check_in . ' +1 day'));
+                            $fn_ex_bd   = ('first_night' === $fn_dt_bd) ? [] : $calc_extras;
+                            $fn_ch_bd   = ('first_night' === $fn_dt_bd) ? 0 : $calc_children;
+                            $fn_ag_bd   = ('first_night' === $fn_dt_bd) ? [] : $calc_child_ages;
+                            $fn_calc_bd = Pricing::calculate_booking_money($room_id, $check_in, $fn_end_bd, $calc_guests, $fn_ex_bd, $fn_ch_bd, $fn_ag_bd);
+                            $first_night_money = (is_array($fn_calc_bd) && isset($fn_calc_bd['total'])) ? $fn_calc_bd['total'] : Money::fromCents(0, $currency);
+                            $deposit_data = Pricing::calculate_deposit_money($total, $first_night_money);
+                        }
+
+                        // If deposit is enabled and we have the data, pass it to the breakdown renderer
+                        if (isset($deposit_data) && is_array($deposit_data)) {
+                            $tax_data['deposit_amount'] = (float) $deposit_data['deposit_money']->toDecimal();
+                            $tax_data['remaining_balance'] = (float) $deposit_data['remaining_money']->toDecimal();
+                        }
+                        /* BUILD_PRO_END */
+
+                        echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), false));
                     }
                     ?>
                 </div>
@@ -1552,7 +2048,9 @@ echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), fa
                 // VAT notes removed from booking page per user request.
                 ?>
 
-<div class="mhbo-submit-container">
+
+
+                <div class="mhbo-submit-container">
                     <button type="submit" name="mhbo_confirm_booking" class="mhbo-btn mhbo-submit-btn">
                         <?php echo esc_html(I18n::get_label('btn_confirm_booking')); ?>
                     </button>
@@ -1582,8 +2080,11 @@ echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), fa
      */
     private function process_booking(): void
     {
+        /* BUILD_PRO_START */
+        Pricing::ensure_pro_init();
+        /* BUILD_PRO_END */
 
-// SECURITY: Rate limiting for booking submissions (5 per minute per IP)
+        // SECURITY: Rate limiting for booking submissions (5 per minute per IP)
         $ip = Security::get_client_ip();
         $rate_key = 'mhbo_booking_rate_' . md5((string)$ip);
         $count = get_transient($rate_key);
@@ -1619,7 +2120,9 @@ echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), fa
             'page_url'          => $this->get_booking_page_url(),
             'language'          => isset( $_POST['booking_language'] ) ? sanitize_key( wp_unslash( $_POST['booking_language'] ) ) : I18n::get_current_language(),
             'consent'           => isset( $_POST['mhbo_consent'] ) ? (bool) sanitize_text_field( wp_unslash( $_POST['mhbo_consent'] ) ) : false,
-            
+            /* BUILD_PRO_START */
+            'mhbo_coupon_applied' => isset( $_POST['mhbo_coupon_applied'] ) ? sanitize_text_field( wp_unslash( $_POST['mhbo_coupon_applied'] ) ) : '',
+            /* BUILD_PRO_END */
         ];
         // phpcs:enable WordPress.Security.NonceVerification.Missing, WordPress.Security.NonceVerification.Recommended
 
@@ -1657,7 +2160,13 @@ echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), fa
             'lavender' => ['#4c1d95', '#a78bfa', '#8b5cf6'],
         ];
 
-if (isset($presets[$active_theme])) {
+        /* BUILD_PRO_START */
+        if ('custom' === $active_theme) {
+            $primary = get_option('mhbo_custom_primary_color', '#1a365d');
+            $secondary = get_option('mhbo_custom_secondary_color', '#f2e2c4');
+            $accent = get_option('mhbo_custom_accent_color', '#d4af37');
+        } else /* BUILD_PRO_END */
+            if (isset($presets[$active_theme])) {
                 $primary = $presets[$active_theme][0];
                 $secondary = $presets[$active_theme][1];
                 $accent = $presets[$active_theme][2];
@@ -1690,7 +2199,16 @@ if (isset($presets[$active_theme])) {
             }
         }
 
-wp_add_inline_style('mhbo-frontend', '
+        /* BUILD_PRO_START */
+        // SECURITY: Sanitize custom CSS — sanitize_textarea_field strips tags and normalizes
+        // whitespace while preserving CSS punctuation, satisfying WP.org inline-style requirements.
+        $extra_css = get_option('mhbo_custom_css');
+        if ( '' !== (string) ( $extra_css ?? '' ) ) {
+            wp_add_inline_style('mhbo-style', sanitize_textarea_field(wp_unslash((string) $extra_css)));
+        }
+        /* BUILD_PRO_END */
+
+        wp_add_inline_style('mhbo-frontend', '
             .mhbo-child-age-group { 
                 display: flex; 
                 align-items: center; 
@@ -1786,3 +2304,4 @@ wp_add_inline_style('mhbo-frontend', '
         return esc_url_raw(home_url('/'));
     }
 }
+

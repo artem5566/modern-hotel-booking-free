@@ -157,8 +157,15 @@
          * @param {string} text
          */
         speak(text) {
+            /* BUILD_PRO_START */
+            const elevenlabsKey = settings.elevenlabsKey || '';
+            if (elevenlabsKey && cfg.isPro) {
+                this._speakElevenLabs(text, elevenlabsKey);
+                return;
+            }
+            /* BUILD_PRO_END */
 
-this._speakBrowser(text);
+            this._speakBrowser(text);
         }
 
         /**
@@ -185,7 +192,42 @@ this._speakBrowser(text);
             this.SpeechSynthesis.speak(utter);
         }
 
-/**
+        /* BUILD_PRO_START */
+        /**
+         * ElevenLabs TTS (Pro).
+         * @param {string} text
+         * @param {string} apiKey
+         */
+        _speakElevenLabs(text, apiKey) {
+            const voiceId = settings.elevenlabsVoiceId || 'EXAVITQu4vr4xnSDxMaL'; // default: Bella
+            fetch('https://api.elevenlabs.io/v1/text-to-speech/' + voiceId, {
+                method: 'POST',
+                headers: {
+                    'Accept': 'audio/mpeg',
+                    'Content-Type': 'application/json',
+                    'xi-api-key': apiKey,
+                },
+                body: JSON.stringify({ text, model_id: 'eleven_multilingual_v2' }),
+            })
+                .then(res => res.blob())
+                .then(blob => {
+                    const url    = URL.createObjectURL(blob);
+                    const audio  = new Audio(url);
+                    this.currentAudio = audio; // Store for barge-in cancellation
+                    audio.addEventListener('ended', () => {
+                        if (this.currentAudio === audio) this.currentAudio = null;
+                        URL.revokeObjectURL(url);
+                    });
+                    audio.play();
+                })
+                .catch(() => {
+                    // Fallback to browser TTS on error.
+                    this._speakBrowser(text);
+                });
+        }
+        /* BUILD_PRO_END */
+
+        /**
          * Toggle the recording UI indicator on the voice button.
          * @param {boolean} active
          */

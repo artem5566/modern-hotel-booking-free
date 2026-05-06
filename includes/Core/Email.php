@@ -191,10 +191,58 @@ class Email
         $body .= self::admin_row(__('Guests', 'modern-hotel-booking'), (string) ((int) ($booking->guests ?? 1)));
         $body .= self::admin_row(__('Payment Method', 'modern-hotel-booking'), esc_html($payment_label));
         $body .= self::admin_row(__('Total Price', 'modern-hotel-booking'), '<strong>' . $total_price . '</strong>');
-        
+        /* BUILD_PRO_START */
+        $payment_type_val    = (string) ($booking->payment_type ?? 'full');
+        $coupon_code_val     = (string) ($booking->coupon_code ?? '');
+        $coupon_discount_raw = (float) ($booking->coupon_discount ?? 0);
+        $deposit_amount_raw  = (float) ($booking->deposit_amount ?? 0);
+        $body .= self::admin_row(__('Payment Type', 'modern-hotel-booking'), esc_html('deposit' === $payment_type_val ? __('Deposit', 'modern-hotel-booking') : __('Full Payment', 'modern-hotel-booking')));
+        if ('' !== $coupon_code_val && $coupon_discount_raw > 0) {
+            $coupon_discount_formatted = I18n::format_currency(Money::fromDecimal((string) $coupon_discount_raw));
+            $body .= self::admin_row(__('Coupon Code', 'modern-hotel-booking'), esc_html(strtoupper($coupon_code_val)));
+            $body .= self::admin_row(__('Coupon Discount', 'modern-hotel-booking'), '<span style="color:#16a34a;">-' . $coupon_discount_formatted . '</span>');
+        }
+        if ('deposit' === $payment_type_val && $deposit_amount_raw > 0) {
+            $deposit_formatted   = I18n::format_currency(Money::fromDecimal((string) $deposit_amount_raw));
+            $remaining_raw       = max(0.0, (float) ($booking->total_price ?? 0) - $deposit_amount_raw);
+            $remaining_formatted = I18n::format_currency(Money::fromDecimal((string) $remaining_raw));
+            $body .= self::admin_row(__('Deposit Paid', 'modern-hotel-booking'), '<strong>' . $deposit_formatted . '</strong>');
+            $body .= self::admin_row(__('Remaining Balance', 'modern-hotel-booking'), $remaining_formatted);
+        }
+        /* BUILD_PRO_END */
         $body .= '</table>';
+        /* BUILD_PRO_START */
+        // Tax breakdown — Pro only (tax is always disabled in the Free build)
+        $tax_mode_val = (string) ($booking->tax_mode ?? 'disabled');
+        if ('disabled' !== $tax_mode_val) {
+            $tax_json = (string) ($booking->tax_breakdown ?? '');
+            if ('' !== $tax_json) {
+                $tax_data = json_decode($tax_json, true);
+                if (is_array($tax_data) && isset($tax_data['totals']) && is_array($tax_data['totals'])) {
+                    $totals = $tax_data['totals'];
+                    $body .= '<h3 style="margin:0 0 8px 0;font-size:15px;border-bottom:1px solid #e5e7eb;padding-bottom:6px;">' . esc_html__('Tax Breakdown', 'modern-hotel-booking') . '</h3>';
+                    $body .= '<table style="width:100%;border-collapse:collapse;margin-bottom:20px;">';
+                    $body .= self::admin_row(__('Subtotal (net)', 'modern-hotel-booking'), I18n::format_currency(Money::fromDecimal((string) ($totals['subtotal_net'] ?? '0'))));
+                    if ((float) ($totals['room_tax'] ?? 0) > 0) {
+                        $body .= self::admin_row(__('Accommodation Tax', 'modern-hotel-booking'), I18n::format_currency(Money::fromDecimal((string) $totals['room_tax'])));
+                    }
+                    if ((float) ($totals['children_tax'] ?? 0) > 0) {
+                        $body .= self::admin_row(__('Children Tax', 'modern-hotel-booking'), I18n::format_currency(Money::fromDecimal((string) $totals['children_tax'])));
+                    }
+                    if ((float) ($totals['extras_tax'] ?? 0) > 0) {
+                        $body .= self::admin_row(__('Extras Tax', 'modern-hotel-booking'), I18n::format_currency(Money::fromDecimal((string) $totals['extras_tax'])));
+                    }
+                    if ((float) ($totals['service_fee_tax'] ?? 0) > 0) {
+                        $body .= self::admin_row(__('Service Fee Tax', 'modern-hotel-booking'), I18n::format_currency(Money::fromDecimal((string) $totals['service_fee_tax'])));
+                    }
+                    $body .= self::admin_row('<strong>' . __('Total Tax', 'modern-hotel-booking') . '</strong>', '<strong>' . I18n::format_currency(Money::fromDecimal((string) ($totals['total_tax'] ?? '0'))) . '</strong>');
+                    $body .= '</table>';
+                }
+            }
+        }
+        /* BUILD_PRO_END */
 
-// CTA button
+        // CTA button
         $body .= '<p style="text-align:center;margin:20px 0 0 0;">';
         $body .= '<a href="' . esc_url($admin_url) . '" style="background:#2563eb;color:#fff;padding:10px 24px;border-radius:5px;text-decoration:none;font-weight:bold;">';
         $body .= esc_html__('View Booking in Dashboard', 'modern-hotel-booking');
@@ -412,7 +460,66 @@ class Email
         $tax_total = '';
         $tax_registration_number = '';
 
-// Format extras
+        /* BUILD_PRO_START */
+        if ( mhbo_is_pro() && '' !== (string) ($booking->tax_breakdown ?? '') ) {
+            $tax_data = json_decode($booking->tax_breakdown, true);
+            $show_breakdown = (bool) ($tax_data['enabled'] ?? false) || (bool) get_option('mhbo_tax_display_email', true);
+            if ($tax_data && $show_breakdown) {
+                // Use the new consolidated rendering methods
+                $meta = [
+                    'guests' => $booking->guests,
+                    'children' => $booking->children,
+                    'payment_type'      => $booking->payment_type ?? 'full',
+                    'payment_status'    => $booking->payment_status ?? '',
+                    'deposit_amount'    => $booking->deposit_amount ?? 0,
+                    'remaining_balance' => $booking->remaining_balance ?? 0,
+                    'coupon_code'       => $booking->coupon_code ?? '',
+                    'coupon_discount'   => $booking->coupon_discount ?? '',
+                ];
+                $tax_breakdown_html = Tax::render_breakdown_html($tax_data, $lang, true, $meta);
+                $tax_breakdown_text = Tax::render_breakdown_text($tax_data, $lang, $meta);
+
+                // Set individual placeholders for backward compatibility or custom templates
+                $totals = $tax_data['totals'] ?? [];
+                $tax_total = I18n::format_currency($totals['total_tax'] ?? 0);
+                $tax_registration_number = $tax_data['registration_number'] ?? Tax::get_registration_number();
+            }
+        }
+
+        // If tax is enabled but no breakdown stored (fallback), show basic info
+        if ( mhbo_is_pro() && '' === (string) ($tax_breakdown_html ?? '') && Tax::is_enabled() ) {
+            $tax_label = Tax::get_label($lang);
+            $tax_mode = Tax::get_mode();
+            $reg_number = Tax::get_registration_number();
+            $accommodation_rate = Tax::get_accommodation_rate();
+            $extras_rate = Tax::get_extras_rate();
+
+            $tax_breakdown_html = '<div style="margin-top: 20px; padding: 15px; background: #f5f5f5; border-radius: 5px; font-family: Arial, sans-serif;">';
+            if (Tax::MODE_VAT === $tax_mode) {
+                if ($accommodation_rate === $extras_rate) {
+                    $tax_breakdown_html .= '<p style="margin: 0; font-size: 14px; color: #666;">' . esc_html(sprintf(I18n::get_label('label_price_includes_tax'), $tax_label, $accommodation_rate)) . '</p>';
+                } else {
+                    /* translators: %1$s: tax label (e.g., VAT), %2$s: accommodation tax rate, %3$s: extras tax rate */
+                    $tax_breakdown_html .= '<p style="margin: 0; font-size: 14px; color: #666;">' . esc_html(sprintf(I18n::get_label('email_tax_includes_split'), $tax_label, $accommodation_rate, $extras_rate)) . '</p>';
+                }
+            } elseif (Tax::MODE_SALES_TAX === $tax_mode) {
+                if ($accommodation_rate === $extras_rate) {
+                    $tax_breakdown_html .= '<p style="margin: 0; font-size: 14px; color: #666;">' . esc_html(sprintf(I18n::get_label('label_tax_added_at_checkout'), $tax_label, $accommodation_rate)) . '</p>';
+                } else {
+                    /* translators: %1$s: tax label (e.g., Sales Tax), %2$s: accommodation tax rate, %3$s: extras tax rate */
+                    $tax_breakdown_html .= '<p style="margin: 0; font-size: 14px; color: #666;">' . esc_html(sprintf(I18n::get_label('email_tax_added_split'), $tax_label, $accommodation_rate, $extras_rate)) . '</p>';
+                }
+            }
+            if ( '' !== (string) ($reg_number ?? '') ) {
+                $tax_breakdown_html .= '<p style="margin: 10px 0 0 0; font-size: 12px; color: #999;">' . esc_html(sprintf(I18n::get_label('label_tax_registration'), $reg_number)) . '</p>';
+            }
+            $tax_breakdown_html .= '</div>';
+
+            $tax_registration_number = $reg_number;
+        }
+        /* BUILD_PRO_END */
+
+        // Format extras
         $booking_extras_html = self::format_extras($booking, $lang, 'html');
         $booking_extras_text = self::format_extras($booking, $lang, 'text');
 
@@ -440,7 +547,15 @@ class Email
             $message .= (string) $tax_breakdown_html;
         }
 
-$admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
+        /* BUILD_PRO_START */
+        // Append deposit details if it's a deposit booking and placeholder not used
+        if (false === strpos($message, '{deposit_details}') && '' !== (string) ($booking->payment_type ?? '') && 'deposit' === $booking->payment_type) {
+            $message .= self::get_deposit_email_html($booking, $lang);
+        }
+        /* BUILD_PRO_END */
+
+
+        $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
         $site_name = get_bloginfo('name');
 
         $headers = [
@@ -557,7 +672,31 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
         $tax_total = '';
         $tax_registration_number = '';
 
-// Format Custom Fields for placeholder
+        /* BUILD_PRO_START */
+        if (mhbo_is_pro() && '' !== (string) ($booking->tax_breakdown ?? '')) {
+            $tax_data = json_decode($booking->tax_breakdown, true);
+            $show_breakdown = (bool) ($tax_data['enabled'] ?? false) || (bool) get_option('mhbo_tax_display_email', true);
+            if ($tax_data && $show_breakdown) {
+                $meta = [
+                    'guests' => $booking->guests,
+                    'children' => $booking->children,
+                    'payment_type'      => $booking->payment_type ?? 'full',
+                    'payment_status'    => $booking->payment_status ?? '',
+                    'deposit_amount'    => $booking->deposit_amount ?? 0,
+                    'remaining_balance' => $booking->remaining_balance ?? 0,
+                    'coupon_code'       => $booking->coupon_code ?? '',
+                    'coupon_discount'   => $booking->coupon_discount ?? '',
+                ];
+                $tax_breakdown_html = Tax::render_breakdown_html($tax_data, $lang, true, $meta);
+                $tax_breakdown_text = Tax::render_breakdown_text($tax_data, $lang, $meta);
+                $totals = $tax_data['totals'] ?? [];
+                $tax_total = I18n::format_currency($totals['total_tax'] ?? 0);
+                $tax_registration_number = $tax_data['registration_number'] ?? Tax::get_registration_number();
+            }
+        }
+        /* BUILD_PRO_END */
+
+        // Format Custom Fields for placeholder
         $custom_fields_formatted = '';
         if ( '' !== (string) ($booking->custom_fields ?? '') ) {
             $custom_data = json_decode((string) $booking->custom_fields, true);
@@ -605,7 +744,13 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
             'tax_registration_number' => $tax_registration_number,
             'room_name' => $room_name,
             'payment_details' => $payment_details,
-            
+            /* BUILD_PRO_START */
+            'company_info'      => self::render_company_card_html($lang),
+            'whatsapp_contact'  => self::render_whatsapp_button_html(),
+            'banking_details'   => self::render_banking_card_html($booking->id),
+            'revolut_details'   => self::render_revolut_card_html(),
+            'business_card'     => self::render_business_card_html($booking->id, $lang)
+            /* BUILD_PRO_END */
         ]);
 
         // Check for placeholders BEFORE replacement (replacement removes the literal tokens).
@@ -753,7 +898,14 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
             $placeholders['{whatsapp_number}']      = $whatsapp['phone_number'] ?? '';
             $placeholders['{whatsapp_link}']        = '' !== (string) ($whatsapp['phone_number'] ?? '') ? 'https://wa.me/' . preg_replace('/[^0-9]/', '', (string) $whatsapp['phone_number']) : '';
 
-}
+            /* BUILD_PRO_START */
+            $placeholders['{company_info}']      = self::render_company_card_html($lang);
+            $placeholders['{whatsapp_contact}']  = self::render_whatsapp_button_html();
+            $placeholders['{banking_details}']   = self::render_banking_card_html(0); // 0 as temporary default
+            $placeholders['{revolut_details}']   = self::render_revolut_card_html();
+            $placeholders['{business_card}']     = self::render_business_card_html(0, $lang);
+            /* BUILD_PRO_END */
+        }
 
         return $placeholders;
     }
@@ -827,7 +979,9 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
 
             // Global Info
             '{site_name}'               => esc_html(get_bloginfo('name')),
-            
+            /* BUILD_PRO_START */
+            '{deposit_details}'         => self::get_deposit_email_html($booking, $lang),
+            /* BUILD_PRO_END */
         ];
 
         // Add Business Information Placeholders
@@ -959,7 +1113,63 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
         return $mhbo_output;
     }
 
-/**
+    /* BUILD_PRO_START */
+    /**
+     * Get Pro-only deposit summary HTML for emails.
+     *
+     * @param object $booking
+     * @param string $lang
+     */
+    private static function get_deposit_email_html(object $booking, string $lang): string
+    {
+        if ( '' === (string) ($booking->payment_type ?? '') || 'deposit' !== $booking->payment_type ) {
+            return '';
+        }
+
+        $total     = Money::fromDecimal((string) ($booking->total_price ?? 0));
+        $paid      = Money::fromDecimal((string) ($booking->deposit_amount ?? 0));
+        $remaining = Money::fromDecimal((string) ($booking->remaining_balance ?? 0));
+
+        $is_non_refundable = (bool)($booking->deposit_is_non_refundable ?? false);
+        $refund_deadline = $booking->refund_deadline_date ?? '';
+        
+        $html = '<div style="margin-top: 20px; padding: 15px; background: #f8fafc; border: 1px solid #e2e8f0; border-radius: 8px; font-family: sans-serif;">';
+        $html .= '<h4 style="margin: 0 0 12px 0; color: #1e293b; font-size: 16px;">' . esc_html(I18n::get_label('label_email_payment_summary')) . '</h4>';
+        
+        $html .= '<table style="width: 100%; border-collapse: collapse; font-size: 14px;">';
+        $html .= '<tr><td style="padding: 4px 0; color: #64748b;">' . esc_html(I18n::get_label('label_email_total_amount')) . '</td><td style="padding: 4px 0; text-align: right; font-weight: 600;">' . I18n::format_currency($total) . '</td></tr>';
+        $deposit_label = ('completed' === ($booking->payment_status ?? ''))
+            ? esc_html(I18n::get_label('label_email_deposit_paid'))
+            : esc_html(I18n::get_label('label_email_deposit_required'));
+        $deposit_color = ('completed' === ($booking->payment_status ?? '')) ? '#16a34a' : '#f97316';
+        $html .= '<tr><td style="padding: 4px 0; color: #64748b;">' . $deposit_label . '</td><td style="padding: 4px 0; text-align: right; color: ' . esc_attr($deposit_color) . '; font-weight: 600;">' . I18n::format_currency($paid) . '</td></tr>';
+        
+        if (!$remaining->isZero()) {
+            $html .= '<tr style="border-top: 1px solid #e2e8f0;"><td style="padding: 8px 0 4px 0; color: #1e293b; font-weight: 600;">' . esc_html(I18n::get_label('label_email_remaining_balance')) . '</td><td style="padding: 8px 0 4px 0; text-align: right; color: #f97316; font-weight: 700;">' . I18n::format_currency($remaining) . '</td></tr>';
+            $html .= '<tr><td colspan="2" style="padding: 4px 0; font-size: 12px; color: #64748b;">' . esc_html(I18n::get_label('label_email_due_at_checkin')) . '</td></tr>';
+        } else {
+            $html .= '<tr style="border-top: 1px solid #e2e8f0;"><td colspan="2" style="padding: 8px 0; text-align: center; color: #166534; font-weight: 700;">' . esc_html(I18n::get_label('label_email_paid_full')) . '</td></tr>';
+        }
+        $html .= '</table>';
+
+        if ($is_non_refundable) {
+            $html .= '<div style="margin-top: 12px; padding: 8px; background: #fff1f2; border-left: 4px solid #f43f5e; color: #9f1239; font-size: 12px;">';
+            $html .= '<strong>' . esc_html(I18n::get_label('label_email_non_refundable')) . '</strong> ' . esc_html(I18n::get_label('msg_email_non_refundable_desc'));
+            $html .= '</div>';
+            } elseif ('' !== (string) ($refund_deadline ?? '') && '0000-00-00' !== $refund_deadline) {
+            $deadline_ts = strtotime($refund_deadline);
+            $html .= '<div style="margin-top: 12px; padding: 8px; background: #f0fdf4; border-left: 4px solid #22c55e; color: #166534; font-size: 12px;">';
+            // translators: %s: date
+            $html .= sprintf(esc_html(I18n::get_label('msg_email_refund_deadline')), '<strong>' . date_i18n(get_option('date_format'), $deadline_ts) . '</strong>');
+            $html .= '</div>';
+        }
+
+        $html .= '</div>';
+        return $html;
+    }
+    /* BUILD_PRO_END */
+
+    /**
      * Format a JSON list of children ages into a user-friendly, localized string.
      * 
      * This utility is used primarily in email notifications to provide detailed 
@@ -982,4 +1192,119 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
         return implode(', ', array_map('absint', $ages));
     }
 
+    /* BUILD_PRO_START */
+    /**
+     * Render a professional company info card for emails.
+     */
+    private static function render_company_card_html(string $lang = ''): string
+    {
+        if (!class_exists('MHBO\Business\Info')) return '';
+        $data = \MHBO\Business\Info::get_company();
+        if ('' === (string)($data['company_name'] ?? '')) return '';
+
+        $html = '<div style="background:#f1f5f9;border-radius:8px;padding:20px;font-family:sans-serif;margin:15px 0;border:1px solid #e2e8f0;">';
+        if ('' !== (string)($data['logo_url'] ?? '')) {
+            $html .= '<div style="margin-bottom:15px;"><img src="'.esc_url($data['logo_url']).'" alt="Logo" style="max-width:150px;height:auto;"></div>';
+        }
+        $html .= '<h3 style="margin:0 0 10px 0;color:#0f172a;font-size:18px;">'.esc_html($data['company_name']).'</h3>';
+        $html .= '<address style="font-style:normal;color:#475569;font-size:14px;line-height:1.5;">';
+        $html .= esc_html($data['address_line_1'] ?? '').'<br>';
+        if ('' !== (string)($data['address_line_2'] ?? '')) $html .= esc_html($data['address_line_2']).'<br>';
+        $html .= esc_html($data['city'] ?? '').', '.esc_html($data['state'] ?? '').' '.esc_html($data['postcode'] ?? '').'<br>';
+        $html .= esc_html($data['country'] ?? '');
+        $html .= '</address>';
+        $html .= '</div>';
+
+        return $html;
+    }
+
+    /**
+     * Render a WhatsApp contact button for emails.
+     */
+    private static function render_whatsapp_button_html(): string
+    {
+        if (!class_exists('MHBO\Business\Info')) return '';
+        $data = \MHBO\Business\Info::get_whatsapp();
+        if (!(bool)($data['enabled'] ?? false) || '' === (string)($data['phone_number'] ?? '')) return '';
+
+        $wa_url = 'https://wa.me/' . preg_replace('/[^\d]/', '', (string)($data['phone_number'] ?? ''));
+        if ('' !== (string)($data['default_msg'] ?? '')) {
+            $wa_url = add_query_arg('text', rawurlencode((string)$data['default_msg']), $wa_url);
+        }
+
+        return '<div style="margin:15px 0;">' .
+               '<a href="'.esc_url($wa_url).'" style="display:inline-block;background:#25D366;color:#ffffff;padding:12px 24px;text-decoration:none;border-radius:6px;font-weight:bold;font-family:sans-serif;font-size:15px;">' .
+               esc_html($data['button_text'] ?: 'Chat on WhatsApp') .
+               '</a></div>';
+    }
+
+    /**
+     * Render a banking details card for emails.
+     */
+    private static function render_banking_card_html(int $booking_id): string
+    {
+        if (!class_exists('MHBO\Business\Info')) return '';
+        $data = \MHBO\Business\Info::get_banking();
+        if (!(bool)($data['enabled'] ?? false) || '' === (string)($data['iban'] ?? '')) return '';
+
+        $reference = $data['reference_prefix'] . ($booking_id ?: 'XXXX');
+
+        $html = '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:8px;padding:20px;font-family:sans-serif;margin:15px 0;">';
+        $html .= '<h4 style="margin:0 0 15px 0;color:#0f172a;font-size:16px;">'.esc_html($data['bank_name'] ?: I18n::get_label('label_bank_transfer_details')).'</h4>';
+        $html .= '<div style="font-size:14px;color:#334155;">';
+        if ('' !== (string)($data['account_name'] ?? '')) {
+            $html .= '<p style="margin:5px 0;"><strong>'.esc_html(I18n::get_label('label_bank_acc_name')).':</strong> '.esc_html($data['account_name']).'</p>';
+        }
+        $html .= '<p style="margin:5px 0;"><strong>'.esc_html(I18n::get_label('label_bank_iban')).':</strong> <code style="background:#f8fafc;padding:2px 4px;border:1px solid #e2e8f0;">'.esc_html($data['iban']).'</code></p>';
+        if ('' !== (string)($data['swift_bic'] ?? '')) {
+            $html .= '<p style="margin:5px 0;"><strong>'.esc_html(I18n::get_label('label_bank_swift')).':</strong> '.esc_html($data['swift_bic']).'</p>';
+        }
+        $html .= '<p style="margin:5px 0;"><strong>'.esc_html(I18n::get_label('label_reference')).':</strong> <span style="color:#e11d48;font-weight:bold;">'.esc_html($reference).'</span></p>';
+        $html .= '</div>';
+        if ('' !== (string)($data['instructions'] ?? '')) {
+            $html .= '<div style="margin-top:15px;padding-top:15px;border-top:1px solid #f1f5f9;font-size:13px;color:#64748b;">'.wp_kses_post((string)$data['instructions']).'</div>';
+        }
+        $html .= '</div>';
+
+        return $html;
+    }
+
+    /**
+     * Render a Revolut details card for emails.
+     */
+    private static function render_revolut_card_html(): string
+    {
+        if (!class_exists('MHBO\Business\Info')) return '';
+        $data = \MHBO\Business\Info::get_revolut();
+        if (!(bool)($data['enabled'] ?? false) || ('' === (string)($data['revolut_tag'] ?? '') && '' === (string)($data['revolut_iban'] ?? ''))) return '';
+
+        $html = '<div style="background:#ffffff;border:1px solid #cbd5e1;border-radius:8px;padding:20px;font-family:sans-serif;margin:15px 0;">';
+        $html .= '<h4 style="margin:0 0 15px 0;color:#0f172a;font-size:16px;">'.esc_html($data['revolut_name'] ?: I18n::get_label('label_revolut_payment')).'</h4>';
+        $html .= '<div style="font-size:14px;color:#334155;">';
+        if ('' !== (string)($data['revolut_tag'] ?? '')) {
+            $html .= '<p style="margin:5px 0;"><strong>'.esc_html(I18n::get_label('label_revolut_tag')).':</strong> <code style="background:#f8fafc;padding:2px 4px;border:1px solid #e2e8f0;">'.esc_html($data['revolut_tag']).'</code></p>';
+        }
+        if ('' !== (string)($data['revolut_link'] ?? '')) {
+            $html .= '<p style="margin:10px 0;"><a href="'.esc_url($data['revolut_link']).'" style="display:inline-block;background:#000000;color:#ffffff;padding:8px 16px;text-decoration:none;border-radius:4px;font-size:13px;">'.esc_html(I18n::get_label('label_pay_via_revolut')).'</a></p>';
+        }
+        $html .= '</div>';
+        $html .= '</div>';
+
+        return $html;
+    }
+
+    /**
+     * Render a complete business card for emails.
+     */
+    private static function render_business_card_html(int $booking_id, string $lang = ''): string
+    {
+        $html = '<div style="margin:20px 0;">';
+        $html .= self::render_company_card_html($lang);
+        $html .= self::render_whatsapp_button_html();
+        $html .= self::render_banking_card_html($booking_id);
+        $html .= self::render_revolut_card_html();
+        $html .= '</div>';
+        return $html;
+    }
+    /* BUILD_PRO_END */
 }

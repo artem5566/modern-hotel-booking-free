@@ -4,6 +4,7 @@ namespace MHBO\Core;
 
 use MHBO\Core\Money;
 
+
 if (!defined('ABSPATH')) {
     exit;
 }
@@ -39,8 +40,9 @@ class Tax
      *
      * @return bool
      */
-    public static function is_enabled(): bool {
-        return false;
+    public static function is_enabled(): bool
+    {
+        return get_option('mhbo_tax_mode', self::MODE_DISABLED) !== self::MODE_DISABLED;
     }
 
     /**
@@ -48,8 +50,9 @@ class Tax
      *
      * @return string One of the MODE_* constants.
      */
-    public static function get_mode(): string {
-        return self::MODE_DISABLED;
+    public static function get_mode(): string
+    {
+        return get_option('mhbo_tax_mode', self::MODE_DISABLED);
     }
 
     /**
@@ -290,7 +293,8 @@ class Tax
         ];
     }
 
-/**
+
+    /**
      * Calculate full booking tax breakdown
      *
      * @param array<string, mixed> $booking_data Booking data containing:
@@ -494,7 +498,78 @@ class Tax
         return self::calculate_booking_tax($booking_data);
     }
 
-/**
+    /* BUILD_PRO_START */
+    /**
+     * Apply a coupon discount to the room component first (then children if needed),
+     * recalculate a percentage-based service fee on the discounted base, then return
+     * a fresh calculate_booking_tax() result with the corrected totals.
+     *
+     * @param array  $calc            Return value of Pricing::calculate_booking_money().
+     * @param Money  $coupon_discount Validated coupon discount (already capped by CouponManager).
+     * @param string $coupon_code     Coupon code for display storage.
+     * @param string $currency        ISO 4217 upper-case currency code.
+     * @return array{tax: array<string,mixed>, total: Money, service_fee: Money}
+     */
+    public static function recalculate_with_coupon(array $calc, Money $coupon_discount, string $coupon_code, string $currency): array
+    {
+        $orig_room     = isset($calc['room_total'])     && $calc['room_total']     instanceof Money ? $calc['room_total']     : Money::fromCents(0, $currency);
+        $orig_children = isset($calc['children_total']) && $calc['children_total'] instanceof Money ? $calc['children_total'] : Money::fromCents(0, $currency);
+        $orig_extras   = isset($calc['extras_total'])   && $calc['extras_total']   instanceof Money ? $calc['extras_total']   : Money::fromCents(0, $currency);
+        $orig_sf       = isset($calc['service_fee'])    && $calc['service_fee']    instanceof Money ? $calc['service_fee']    : Money::fromCents(0, $currency);
+
+        // Apply coupon to room first, cap at room total.
+        $coupon_on_room     = Money::fromCents((string)min((int)$coupon_discount->getAmount(), (int)$orig_room->getAmount()), $currency);
+        $discounted_room    = $orig_room->subtract($coupon_on_room);
+        $remaining_coupon   = $coupon_discount->subtract($coupon_on_room);
+
+        // Apply any remaining to children, then stop (extras stay at full price).
+        $coupon_on_children  = Money::fromCents((string)min((int)$remaining_coupon->getAmount(), (int)$orig_children->getAmount()), $currency);
+        $discounted_children = $orig_children->subtract($coupon_on_children);
+
+        // Recalculate percentage service fee on the discounted pre-fee subtotal.
+        $new_service_fee = $orig_sf;
+        if ((bool)(int)get_option('mhbo_service_fee_enabled', 0)
+            && 'percentage' === (string)get_option('mhbo_service_fee_type', 'fixed')
+            && $orig_sf->isPositive()
+        ) {
+            $sf_pct     = (float)get_option('mhbo_service_fee_percentage', 0);
+            $sf_divisor = function_exists('bcdiv')
+                ? bcdiv((string)$sf_pct, '100', 6)
+                : number_format($sf_pct / 100, 6, '.', '');
+            $new_service_fee = $discounted_room->add($discounted_children)->add($orig_extras)->multiply($sf_divisor);
+        }
+
+        // Rebuild per-item extras list — coupon does not reduce individual extras.
+        $extras_for_tax = [];
+        foreach ((array)($calc['extras_breakdown'] ?? []) as $ex_id => $ex_item) {
+            $ex_money = isset($ex_item['total']) && $ex_item['total'] instanceof Money
+                ? $ex_item['total']
+                : Money::fromDecimal((string)($ex_item['total'] ?? '0'), $currency);
+            $extras_for_tax[] = [
+                'id'    => (string)$ex_id,
+                'name'  => (string)($ex_item['name'] ?? ''),
+                'total' => $ex_money->toDecimal(),
+            ];
+        }
+
+        $tax_data = self::calculate_booking_tax([
+            'room_total'        => $discounted_room->toDecimal(),
+            'children_total'    => $discounted_children->toDecimal(),
+            'extras_total'      => '0',
+            'extras'            => $extras_for_tax,
+            'service_fee'       => $new_service_fee->toDecimal(),
+            'service_fee_label' => (string)($calc['service_fee_label'] ?? ''),
+        ]);
+
+        return [
+            'tax'         => $tax_data,
+            'total'       => $tax_data['totals']['total_gross'],
+            'service_fee' => $new_service_fee,
+        ];
+    }
+    /* BUILD_PRO_END */
+
+    /**
      * Get stored tax breakdown for a booking
      *
      * @param int $booking_id Booking ID
@@ -639,7 +714,31 @@ class Tax
             ];
         }
 
-// Children
+        /* BUILD_PRO_START */
+        // Coupon — appears immediately after Room, before children/extras.
+        $coupon_code_fmt     = isset($meta['coupon_code'])     ? sanitize_text_field((string)$meta['coupon_code'])     : '';
+        $coupon_discount_fmt = isset($meta['coupon_discount']) ? (string)$meta['coupon_discount']                      : '';
+        if ('' !== $coupon_code_fmt && (float)$coupon_discount_fmt > 0.001) {
+            $coupon_label = sprintf(
+                /* translators: %s: coupon code */
+                __('Coupon %s', 'modern-hotel-booking'),
+                $coupon_code_fmt
+            );
+            $formatted['items'][] = [
+                'type'             => 'coupon',
+                'label'            => $coupon_label,
+                'net'              => 0,
+                'tax_rate'         => 0,
+                'tax'              => 0,
+                'gross'            => -(float)$coupon_discount_fmt,
+                'net_formatted'    => '',
+                'tax_formatted'    => '',
+                'gross_formatted'  => '−' . I18n::format_currency($coupon_discount_fmt),
+            ];
+        }
+        /* BUILD_PRO_END */
+
+        // Children
         if (isset($breakdown['breakdown']['children']) && [] !== $breakdown['breakdown']['children']) {
             $children = $breakdown['breakdown']['children'];
             if (($children['gross'] ?? $children['gross_amount'] ?? 0) > 0) {
@@ -887,7 +986,64 @@ class Tax
                     </tr>
                 </tfoot>
             </table>
-            
+            <?php
+            /* BUILD_PRO_START */
+            $currency = strtoupper((string) get_option('mhbo_currency_code', 'USD'));
+            $payment_type = $meta['payment_type'] ?? 'full';
+            $deposit_amount_val = (string) ($breakdown['deposit_amount'] ?? ($meta['deposit_amount'] ?? '0'));
+            $remaining_balance_val = (string) ($breakdown['remaining_balance'] ?? ($meta['remaining_balance'] ?? '0'));
+
+            $deposit_money = Money::fromDecimal($deposit_amount_val, $currency);
+            $remaining_money = Money::fromDecimal($remaining_balance_val, $currency);
+
+            // 2026 BP: Render deposit rows whenever deposit data exists (not just when selected).
+            // On the booking form (payment_type='full'), rows start hidden and JS shows them
+            // when the guest switches to the deposit payment option.
+            // On confirmation/email (payment_type='deposit'), rows are visible immediately.
+            $has_deposit = !$deposit_money->isZero();
+            $payment_status = $meta['payment_status'] ?? '';
+            // Label depends on both payment_type and whether it has actually been paid:
+            // - checkout form (payment_type != 'deposit'): "Deposit to Pay Now"
+            // - post-booking, not yet paid (pending): "Deposit Required"
+            // - post-booking, paid (completed): "Deposit Paid"
+            if ('deposit' === $payment_type) {
+                $deposit_row_label = ('completed' === $payment_status)
+                    ? (string) I18n::get_label('label_deposit_paid')
+                    : (string) I18n::get_label('label_deposit_required');
+            } else {
+                $deposit_row_label = (string) I18n::get_label('label_deposit_to_pay_now');
+            }
+            $deposit_wrapper_display = ('deposit' === $payment_type) ? '' : 'display:none;';
+            ?>
+            <?php if ($has_deposit): ?>
+            <div class="mhbo-deposit-breakdown-summary"
+                 style="margin-top: 15px; border-top: 1px dashed #ccc; padding-top: 10px; <?php echo esc_attr($deposit_wrapper_display); ?>">
+                <table class="<?php echo $is_email ? '' : esc_attr($styles['table']); ?>"
+                       style="width: 100%; border-collapse: collapse;">
+                    <tbody>
+                        <tr class="mhbo-deposit-amount-row">
+                            <td style="<?php echo esc_attr($styles['td']); ?>">
+                                <strong><?php echo esc_html($deposit_row_label); ?></strong>
+                            </td>
+                            <td style="<?php echo esc_attr($styles['td_right']); ?>">
+                                <strong id="mhbo-deposit-amount-display"><?php echo esc_html(I18n::format_currency($deposit_money->toDecimal())); ?></strong>
+                            </td>
+                        </tr>
+                        <tr class="mhbo-remaining-balance-row"<?php echo $remaining_money->isZero() ? ' style="display:none;"' : ''; ?>>
+                            <td style="<?php echo esc_attr($styles['td']); ?> color: #666;">
+                                <?php echo esc_html(I18n::get_label('label_remaining_balance')); ?>
+                            </td>
+                            <td style="<?php echo esc_attr($styles['td_right']); ?> color: #666;" id="mhbo-remaining-balance-display">
+                                <?php echo esc_html(I18n::format_currency($remaining_money->toDecimal())); ?>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+            <?php endif; ?>
+            <?php
+            /* BUILD_PRO_END */
+            ?>
             <?php if ($show_note && $tax_enabled && self::MODE_VAT === $formatted['mode']): ?>
                 <p style="font-size: 12px; color: #666; margin-top: 5px;">
                     <?php echo esc_html($formatted['totals']['tax_included_note']); ?>
@@ -928,7 +1084,12 @@ class Tax
         $lines[] = str_repeat('-', 40);
 
         foreach ($formatted['items'] as $item) {
-            
+            /* BUILD_PRO_START */
+            if ('coupon' === ($item['type'] ?? '')) {
+                $lines[] = '  ' . $item['label'] . ': ' . $item['gross_formatted'];
+                continue;
+            }
+            /* BUILD_PRO_END */
             $lines[] = sprintf(
                 '  %s (%s%%): %s',
                 $item['label'],

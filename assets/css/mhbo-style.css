@@ -852,6 +852,7 @@
     margin: 0;
 }
 
+
 .mhbo-extra-item input[type="number"] {
     width: 70px !important;
     height: 40px !important;
@@ -1401,6 +1402,7 @@
     from { transform: scale(0.5); opacity: 0; }
     to { transform: scale(1); opacity: 1; }
 }
+
 
 .mhbo-message {
     padding: 18px 24px;
@@ -1953,3 +1955,4 @@
         padding: 20px;
     }
 }
+

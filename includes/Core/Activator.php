@@ -35,7 +35,8 @@ class Activator
 		) $charset_collate;";
 		dbDelta($sql_room_types);
 
-// Rule 13 rationale: Creating individual rooms table for specific availability tracking.
+
+		// Rule 13 rationale: Creating individual rooms table for specific availability tracking.
 		$sql_rooms = "CREATE TABLE {$wpdb->prefix}mhbo_rooms (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			type_id mediumint(9) NOT NULL,
@@ -48,7 +49,8 @@ class Activator
 		) $charset_collate;";
 		dbDelta($sql_rooms);
 
-// Rule 13 rationale: Primary bookings table. Essential for multi-channel revenue management.
+
+		// Rule 13 rationale: Primary bookings table. Essential for multi-channel revenue management.
 		$sql_bookings = "CREATE TABLE {$wpdb->prefix}mhbo_bookings (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			room_id mediumint(9) NOT NULL,
@@ -107,7 +109,13 @@ class Activator
 			service_fee_tax decimal(19,4) DEFAULT 0.0000,
 			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP";
 
-$sql_bookings .= ",
+/* BUILD_PRO_START */
+		$sql_bookings .= ",
+			is_multi_room tinyint(1) DEFAULT 0,
+			multi_room_parent varchar(64) DEFAULT NULL";
+/* BUILD_PRO_END */
+
+		$sql_bookings .= ",
 			PRIMARY KEY  (id),
 			KEY room_id (room_id),
 			KEY ical_uid (ical_uid),
@@ -119,7 +127,8 @@ $sql_bookings .= ",
 		) $charset_collate;";
 		dbDelta($sql_bookings);
 
-// Rule 13 rationale: Multi-platform iCal sync connections table.
+
+		// Rule 13 rationale: Multi-platform iCal sync connections table.
 		$sql_ical_connections = "CREATE TABLE {$wpdb->prefix}mhbo_ical_connections (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			room_id mediumint(9) NOT NULL,
@@ -140,7 +149,30 @@ $sql_bookings .= ",
 		) $charset_collate;";
 		dbDelta($sql_ical_connections);
 
-// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- Necessary for plugin tables
+		/* BUILD_PRO_START */
+		// Legacy mhbo_ical_feeds table is deprecated.
+		// Migration to mhbo_ical_connections is handled in migrate_ical_feeds_to_connections().
+		/* BUILD_PRO_END */
+
+
+
+/* BUILD_PRO_START */
+		// Rule 13 rationale: Incremental iCal sync logs for remote diagnostic visibility.
+		$sql_ical_logs = "CREATE TABLE {$wpdb->prefix}mhbo_ical_logs (
+			id bigint(20) NOT NULL AUTO_INCREMENT,
+			connection_id mediumint(9) NOT NULL,
+			sync_time datetime DEFAULT CURRENT_TIMESTAMP,
+			status varchar(20) DEFAULT 'success',
+			message text,
+			events_added int(11) DEFAULT 0,
+			PRIMARY KEY  (id),
+			KEY connection_id (connection_id),
+			KEY sync_time (sync_time)
+		) $charset_collate;";
+		dbDelta($sql_ical_logs);
+/* BUILD_PRO_END */
+
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared -- Necessary for plugin tables
 		$sql_pricing = "CREATE TABLE {$wpdb->prefix}mhbo_pricing_rules (
 			id mediumint(9) NOT NULL AUTO_INCREMENT,
 			room_id mediumint(9) NOT NULL DEFAULT 0,
@@ -196,28 +228,105 @@ $sql_bookings .= ",
 		) $charset_collate;";
 		dbDelta($sql_idempotency);
 
-// Add new options for multilingual and currency
+/* BUILD_PRO_START */
+		// Coupon codes table (PRO).
+		$sql_coupons = "CREATE TABLE {$wpdb->prefix}mhbo_coupons (
+			id mediumint(9) NOT NULL AUTO_INCREMENT,
+			code varchar(50) NOT NULL,
+			description varchar(255) DEFAULT '',
+			discount_type varchar(20) NOT NULL DEFAULT 'percentage',
+			discount_value decimal(19,4) NOT NULL DEFAULT '0.0000',
+			max_discount_amount decimal(19,4) DEFAULT NULL,
+			min_booking_amount decimal(19,4) DEFAULT NULL,
+			max_uses mediumint(9) NOT NULL DEFAULT 0,
+			uses_count mediumint(9) NOT NULL DEFAULT 0,
+			max_uses_per_customer tinyint(4) NOT NULL DEFAULT 0,
+			start_date date DEFAULT NULL,
+			expiry_date date DEFAULT NULL,
+			room_type_ids text DEFAULT NULL,
+			ai_accessible tinyint(1) NOT NULL DEFAULT 1,
+			enabled tinyint(1) NOT NULL DEFAULT 1,
+			created_at datetime DEFAULT CURRENT_TIMESTAMP,
+			updated_at datetime DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
+			PRIMARY KEY  (id),
+			UNIQUE KEY code (code),
+			KEY enabled (enabled),
+			KEY expiry_date (expiry_date)
+		) $charset_collate;";
+		dbDelta($sql_coupons);
+
+		// Add coupon tracking columns to bookings table (MySQL-safe existence check).
+		$bookings_table = $wpdb->prefix . 'mhbo_bookings';
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema introspection
+		$has_coupon_code = $wpdb->get_var($wpdb->prepare(
+			'SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s',
+			DB_NAME, $bookings_table, 'coupon_code'
+		));
+		if (!(int)$has_coupon_code) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- DDL via %i identifier placeholder
+			$wpdb->query($wpdb->prepare("ALTER TABLE %i ADD COLUMN coupon_code varchar(50) DEFAULT NULL", $bookings_table));
+		}
+		// phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Schema introspection
+		$has_coupon_discount = $wpdb->get_var($wpdb->prepare(
+			'SELECT COUNT(*) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = %s AND TABLE_NAME = %s AND COLUMN_NAME = %s',
+			DB_NAME, $bookings_table, 'coupon_discount'
+		));
+		if (!(int)$has_coupon_discount) {
+			// phpcs:ignore WordPress.DB.DirectDatabaseQuery.SchemaChange, WordPress.DB.PreparedSQL.NotPrepared, WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- DDL via %i identifier placeholder
+			$wpdb->query($wpdb->prepare("ALTER TABLE %i ADD COLUMN coupon_discount decimal(19,4) NOT NULL DEFAULT '0.0000'", $bookings_table));
+		}
+/* BUILD_PRO_END */
+
+		// Add new options for multilingual and currency
 		add_option('mhbo_db_version', MHBO_VERSION);
 		add_option('mhbo_currency_code', 'USD');
 		add_option('mhbo_currency_symbol', '$');
 		add_option('mhbo_currency_position', 'before');
-
+/* BUILD_PRO_START */
+		add_option('mhbo_license_status', 'inactive');
+		// Deposit Settings
+		add_option('mhbo_deposits_enabled', 0);
+		add_option('mhbo_deposit_type', 'percentage');
+		add_option('mhbo_deposit_value', 20);
+		add_option('mhbo_deposit_non_refundable', 0);
+		add_option('mhbo_deposit_refund_deadline_days', 7);
+		add_option('mhbo_deposit_allow_guest_choice', 0);
+/* BUILD_PRO_END */
 		add_option('mhbo_gateway_stripe_enabled', 0);
 		add_option('mhbo_gateway_paypal_enabled', 0);
 		add_option('mhbo_gateway_onsite_enabled', 0);
 		add_option('mhbo_stripe_mode', 'test');
 		add_option('mhbo_paypal_mode', 'sandbox');
-
+/* BUILD_PRO_START */
+		add_option('mhbo_ical_token', wp_generate_password(32, false));
+/* BUILD_PRO_END */
 		add_option('mhbo_powered_by_link', 0); // Default OFF per WP.org Guideline 10 - requires user opt-in
+/* BUILD_PRO_START */
+		// Hotel timezone — '' means fall back to WP site timezone (see HotelTime::timezone())
+		add_option('mhbo_hotel_timezone', '');
+/* BUILD_PRO_END */
 
-// Rule 13: Initialize versions for caching
+		// Rule 13: Initialize versions for caching
 		foreach (['bookings', 'rooms', 'room_types', 'pricing_rules', 'ical_connections', 'settings', 'calendar_overrides'] as $table) {
 			if (false === get_option("mhbo_v_{$table}")) {
 				add_option("mhbo_v_{$table}", 1);
 			}
 		}
 
-// Tax System Options
+/* BUILD_PRO_START */
+		// Coupon System Options
+		add_option('mhbo_coupons_enabled', 1);
+		add_option('mhbo_coupon_ai_enabled', 1);
+
+		// Service Fee Options
+		add_option('mhbo_service_fee_enabled', 0);
+		add_option('mhbo_service_fee_type', 'fixed');
+		add_option('mhbo_service_fee_amount', '0');
+		add_option('mhbo_service_fee_percentage', '0');
+		add_option('mhbo_service_fee_label', 'Service Fee');
+/* BUILD_PRO_END */
+
+		// Tax System Options
 		add_option('mhbo_tax_mode', 'disabled');
 		add_option('mhbo_tax_rate_accommodation', 0.00);
 		add_option('mhbo_tax_rate_extras', 0.00);
@@ -228,8 +337,20 @@ $sql_bookings .= ",
 		add_option('mhbo_tax_rounding_mode', 'per_total');
 		add_option('mhbo_tax_decimal_places', 2);
 		add_option('mhbo_tax_zero_rate_label', '[:en]Zero Rate[:ro]Cotă Zero[:]');
+/* BUILD_PRO_START */
+		// iCal Sync Settings
+		add_option('mhbo_ical_auto_sync_enabled', 1);
+		add_option('mhbo_ical_sync_interval', '1hour'); // Updated default to 1 hour
+		add_option('mhbo_ical_conflict_resolution', 'local'); // 'local' or 'external'
+		add_option('mhbo_ical_failure_email_threshold', 3);
+		add_option('mhbo_ical_success_notification', 0);
+		add_option('mhbo_ical_retry_enabled', 1);
+		add_option('mhbo_ical_email_notifications', 0);
+		add_option('mhbo_ical_notification_email', get_option('admin_email'));
+		add_option('mhbo_ical_sync_lock_timeout', 30);
+/* BUILD_PRO_END */
 
-// Cache Settings (optional/configurable)
+		// Cache Settings (optional/configurable)
 		add_option('mhbo_cache_enabled', 1);
 
 		// Default Amenities
@@ -244,7 +365,25 @@ $sql_bookings .= ",
 			update_option('mhbo_amenities_list', $default_amenities);
 		}
 
-}
+/* BUILD_PRO_START */
+		// License API Credentials — only seed when Pro classes are available
+		// Obfuscated to prevent casual source reading; server-side domain validation is the real security layer
+		if (class_exists('MHBO\Core\LicenseManager')) {
+			add_option('mhbo_license_api_key', base64_decode ('Y2tfYzNhNjhmMjQ0Nzc2YjUxNzhiZThiODk3ZGMyMzE2ZWZlZDY4MTIxMg==', true));
+			add_option('mhbo_license_api_secret', base64_decode ('Y3NfZWUwMDUxZjQxMmZkMTRhOGYzY2YwYTdiNWQwMzIyMGYyYmM5YTI1YQ==', true));
+		}
+/* BUILD_PRO_END */
+
+/* BUILD_PRO_START */
+		// Register .ics rewrite rule before flushing so it's available immediately after activation.
+		add_rewrite_rule(
+			'^mhbo-ical/room-([0-9]+)\.ics$',
+			'index.php?mhbo_action=ical_export&room_id=$matches[1]',
+			'top'
+		);
+		flush_rewrite_rules(false);
+/* BUILD_PRO_END */
+	}
 
 	/**
 	 * Migrate database schema for existing installations.
@@ -258,7 +397,16 @@ $sql_bookings .= ",
 		// Run activate to ensure all tables and columns are up to date via dbDelta
 		self::activate();
 
-// Add tax options if they don't exist
+/* BUILD_PRO_START */
+		// Service Fee Options (for existing installations)
+		add_option('mhbo_service_fee_enabled', 0);
+		add_option('mhbo_service_fee_type', 'fixed');
+		add_option('mhbo_service_fee_amount', '0');
+		add_option('mhbo_service_fee_percentage', '0');
+		add_option('mhbo_service_fee_label', 'Service Fee');
+/* BUILD_PRO_END */
+
+		// Add tax options if they don't exist
 		add_option('mhbo_tax_mode', 'disabled');
 		add_option('mhbo_tax_rate_accommodation', 0.00);
 		add_option('mhbo_tax_rate_extras', 0.00);
@@ -270,7 +418,25 @@ $sql_bookings .= ",
 		add_option('mhbo_tax_decimal_places', 2);
 		add_option('mhbo_tax_zero_rate_label', '[:en]Zero Rate[:ro]Cotă Zero[:]');
 
-// Cache Settings (for existing installations)
+/* BUILD_PRO_START */
+		// License API Credentials (for existing installations)
+		if (class_exists('MHBO\Core\LicenseManager')) {
+			add_option('mhbo_license_api_key', base64_decode ('Y2tfYzNhNjhmMjQ0Nzc2YjUxNzhiZThiODk3ZGMyMzE2ZWZlZDY4MTIxMg==', true));
+			add_option('mhbo_license_api_secret', base64_decode ('Y3NfZWUwMDUxZjQxMmZkMTRhOGYzY2YwYTdiNWQwMzIyMGYyYmM5YTI1YQ==', true));
+		}
+		// Deposit Settings (for existing installations)
+		add_option('mhbo_deposits_enabled', 0);
+		add_option('mhbo_deposit_type', 'percentage');
+		add_option('mhbo_deposit_value', 20);
+		add_option('mhbo_deposit_non_refundable', 0);
+		add_option('mhbo_deposit_refund_deadline_days', 7);
+		add_option('mhbo_deposit_allow_guest_choice', 0);
+		// Coupon System Options (for existing installations)
+		add_option('mhbo_coupons_enabled', 1);
+		add_option('mhbo_coupon_ai_enabled', 1);
+/* BUILD_PRO_END */
+
+		// Cache Settings (for existing installations)
 		add_option('mhbo_cache_enabled', 1);
 
 		// 2026 BP: Add updated_at column to bookings table for existing installations.
@@ -288,8 +454,11 @@ $sql_bookings .= ",
 		add_option('mhbo_ical_notification_email', get_option('admin_email'));
 		add_option('mhbo_ical_sync_lock_timeout', 30);
 		add_option('mhbo_powered_by_link', 0); // Default OFF per WP.org Guideline 10 - requires user opt-in
+/* BUILD_PRO_START */
+		add_option('mhbo_hotel_timezone', '');
+/* BUILD_PRO_END */
 
-// Default Amenities (for migration)
+		// Default Amenities (for migration)
 		if (false === get_option('mhbo_amenities_list')) {
 			$default_amenities = [
 				'wifi'      => I18n::get_label('amenity_free_wifi'),

@@ -139,7 +139,7 @@ class ChatRest {
         // 2. Rate limiting.
         $ip     = self::get_client_ip();
         $ip_key = 'mhbo_rl_' . \md5( (string) $ip );
-        $rate   = false ? self::RATE_PRO : self::RATE_FREE;
+        $rate   = License::is_active() ? self::RATE_PRO : self::RATE_FREE;
 
         $count = (int) \get_transient( $ip_key );
         if ( $count >= $rate ) {
@@ -202,7 +202,7 @@ class ChatRest {
         // 6. System prompt + tools.
         $lang          = (string) ( $request->get_param( 'lang' ) ?? '' );
         $system_prompt = KnowledgeBase::get_system_prompt( $lang );
-        $tools         = KnowledgeBase::get_tool_definitions( false );
+        $tools         = KnowledgeBase::get_tool_definitions( License::is_active() );
 
         // 7. Dynamic Session Context (2026 BP).
         //    Inject known session state directly into the prompt to ensure the AI
@@ -226,7 +226,7 @@ class ChatRest {
         $scarcity_rule = I18n::get_label( 'ai_prompt_scarcity_rule' ) . "\n";
         $decisive_rule = \sprintf( 
             I18n::get_label( 'ai_prompt_decisive_rule' ), 
-            false ? '`create_booking_link` (or `create_booking_draft` if is_pro)' : '`create_booking_link`'
+            License::is_active() ? '`create_booking_link` (or `create_booking_draft` if is_pro)' : '`create_booking_link`'
         );
         
         $system_prompt .= "\n" . $lang_block . "\n" . $context_name . " " . $context_email . " " . $context_phone . "\n" . $date_context . "\n" . $scarcity_rule . $decisive_rule;
@@ -628,7 +628,32 @@ class ChatRest {
             'get_local_tips'      => Abilities\LocalTips::execute( $args ),
             'get_business_card'   => GetBusinessCard::execute( $args ),
             'create_booking_link' => CreateBookingLink::execute( $args ),
-            
+            /* BUILD_PRO_START */
+            'create_booking_draft' => License::is_active()
+                ? Abilities\Pro\CreateBooking::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'modify_booking'       => License::is_active()
+                ? Abilities\Pro\ModifyBooking::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'cancel_booking'       => License::is_active()
+                ? Abilities\Pro\CancelBooking::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'apply_promo_code'     => License::is_active()
+                ? Abilities\Pro\ApplyPromo::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'get_guest_history'    => License::is_active()
+                ? Abilities\Pro\GuestHistory::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'resend_confirmation'  => License::is_active()
+                ? Abilities\Pro\ResendConfirmation::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'send_verification_code' => License::is_active()
+                ? Abilities\Pro\SendVerification::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            'verify_identity'      => License::is_active()
+                ? Abilities\Pro\VerifyIdentity::execute( $args )
+                : [ 'error' => 'Pro feature.' ],
+            /* BUILD_PRO_END */
             default => [ 'error' => "Unknown tool: {$name}" ],
         };
     }

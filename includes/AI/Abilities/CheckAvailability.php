@@ -54,6 +54,7 @@ use function wp_create_nonce;
 use function wp_json_encode;
 use function wp_register_ability;
 
+
 if ( ! \defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -76,7 +77,13 @@ class CheckAvailability {
                     'check_out' => [ 'type' => 'string', 'format' => 'date',    'description' => 'Check-out date.' ],
                     'adults'    => [ 'type' => 'integer', 'default' => 2, 'minimum' => 1, 'maximum' => 10 ],
                     'children'  => [ 'type' => 'integer', 'default' => 0, 'minimum' => 0 ],
-                    
+                    /* BUILD_PRO_START */
+                    'child_ages' => [
+                        'type'        => 'array',
+                        'items'       => [ 'type' => 'integer', 'minimum' => 0 ],
+                        'description' => 'Age of each child in years. Required for accurate pricing — children below the free-age limit are not charged.',
+                    ],
+                    /* BUILD_PRO_END */
                     'room_type'  => [ 'type' => 'string',  'description' => 'Optional filter by room type name or ID.' ],
                     'guest_name' => [ 'type' => 'string',  'description' => 'Optional: Guest full name.' ],
                     'guest_email'=> [ 'type' => 'string',  'description' => 'Optional: Guest email.' ],
@@ -126,9 +133,12 @@ class CheckAvailability {
         $check_out = (string) \preg_replace( '/[^0-9\-]/', '', \sanitize_text_field( (string) ( $args['check_out'] ?? '' ) ) );
         $adults    = \max( 1, (int) ( $args['adults']   ?? 2 ) );
         $children  = \max( 0, (int) ( $args['children'] ?? 0 ) );
-
-$child_ages = [];
-        
+        /* BUILD_PRO_START */
+        $child_ages = ( isset( $args['child_ages'] ) && \is_array( $args['child_ages'] ) ) ? \array_map( '\absint', $args['child_ages'] ) : [];
+        /* BUILD_PRO_END */
+        /* BUILD_FREE_START */
+        $child_ages = [];
+        /* BUILD_FREE_END */
         $room_type  = \sanitize_text_field( (string) ( $args['room_type']  ?? '' ) );
         $guest_name = \sanitize_text_field( (string) ( $args['guest_name'] ?? '' ) );
         $guest_email= \sanitize_email( (string) ( $args['guest_email']    ?? '' ) );
@@ -156,7 +166,30 @@ $child_ages = [];
             return [ 'available' => false, 'rooms' => [], 'nights_count' => 0, 'message' => \__( 'Stay cannot exceed 365 nights.', 'modern-hotel-booking' ) ];
         }
 
-// Fetch rooms from DB (mirrors RestApi::get_availability).
+        /* BUILD_PRO_START */
+        $global_min_stay = (int) \get_option( 'mhbo_global_min_stay', 0 );
+        $global_max_stay = (int) \get_option( 'mhbo_global_max_stay', 0 );
+        if ( $global_min_stay > 0 && $nights < $global_min_stay ) {
+            return [
+                'available'    => false,
+                'rooms'        => [],
+                'nights_count' => $nights,
+                // translators: 1: minimum nights, 2: requested nights
+                'message'      => \sprintf( \__( 'The hotel has a minimum stay requirement of %1$d nights. You requested %2$d night(s). Please adjust the dates and try again.', 'modern-hotel-booking' ), $global_min_stay, $nights ),
+            ];
+        }
+        if ( $global_max_stay > 0 && $nights > $global_max_stay ) {
+            return [
+                'available'    => false,
+                'rooms'        => [],
+                'nights_count' => $nights,
+                // translators: 1: maximum nights, 2: requested nights
+                'message'      => \sprintf( \__( 'The hotel has a maximum stay limit of %1$d nights. You requested %2$d night(s). Please adjust the dates and try again.', 'modern-hotel-booking' ), $global_max_stay, $nights ),
+            ];
+        }
+        /* BUILD_PRO_END */
+
+        // Fetch rooms from DB (mirrors RestApi::get_availability).
         $cache_key = 'rooms_with_types_ai';
         $rooms     = Cache::get_query( (string) $cache_key, Cache::TABLE_ROOMS );
 
@@ -226,7 +259,41 @@ $child_ages = [];
             // --- Multi-Room Suggestion Logic ---
             if ( $adults > $max_a || $children > $max_c ) {
                 $multi_room_handled = false;
-                
+                /* BUILD_PRO_START */
+                $multi_calc = Pricing::calculate_multi_room_booking( (int) $type_id, $check_in, $check_out, $adults, $children, $child_ages );
+                if ( $multi_calc ) {
+                    // For multi-room, direct them to search results since Step 3 handles single rooms.
+                    $multi_search_url = \add_query_arg( [
+                        'mhbo_auto_search' => 1,
+                        'type_id'          => $type_id,
+                        'check_in'         => $check_in,
+                        'check_out'        => $check_out,
+                        'guests'           => $adults,
+                        'children'         => $children,
+                        'customer_name'    => $guest_name,
+                        'customer_email'   => $guest_email,
+                        'customer_phone'   => $guest_phone,
+                    ], $base_url );
+
+                    $available[] = [
+                        'room_id'         => (int) $multi_calc['breakdown'][0]['room_id'], // Representative ID
+                        'room_name'       => I18n::decode( (string) $room->type_name ) . ' (' . (int) $multi_calc['num_rooms'] . ' Rooms)',
+                        'room_type'       => 'type_' . (int) $type_id,
+                        'is_multi_room'   => true,
+                        'num_rooms'       => (int) $multi_calc['num_rooms'],
+                        'units_remaining' => (int) \floor( $count / (int) $multi_calc['num_rooms'] ), // How many *sets* of this booking can we take?
+                        'price_per_night' => \round( (float) $multi_calc['total_price'] / ( (int) $nights ?: 1 ) / (int) $multi_calc['num_rooms'], 2 ),
+                        'total_price'     => (float) $multi_calc['total_price'],
+                        'price_formatted' => Money::fromDecimal( (string) $multi_calc['total_price'], (string) $currency )->format(),
+                        'currency'        => $currency,
+                        'max_adults'      => $max_a,
+                        'max_children'    => $max_c,
+                        'distribution'    => $multi_calc['breakdown'],
+                        'booking_url'     => \esc_url( (string) $multi_search_url ),
+                    ];
+                    $multi_room_handled = true;
+                }
+                /* BUILD_PRO_END */
                 // Fallback: estimate multi-room cost from single-room price when Pro pricing is unavailable.
                 if ( ! $multi_room_handled ) {
                     $min_rooms            = (int) \max(
@@ -428,7 +495,7 @@ $child_ages = [];
             'message'                  => $message,
             'search_url'               => $search_url,
             'deposit_info'             => $deposit_info,
-            'is_pro'                   => false,
+            'is_pro'                   => License::is_pro_active(),
             'payment_methods_summary'  => CreateBookingLink::get_payment_summary(),
             'multi_room_guidance'      => $multi_room_guidance ?? '',
             'tax_note'                 => Tax::is_enabled()

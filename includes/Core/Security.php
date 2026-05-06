@@ -18,8 +18,108 @@ if (!defined('ABSPATH')) {
  */
 class Security
 {
+/* BUILD_PRO_START */
+    /**
+     * Validate URL for safe HTTP requests (SSRF protection).
+     *
+     * Blocks internal/private IP addresses, cloud metadata endpoints,
+     * and non-HTTP(S) schemes.
+     *
+     * @param string $url The URL to validate.
+     * @return bool True if safe, false otherwise.
+     */
+    public static function is_safe_url(string $url): bool
+    {
+        // Must be a valid URL
+        if (!filter_var($url, FILTER_VALIDATE_URL)) {
+            return false;
+        }
 
-/**
+        $parsed = wp_parse_url($url);
+        if (!isset($parsed['host']) || $parsed['host'] === '') {
+            return false;
+        }
+
+        // Only allow HTTP/HTTPS schemes and standard ports
+        $scheme = strtolower((string) ($parsed['scheme'] ?? ''));
+        if (!in_array($scheme, ['http', 'https'], true)) {
+            return false;
+        }
+
+        if (isset($parsed['port']) && !in_array((int) $parsed['port'], [80, 443], true)) {
+            return false;
+        }
+
+        $host = (string) ($parsed['host'] ?? '');
+        if ($host === '') {
+            return false;
+        }
+
+        // Block localhost and common loopback variations
+        $blocked_hosts = ['localhost', '127.0.0.1', '::1', '0.0.0.0'];
+        if (in_array(strtolower($host), $blocked_hosts, true)) {
+            return false;
+        }
+
+        // 2026 BP: Trusted OTAs are safe by design. Bypassing resolution speeds up sync.
+        if (self::is_trusted_platform($host)) {
+            return true;
+        }
+
+        // Resolve hostname to IP
+        $resolved_ip = gethostbyname($host);
+
+        // SSRF HARDENING: If DNS fails to resolve and it's not already a valid IP, block it.
+        // This prevents "unresolved host" bypasses where malicious inputs might slip through.
+        if ($host === $resolved_ip && !filter_var($host, FILTER_VALIDATE_IP)) {
+            return false;
+        }
+
+        $ip = $resolved_ip;
+
+        // Use PHP's built-in filters for private/reserved ranges
+        // FILTER_FLAG_NO_PRIV_RANGE - Blocks 10.x, 172.16-31.x, 192.168.x
+        // FILTER_FLAG_NO_RES_RANGE - Blocks 169.254.x.x (cloud metadata), 0.x.x.x, etc.
+        $valid_ip = filter_var(
+            $ip,
+            FILTER_VALIDATE_IP,
+            FILTER_FLAG_NO_PRIV_RANGE | FILTER_FLAG_NO_RES_RANGE
+        );
+
+        if (false === $valid_ip) {
+            return false;
+        }
+
+        // Additional CIDR-based check for edge cases
+        $blocked_ranges = [
+            '127.0.0.0/8',      // Loopback
+            '10.0.0.0/8',       // Private Class A
+            '172.16.0.0/12',    // Private Class B
+            '192.168.0.0/16',   // Private Class C
+            '169.254.0.0/16',   // Link-local (AWS/GCP/Azure/OCI metadata)
+            '0.0.0.0/8',        // Current network
+            '100.64.0.0/10',    // Shared Address Space (CGNAT)
+            '192.0.0.0/24',     // IETF Protocol Assignments
+            '198.18.0.0/15',    // Network Interconnect Device Benchmark testing
+            '240.0.0.0/4',      // Reserved
+        ];
+
+        foreach ($blocked_ranges as $range) {
+            if (self::ip_in_range($ip, $range)) {
+                return false;
+            }
+        }
+
+        // Use WordPress built-in validation as final safety net
+        if (function_exists('wp_http_validate_url')) {
+            return (bool) wp_http_validate_url($url);
+        }
+
+        return true;
+    }
+/* BUILD_PRO_END */
+
+    /**
      * Check if an IP is within a CIDR range.
      *
      * Supports both IPv4 and IPv6 CIDR notation and exact matches.
@@ -222,7 +322,41 @@ class Security
         return (false !== $decrypted) ? (string) $decrypted : $value;
     }
 
-/**
+    /* BUILD_PRO_START */
+    /**
+     * Check if a host belongs to a trusted booking platform.
+     *
+     * @param string $host Hostname.
+     * @return bool True if trusted.
+     */
+    public static function is_trusted_platform(string $host): bool
+    {
+        $host = strtolower($host);
+        $trusted = [
+            'airbnb.com',
+            'www.airbnb.com',
+            'booking.com',
+            'admin.booking.com',
+            'ical.booking.com',
+            'vrbo.com',
+            'www.vrbo.com',
+            'expedia.com',
+            'google.com',
+            'calendar.google.com',
+            'tripadvisor.com',
+        ];
+
+        foreach ($trusted as $domain) {
+            if ($host === $domain || str_ends_with($host, '.' . $domain)) {
+                return true;
+            }
+        }
+
+        return false;
+    }
+    /* BUILD_PRO_END */
+    
+    /**
      * Normalize verbal inputs into standard formats (Neuromorphic Normalization).
      *
      * Handles specific AI-to-Form transformations like verbal email segments.

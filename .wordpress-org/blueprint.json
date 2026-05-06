@@ -1,0 +1,40 @@
+{
+    "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+    "meta": {
+        "title": "Modern Hotel Booking - Ultimate Showcase",
+        "description": "Experience the full power of MHBO with a pre-configured luxury resort site, beautiful Gutenberg layouts, and live booking demonstrations.",
+        "author": "Antigravity Architect",
+        "categories": ["travel", "booking", "real-estate"]
+    },
+    "preferredVersions": {
+        "php": "8.3",
+        "wp": "latest"
+    },
+    "features": {
+        "networking": true
+    },
+    "constants": {
+        "WP_DEBUG": true,
+        "WP_DEBUG_DISPLAY": false
+    },
+    "login": true,
+    "landingPage": "/",
+    "plugins": [
+        "modern-hotel-booking"
+    ],
+    "steps": [
+        {
+            "step": "setSiteOptions",
+            "options": {
+                "blogname": "Azure Bay Resort",
+                "blogdescription": "Tropical Luxury Redefined",
+                "show_on_front": "page",
+                "mhbo_modal_enabled": 1
+            }
+        },
+        {
+            "step": "runPHP",
+            "code": "<?php require_once '/wordpress/wp-load.php'; global $wpdb; $room_types = [['name' => 'Royal Ocean Suite', 'description' => 'A grand suite with floor-to-ceiling ocean views and a private balcony.', 'base_price' => 349.00, 'max_adults' => 2, 'total_rooms' => 2, 'amenities' => 'wifi,ac,tv,breakfast,pool'], ['name' => 'Deluxe Garden Room', 'description' => 'Elegant comfort surrounded by lush tropical gardens.', 'base_price' => 199.00, 'max_adults' => 2, 'total_rooms' => 5, 'amenities' => 'wifi,ac,tv'], ['name' => 'Family Bungalow', 'description' => 'Spacious accommodation for the whole family, close to the pool.', 'base_price' => 279.00, 'max_adults' => 4, 'total_rooms' => 3, 'amenities' => 'wifi,ac,tv,breakfast']]; foreach ($room_types as $rt) { $wpdb->insert($wpdb->prefix . 'mhbo_room_types', $rt); $type_id = $wpdb->insert_id; $wpdb->insert($wpdb->prefix . 'mhbo_rooms', ['type_id' => $type_id, 'room_number' => '10' . $type_id, 'status' => 'available']); } $wpdb->insert($wpdb->prefix . 'mhbo_bookings', ['room_id' => 1, 'customer_name' => 'John Doe', 'customer_email' => 'john@example.com', 'check_in' => date('Y-m-d', strtotime('+1 day')), 'check_out' => date('Y-m-d', strtotime('+4 days')), 'total_price' => 1047.00, 'status' => 'confirmed', 'booking_token' => bin2hex(random_bytes(16)), 'created_at' => current_time('mysql')]); update_option('mhbo_currency_code', 'USD'); update_option('mhbo_currency_symbol', '$'); update_option('mhbo_hotel_name', 'Azure Bay Resort'); $content = '<!-- wp:cover {\"url\":\"https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1920\",\"dimRatio\":50,\"overlayColor\":\"vivid-cyan-blue\",\"align\":\"full\"} --><div class=\"wp-block-cover alignfull\"><span aria-hidden=\"true\" class=\"wp-block-cover__background has-vivid-cyan-blue-background-color has-background-dim\"></span><img class=\"wp-block-cover__image-background\" alt=\"\" src=\"https://images.unsplash.com/photo-1571896349842-33c89424de2d?auto=format&fit=crop&q=80&w=1920\" data-object-fit=\"cover\"/><div class=\"wp-block-cover__inner-container\"><!-- wp:heading {\"textAlign\":\"center\",\"level\":1,\"style\":{\"typography\":{\"fontSize\":\"60px\"}}} --><h1 class=\"has-text-align-center\" style=\"font-size:60px\">Azure Bay Resort</h1><!-- /wp:heading --><!-- wp:paragraph {\"align\":\"center\",\"style\":{\"typography\":{\"fontSize\":\"24px\"}}} --><p class=\"has-text-align-center\" style=\"font-size:24px\">Your escape to tropical luxury and serene comfort.</p><!-- /wp:paragraph --></div></div><!-- /wp:cover --><!-- wp:spacer {\"height\":\"60px\"} --><div style=\"height:60px\" aria-hidden=\"true\" class=\"wp-block-spacer\"></div><!-- /wp:spacer --><!-- wp:columns {\"align\":\"wide\"} --><div class=\"wp-block-columns alignwide\"><!-- wp:column {\"width\":\"33.33%\"} --><div class=\"wp-block-column\" style=\"flex-basis:33.33%\"><!-- wp:heading {\"level\":3} --><h3>Quick Reservation</h3><!-- /wp:heading --><!-- wp:modern-hotel-booking/booking-form {\"roomId\":0} /--></div><!-- /wp:column --><!-- wp:column {\"width\":\"66.66%\"} --><div class=\"wp-block-column\" style=\"flex-basis:66.66%\"><!-- wp:heading --><h2>Experience the Royal Ocean Suite</h2><!-- /wp:heading --><!-- wp:paragraph --><p>Enjoy unparalleled views of the turquoise waters from your private terrace. Check our live availability below:</p><!-- /wp:paragraph --><!-- wp:modern-hotel-booking/room-calendar {\"roomId\":1} /--></div><!-- /wp:column --></div><!-- /wp:columns -->'; $page_id = wp_insert_post(['post_title' => 'Home', 'post_content' => $content, 'post_status' => 'publish', 'post_type' => 'page']); update_option('show_on_front', 'page'); update_option('page_on_front', $page_id); update_option('mhbo_booking_page', $page_id); update_option('mhbo_booking_page_url', get_permalink($page_id)); wp_update_user(['ID' => 1, 'admin_color' => 'midnight']);"
+        }
+    ]
+}

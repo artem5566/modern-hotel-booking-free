@@ -88,10 +88,40 @@ class Loader {
         // Site Scanner hooks (auto-invalidate KB on content save).
         SiteScanner::register_hooks();
 
-// MCP Server (priority 20 = after abilities are registered).
+        /* BUILD_PRO_START */
+        // Auto-Sync Discovery Files (whenever hotel info or settings change).
+        if ( License::is_pro_active() ) {
+            add_action( 'update_option_mhbo_company_info', [ self::class, 'maybe_auto_sync_discovery' ] );
+            add_action( 'update_option_mhbo_checkin_time', [ self::class, 'maybe_auto_sync_discovery' ] );
+            add_action( 'update_option_mhbo_checkout_time', [ self::class, 'maybe_auto_sync_discovery' ] );
 
-// Pro activation: register AI guest role.
-        
+            // Weekly Deep Sync.
+            if ( ! wp_next_scheduled( 'mhbo_ai_weekly_deep_sync' ) ) {
+                wp_schedule_event( time(), 'weekly', 'mhbo_ai_weekly_deep_sync' );
+            }
+            add_action( 'mhbo_ai_weekly_deep_sync', [ self::class, 'run_weekly_sync' ] );
+        }
+        /* BUILD_PRO_END */
+
+        // MCP Server (priority 20 = after abilities are registered).
+        /* BUILD_PRO_START */
+        add_action( 'plugins_loaded', [ McpServer::class, 'init' ], 20 );
+        /* BUILD_PRO_END */
+
+        // Pro activation: register AI guest role.
+        /* BUILD_PRO_START */
+        if ( License::is_pro_active() ) {
+            self::maybe_register_ai_guest_role();
+            // Register AJAX export.
+            add_action( 'wp_ajax_mhbo_export_chat_logs', [ self::class, 'ajax_export_chat_logs' ] );
+
+            // Attribution: link new bookings to active AI chat sessions.
+            add_action( 'mhbo_booking_created', [ self::class, 'attribute_booking_to_ai' ], 20 );
+
+            // Background Discovery Sync (Pro-only auto-update).
+            add_action( 'mhbo_kb_snapshot_updated', [ self::class, 'maybe_auto_sync_discovery' ] );
+        }
+        /* BUILD_PRO_END */
     }
     
     /**
@@ -123,7 +153,95 @@ class Loader {
         LlmFile::sync();
     }
 
-// -------------------------------------------------------------------------
+    /* BUILD_PRO_START */
+
+    /**
+     * Listener for mhbo_booking_created to attribute bookings to active AI sessions.
+     *
+     * @param int $booking_id
+     */
+    public static function attribute_booking_to_ai( int $booking_id ): void {
+        $session_id = ChatSession::get_session_id();
+        if ( ! $session_id ) {
+            return;
+        }
+
+        // Only link if there is actual history (don't attribute if they just opened the widget).
+        $history = ChatSession::get_history( $session_id );
+        if ( [] === (array) $history ) {
+            return;
+        }
+
+        // 2026 BP: Safeguard for Free build where link_booking method is stripped.
+        if ( method_exists( '\MHBO\AI\ChatSession', 'link_booking' ) ) {
+            ChatSession::link_booking( $session_id, $booking_id );
+        }
+    }
+
+    /**
+     * AJAX handler to export chat logs to CSV.
+     */
+    public static function ajax_export_chat_logs(): void {
+        check_ajax_referer( 'mhbo_export_chat', 'nonce' );
+        if ( ! current_user_can( 'manage_options' ) ) {
+            wp_die( esc_html__( 'Insufficient permissions.', 'modern-hotel-booking' ) );
+        }
+
+        global $wpdb;
+        $table = $wpdb->prefix . 'mhbo_chat_sessions';
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+        $rows = $wpdb->get_results(
+            $wpdb->prepare(
+                "SELECT id, session_id, guest_email, message_role, message_content, booking_id, created_at FROM %i ORDER BY id ASC",
+                $table
+            ),
+            ARRAY_A
+        );
+
+        if ( ! headers_sent() ) {
+            header( 'Content-Type: text/csv; charset=UTF-8' );
+            header( 'Content-Disposition: attachment; filename="mhbo-chat-logs-' . gmdate( 'Y-m-d' ) . '.csv"' );
+        }
+
+        // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- Rationale: Direct streaming to browser output for CSV export is the most memory-efficient pattern.
+        $out = fopen( 'php://output', 'w' );
+        if ( ! \is_resource( $out ) ) {
+            wp_die();
+        }
+
+        fputcsv( $out, [ 'ID', 'Session', 'Guest Email', 'Role', 'Content', 'Booking ID', 'Timestamp' ] );
+        foreach ( (array) $rows as $row ) {
+            fputcsv( $out, array_values( $row ) );
+        }
+        // phpcs:ignore WordPress.WP.AlternativeFunctions.file_system_operations_fclose -- Rationale: Streaming directly to php://output for CSV export; standard WP_Filesystem is not applicable for stdout streaming.
+        fclose( $out );
+        exit();
+    }
+
+    /**
+     * Automatically sync discovery files if enabled and they exist.
+     */
+    public static function maybe_auto_sync_discovery(): void {
+        if ( ! License::is_pro_active() ) {
+            return;
+        }
+
+        if ( ! (int) get_option( 'mhbo_ai_discovery_auto_sync', 1 ) ) {
+            return;
+        }
+
+        // Only sync if files were already initialized once.
+        $status = LlmFile::get_status();
+        if ( ! $status['summary'] ) {
+            return;
+        }
+
+        LlmFile::sync();
+    }
+    /* BUILD_PRO_END */
+
+    // -------------------------------------------------------------------------
     // Admin Menu
     // -------------------------------------------------------------------------
 
@@ -159,7 +277,16 @@ class Loader {
         Abilities\GetBusinessCard::register();
         Abilities\CreateBookingLink::register();
 
-}
+        /* BUILD_PRO_START */
+        if ( License::is_pro_active() ) {
+            Abilities\Pro\CreateBooking::register();
+            Abilities\Pro\ModifyBooking::register();
+            Abilities\Pro\CancelBooking::register();
+            Abilities\Pro\ApplyPromo::register();
+            Abilities\Pro\GuestHistory::register();
+        }
+        /* BUILD_PRO_END */
+    }
 
     // -------------------------------------------------------------------------
     // Frontend Assets
@@ -214,7 +341,7 @@ class Loader {
             'ajaxurl'  => admin_url( 'admin-ajax.php' ),
             'nonce'    => wp_create_nonce( 'mhbo_chat_nonce' ),
             'restNonce'=> wp_create_nonce( 'wp_rest' ),
-            'isPro'    => false,
+            'isPro'    => License::is_pro_active(),
             'settings' => [
                 'hotelName'      => $company['company_name'] ?: get_bloginfo( 'name' ),
                 'personaName'    => get_option( 'mhbo_ai_persona_name', \MHBO\Core\I18n::get_label( 'ai_persona_default' ) ),
@@ -226,7 +353,9 @@ class Loader {
                 'ttsEnabled'     => (bool) get_option( 'mhbo_ai_voice_output_enabled', 0 ),
                 'language'       => (string) ( get_option( 'mhbo_ai_voice_language', '' ) ?: self::detect_page_locale() ),
                 'pageLocale'     => self::detect_page_locale(),
-                
+                /* BUILD_PRO_START */
+                'elevenlabsKey'  => License::is_pro_active() ? get_option( 'mhbo_ai_elevenlabs_key', '' ) : '',
+                /* BUILD_PRO_END */
                 // Einstein / proactive features.
                 'proactiveTriggerSeconds' => (int) get_option( 'mhbo_ai_proactive_trigger_seconds', 45 ),
                 'bookingUrl'              => KnowledgeBase::get_booking_url(),
@@ -392,7 +521,13 @@ class Loader {
             'theme'           => '',     // Pro only
         ], \is_array( $atts ) ? $atts : [] );
 
-$enabled = (int) get_option( 'mhbo_ai_enabled', 1 );
+        /* BUILD_PRO_START */
+        if ( isset( $atts['theme'] ) && $atts['theme'] && ! License::is_pro_active() ) {
+            $atts['theme'] = '';
+        }
+        /* BUILD_PRO_END */
+
+        $enabled = (int) get_option( 'mhbo_ai_enabled', 1 );
         if ( ! $enabled ) {
             return '';
         }
@@ -456,7 +591,32 @@ $enabled = (int) get_option( 'mhbo_ai_enabled', 1 );
     // PRO: Role management
     // -------------------------------------------------------------------------
 
-// -------------------------------------------------------------------------
+    /* BUILD_PRO_START */
+
+    /**
+     * Create the 'mhbo_ai_guest' role if it doesn't exist.
+     * This role is granted 'mhbo_create_booking' so the AI can create bookings
+     * on behalf of authenticated guests.
+     */
+    public static function maybe_register_ai_guest_role(): void {
+        if ( ! get_role( 'mhbo_ai_guest' ) ) {
+            add_role( 'mhbo_ai_guest', __( 'Hotel AI Guest', 'modern-hotel-booking' ), [
+                'read'                => true,
+                'mhbo_create_booking' => true,
+            ] );
+        }
+    }
+
+    /**
+     * Remove the 'mhbo_ai_guest' role on plugin deactivation.
+     */
+    public static function remove_ai_guest_role(): void {
+        remove_role( 'mhbo_ai_guest' );
+    }
+
+    /* BUILD_PRO_END */
+
+    // -------------------------------------------------------------------------
     // Locale Detection
     // -------------------------------------------------------------------------
 

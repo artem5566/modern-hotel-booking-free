@@ -12,6 +12,9 @@ use MHBO\Core\Pricing;
 use MHBO\Core\Tax;
 use MHBO\Core\License;
 use MHBO\Core\Cache;
+/* BUILD_PRO_START */
+use MHBO\Pro\PaymentGateways;
+/* BUILD_PRO_END */
 
 /**
  * BookingProcessor Class
@@ -117,13 +120,53 @@ class BookingProcessor
 
         // 3. Pro Features Check
         $is_pro_active = false;
+        /* BUILD_PRO_START */
+        $is_pro_active = License::is_pro_active();
+        /* BUILD_PRO_END */
 
-$children      = 0;
+        $children      = 0;
         $child_ages    = [];
         $extras_input  = [];
         $payment_type  = 'full';
 
-// 4. Room & Availability Logic
+        /* BUILD_PRO_START */
+        if ($is_pro_active) {
+            $children      = absint($data['children'] ?? 0);
+            $child_ages    = is_array($data['child_ages'] ?? []) ? array_map('absint', $data['child_ages']) : [];
+            $extras_input  = is_array($data['extras'] ?? []) ? array_map('sanitize_text_field', $data['extras']) : [];
+            $payment_type  = sanitize_key($data['payment_type'] ?? 'full');
+
+            // Max children validation
+            $room_obj = Pricing::get_room_pricing_data($room_id);
+            if ($room_obj) {
+                if ($children > (int)$room_obj->max_children) {
+                    return new \WP_Error('mhbo_max_children', sprintf(I18n::get_label('label_max_children_error'), $room_obj->max_children));
+                }
+                if ($guests > (int)$room_obj->max_adults) {
+                    return new \WP_Error('mhbo_max_adults', sprintf(I18n::get_label('label_max_adults_error'), $room_obj->max_adults));
+                }
+            }
+
+            // Stay Restrictions
+            if (class_exists('MHBO\Pro\AdminCalendar')) {
+                $dt_in  = new \DateTime($check_in);
+                $dt_out = new \DateTime($check_out);
+                $nights = (int) $dt_in->diff($dt_out)->format('%a');
+                
+                $min_stay = \MHBO\Pro\AdminCalendar::resolve_min_stay($room_id, $check_in);
+                $max_stay = \MHBO\Pro\AdminCalendar::resolve_max_stay($room_id, $check_in);
+
+                if (null !== $min_stay && $nights < $min_stay) {
+                    return new \WP_Error('mhbo_min_stay', sprintf(I18n::get_label('api_err_min_stay'), $min_stay));
+                }
+                if (null !== $max_stay && $nights > $max_stay) {
+                    return new \WP_Error('mhbo_max_stay', sprintf(I18n::get_label('api_err_max_stay'), $max_stay));
+                }
+            }
+        }
+        /* BUILD_PRO_END */
+
+        // 4. Room & Availability Logic
         if (!$bypass_lock && !Pricing::acquire_booking_lock($room_id, 10)) {
             return new \WP_Error('mhbo_lock_failed', I18n::get_label('label_booking_busy'));
         }
@@ -156,9 +199,61 @@ $children      = 0;
             $booking_extras = $calc['extras_breakdown'] ?? [];
             $tax_data = $calc['tax'] ?? null;
 
-$charge_amount = $total;
+            /* BUILD_PRO_START */
+            // Coupon application — server-side validation only; client-submitted discount_amount is never trusted.
+            $coupon_code     = '';
+            $coupon_discount = Money::fromCents(0, $total->getCurrency());
+            if ($is_pro_active && class_exists(\MHBO\Pro\CouponManager::class) && !$is_privileged) {
+                $raw_coupon_code = sanitize_text_field($data['mhbo_coupon_code'] ?? $data['mhbo_coupon_applied'] ?? '');
+                if ('' !== $raw_coupon_code && (bool)(int)get_option('mhbo_coupons_enabled', 1)) {
+                    $room_obj_for_coupon  = Pricing::get_room_pricing_data($room_id);
+                    $room_type_id_coupon  = $room_obj_for_coupon ? (int)$room_obj_for_coupon->type_id : 0;
+                    $coupon_result        = \MHBO\Pro\CouponManager::validate(
+                        $raw_coupon_code,
+                        $total,
+                        $room_id,
+                        $room_type_id_coupon,
+                        $customer_email
+                    );
+                    if (is_wp_error($coupon_result)) {
+                        return $coupon_result;
+                    }
+                    $coupon_code     = strtoupper($raw_coupon_code);
+                    $coupon_discount = \MHBO\Pro\CouponManager::calculate_discount($coupon_result, $total);
+                    // Apply coupon to room first; recalculate service fee on discounted base.
+                    $bp_recalc = Tax::recalculate_with_coupon($calc, $coupon_discount, $coupon_code, $total->getCurrency());
+                    $tax_data           = $bp_recalc['tax'];
+                    $calc['service_fee'] = $bp_recalc['service_fee'];
+                    $total              = $bp_recalc['total'];
+                }
+            }
+            /* BUILD_PRO_END */
 
-// 5. Payment Verification
+            $charge_amount = $total;
+
+            /* BUILD_PRO_START */
+            $deposit_data = null;
+            if ($is_pro_active && get_option('mhbo_deposits_enabled', 0)) {
+                $currency = $total->getCurrency();
+                $fn_type = (string) get_option('mhbo_deposit_type', 'percentage');
+                $fn_end = gmdate('Y-m-d', strtotime($check_in . ' +1 day'));
+                $fn_extras = ('first_night' === $fn_type) ? [] : $extras_input;
+                $fn_children = ('first_night' === $fn_type) ? 0 : $children;
+                $fn_ages = ('first_night' === $fn_type) ? [] : $child_ages;
+                
+                $fn_calc = Pricing::calculate_booking_money($room_id, $check_in, $fn_end, $guests, $fn_extras, $fn_children, $fn_ages);
+                $fn_money = (is_array($fn_calc) && isset($fn_calc['total'])) ? $fn_calc['total'] : Money::fromCents(0, $currency);
+                
+                $deposit_data = Pricing::calculate_deposit_money($total, $fn_money);
+                if ('deposit' === $payment_type && $deposit_data) {
+                    $charge_amount = $deposit_data['deposit_money'];
+                } else {
+                    $payment_type = 'full';
+                }
+            }
+            /* BUILD_PRO_END */
+
+            // 5. Payment Verification
             // Only privileged internal sources may preset status/payment_status.
             $status = $is_privileged ? sanitize_key($data['status'] ?? 'pending') : 'pending';
             $payment_status = $is_privileged ? sanitize_key($data['payment_status'] ?? 'pending') : 'pending';
@@ -170,7 +265,46 @@ $charge_amount = $total;
                 $payment_date = current_time('mysql');
             }
 
-// 5. Custom Fields & GDPR
+            /* BUILD_PRO_START */
+            if ($is_pro_active && 'arrival' !== $payment_method && class_exists(PaymentGateways::class)) {
+                $gateway = new PaymentGateways();
+                
+                if ('stripe' === $payment_method) {
+                    $stripe_pi = sanitize_text_field($data['stripe_pi'] ?? '');
+                    if ('' === $stripe_pi) {
+                        return new \WP_Error('mhbo_stripe_missing', I18n::get_label('label_stripe_intent_missing'));
+                    }
+
+                    if ($gateway->verify_stripe_payment_intent($stripe_pi, $charge_amount)) {
+                        $status = 'confirmed';
+                        $payment_status = 'completed';
+                        $payment_received = 1;
+                        $transaction_id = $stripe_pi;
+                        $payment_date = current_time('mysql');
+                    } else {
+                        return new \WP_Error('mhbo_payment_failed', I18n::get_label('label_payment_failed'));
+                    }
+                } elseif ('paypal' === $payment_method) {
+                    $paypal_id = sanitize_text_field($data['paypal_order_id'] ?? '');
+                    if ('' === $paypal_id) {
+                        return new \WP_Error('mhbo_paypal_missing', I18n::get_label('label_paypal_id_missing'));
+                    }
+
+                    if ($gateway->verify_paypal_order($paypal_id, $charge_amount)) {
+                        $status = 'confirmed';
+                        $payment_status = 'completed';
+                        $payment_received = 1;
+                        $transaction_id = $paypal_id;
+                        $capture_id = sanitize_text_field($data['paypal_capture_id'] ?? '');
+                        $payment_date = current_time('mysql');
+                    } else {
+                        return new \WP_Error('mhbo_payment_failed', I18n::get_label('label_payment_failed'));
+                    }
+                }
+            }
+            /* BUILD_PRO_END */
+
+            // 5. Custom Fields & GDPR
             $custom_data = [];
             $custom_fields_defn = get_option('mhbo_custom_fields', []);
             if (is_array($custom_fields_defn) && [] !== $custom_fields_defn) {
@@ -192,7 +326,15 @@ $charge_amount = $total;
                 }
             }
 
-// 6. Database Insertion
+            /* BUILD_PRO_START */
+            if ($is_pro_active && get_option('mhbo_gdpr_enabled', 0) && get_option('mhbo_gdpr_checkbox_enabled', 0)) {
+                if ( ! (bool) ( $data['consent'] ?? false ) ) {
+                    return new \WP_Error('mhbo_gdpr_required', I18n::get_label('msg_gdpr_required'));
+                }
+            }
+            /* BUILD_PRO_END */
+
+            // 6. Database Insertion
             $insert_data = [
                 'room_id'                => $room_id,
                 'customer_name'          => $customer_name,
@@ -222,7 +364,56 @@ $charge_amount = $total;
 
             $insert_format = ['%d', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%s', '%d', '%s', '%s', '%s', '%s', '%d', '%d', '%s', '%s', '%s', '%s', '%s', '%s'];
 
-if ($update_id > 0) {
+            /* BUILD_PRO_START */
+            if ($is_pro_active) {
+                if ('' !== $coupon_code) {
+                    $insert_data['coupon_code']     = $coupon_code;
+                    $insert_data['coupon_discount'] = $coupon_discount->toDecimal();
+                    $insert_data['discount_amount'] = $coupon_discount->toDecimal();
+                    array_push($insert_format, '%s', '%s', '%s');
+                }
+
+                $insert_data['booking_extras'] = [] !== $booking_extras ? wp_json_encode($booking_extras) : null;
+                $insert_format[] = '%s';
+
+                // Service fee amount (raw pre-tax gross, stored for audit / display on bookings without tax_breakdown JSON)
+                $service_fee_money = isset($calc['service_fee']) ? $calc['service_fee'] : Money::fromCents(0, Pricing::get_currency_code());
+                if ($service_fee_money->isPositive()) {
+                    $insert_data['service_fee_amount'] = $service_fee_money->toDecimal();
+                    $insert_format[] = '%s';
+                }
+
+                $insert_data['payment_type']      = $payment_type;
+                $insert_data['payment_capture_id'] = $capture_id ?: null;
+                $insert_format[] = '%s';
+                $insert_format[] = '%s';
+
+                if ($tax_data) {
+                    $insert_data['tax_enabled'] = 1;
+                    $insert_data['tax_mode']    = sanitize_key($tax_data['mode'] ?? 'disabled');
+                    $insert_data['total_tax']   = (string)($tax_data['totals']['total_tax'] ?? '0.00');
+                    $insert_data['subtotal_net'] = (string)($tax_data['totals']['subtotal_net'] ?? $total->toDecimal());
+                    $insert_data['tax_breakdown'] = wp_json_encode($tax_data);
+                    
+                    array_push($insert_format, '%d', '%s', '%s', '%s', '%s');
+                }
+
+                if ($deposit_data && 'deposit' === $payment_type) {
+                    $insert_data['deposit_amount']    = $deposit_data['deposit_money']->toDecimal();
+                    $insert_data['remaining_balance'] = $deposit_data['remaining_money']->toDecimal();
+                    $insert_data['balance_status']    = 'pending';
+                    array_push($insert_format, '%s', '%s', '%s');
+                }
+
+                if ( '' !== $parent_token || (bool) ($data['is_multi_room'] ?? false) ) {
+                    $insert_data['is_multi_room']      = 1;
+                    $insert_data['multi_room_parent'] = $parent_token ?: $insert_data['booking_token'];
+                    array_push($insert_format, '%d', '%s');
+                }
+            }
+            /* BUILD_PRO_END */
+
+            if ($update_id > 0) {
                 // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Custom table write; cache invalidated via Cache::invalidate_booking() below.
                 $wpdb->update("{$wpdb->prefix}mhbo_bookings", $insert_data, ['id' => $update_id], $insert_format, ['%d']);
                 $booking_id = $update_id;
@@ -239,7 +430,17 @@ if ($update_id > 0) {
             // 7. Post-Processing
             Cache::invalidate_booking($booking_id, $room_id);
 
-// Clean up transients
+            /* BUILD_PRO_START */
+            // Increment coupon uses_count atomically after confirmed DB insert.
+            if ($is_pro_active && '' !== $coupon_code && class_exists(\MHBO\Pro\CouponManager::class)) {
+                $coupon_row_for_inc = \MHBO\Pro\CouponManager::get_by_code($coupon_code);
+                if ($coupon_row_for_inc) {
+                    \MHBO\Pro\CouponManager::increment_uses((int)$coupon_row_for_inc->id);
+                }
+            }
+            /* BUILD_PRO_END */
+
+            // Clean up transients
             if (isset($data['stripe_pi'])) {
                 delete_transient('mhbo_pi_amount_' . $data['stripe_pi']);
                 delete_transient('mhbo_pi_params_' . $data['stripe_pi']);

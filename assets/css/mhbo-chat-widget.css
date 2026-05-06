@@ -38,6 +38,7 @@
     --mhbo-chat-z:             999999;
 }
 
+
 /* ─────────────────────────────────────────────────────────────────────────────
    Dark Mode (Adaptive)
 ───────────────────────────────────────────────────────────────────────────── */
@@ -678,6 +679,100 @@
 /* ─────────────────────────────────────────────────────────────────────────────
    PRO Themes (Override specific components)
 ───────────────────────────────────────────────────────────────────────────── */
+
+/* BUILD_PRO_START */
+
+/* Luxury Gold — Classical elegance */
+.mhbo-theme-luxury {
+    --mhbo-chat-font: Georgia, "Garamond", serif;
+    --mhbo-chat-accent:       #D4AF37;
+    --mhbo-chat-accent-hover: #AA8A2E;
+    --mhbo-chat-bg:           #fffdf9;
+    --mhbo-chat-surface:      #fdf6e3;
+    --mhbo-chat-border:       rgba(212, 175, 55, 0.3);
+    --mhbo-chat-text:         #1a202c;
+    --mhbo-chat-text-muted:   #7d6b42;
+    --mhbo-chat-bubble-ai:    #f5ead0;
+    --mhbo-chat-bubble-user:  #D4AF37; /* Luxury Gold User Bubble */
+    --mhbo-chat-bubble-user-text: #ffffff;
+    --mhbo-chat-radius:       4px;
+    --mhbo-chat-shadow:       0 15px 50px rgba(0, 0, 0, 0.15), 0 0 0 1px rgba(212, 175, 55, 0.4);
+}
+.mhbo-theme-luxury .mhbo-chat-header {
+    border-bottom: 2px double rgba(212, 175, 55, 0.4);
+    background: #D4AF37;
+    color: #fff;
+}
+
+/* Boutique — Soft and inviting */
+.mhbo-theme-boutique {
+    --mhbo-chat-accent:           #ff6f61;
+    --mhbo-chat-accent-hover:     #e65b50;
+    --mhbo-chat-bg:               #fffbfb;
+    --mhbo-chat-surface:          #fff0ed;
+    --mhbo-chat-border:           #ffd1cb;
+    --mhbo-chat-text:             #2d3748;
+    --mhbo-chat-text-muted:       #718096;
+    --mhbo-chat-bubble-ai:        #fff0ed;
+    --mhbo-chat-bubble-user:      #ff6f61; /* Boutique Coral User Bubble */
+    --mhbo-chat-bubble-user-text: #ffffff;
+    --mhbo-chat-radius:           30px;
+}
+.mhbo-theme-boutique .mhbo-chat-header {
+    background: #ff6f61;
+    color: #fff;
+}
+
+/* Modern Edge — High-tech glass */
+.mhbo-theme-modern {
+    --mhbo-chat-accent:           #0070f3;
+    --mhbo-chat-accent-hover:     #0761d1;
+    --mhbo-chat-bg:               rgba(255, 255, 255, 0.85);
+    --mhbo-chat-surface:          rgba(255, 255, 255, 0.5);
+    --mhbo-chat-glass-blur:       blur(25px) saturate(180%);
+    --mhbo-chat-text:             #000000;
+    --mhbo-chat-bubble-ai:        #f0f4ff;
+    --mhbo-chat-bubble-user:      #0070f3; /* Modern Blue User Bubble */
+    --mhbo-chat-bubble-user-text: #ffffff;
+    --mhbo-chat-radius:           12px;
+}
+
+/* Solid Dark — High contrast dark theme */
+.mhbo-theme-dark {
+    --mhbo-chat-bg:               #0f172a;
+    --mhbo-chat-surface:          #1e293b;
+    --mhbo-chat-border:           #334155;
+    --mhbo-chat-text:             #f8fafc;
+    --mhbo-chat-text-muted:       #94a3b8;
+    --mhbo-chat-bubble-ai:        #1e293b;
+    --mhbo-chat-accent:           #6366f1;
+    --mhbo-chat-accent-hover:     #4f46e5;
+    --mhbo-chat-bubble-user:      #6366f1; /* Indigo User Bubble */
+    --mhbo-chat-bubble-user-text: #ffffff;
+}
+.mhbo-theme-dark .mhbo-chat-header {
+    background: #1e293b;
+    border-bottom: 1px solid #334155;
+    color: #f8fafc;
+}
+.mhbo-theme-dark .mhbo-chat-input-row {
+    background: #0f172a;
+    border-top: 1px solid #334155;
+}
+
+/* Minimalist */
+.mhbo-theme-minimal {
+    --mhbo-chat-accent:           #1a202c;
+    --mhbo-chat-accent-hover:     #000000;
+    --mhbo-chat-radius:           0px;
+    --mhbo-chat-shadow:           0 1px 3px rgba(0,0,0,0.1);
+    --mhbo-chat-border:           #e2e8f0;
+    --mhbo-chat-bg:               #ffffff;
+    --mhbo-chat-text:             #1a202c;
+    --mhbo-chat-bubble-user:      #1a202c;
+    --mhbo-chat-bubble-user-text: #ffffff;
+}
+/* BUILD_PRO_END */
 
 /* ─────────────────────────────────────────────────────────────────────────────
    Accessibility: reduced motion overrides

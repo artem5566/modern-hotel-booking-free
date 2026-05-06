@@ -95,4 +95,23 @@ class Booking_Query {
         return $row ?: null;
     }
 
+    /* BUILD_PRO_START */
+    /**
+     * Get iCal synchronization status for all rooms (Pro only).
+     *
+     * @return array<int, object>
+     */
+    public static function get_ical_status(): array {
+        global $wpdb;
+
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Pro-only diagnostic query
+        return $wpdb->get_results(
+            $wpdb->prepare(
+                'SELECT r.room_number, c.platform, c.last_sync, c.sync_status FROM %i c JOIN %i r ON c.room_id = r.id',
+                $wpdb->prefix . 'mhbo_ical_connections',
+                $wpdb->prefix . 'mhbo_rooms'
+            )
+        );
+    }
+    /* BUILD_PRO_END */
 }

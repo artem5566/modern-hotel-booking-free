@@ -1,0 +1,39 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "Modern Hotel Booking - Public Preview",
+    "description": "Live demo of the Modern Hotel Booking plugin.",
+    "author": "StartMySuccess"
+  },
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "features": {
+    "networking": true
+  },
+  "steps": [
+    {
+      "step": "installPlugin",
+      "pluginZipFile": {
+        "resource": "wordpress.org/plugins/modern-hotel-booking"
+      }
+    },
+    {
+      "step": "activatePlugin",
+      "pluginPath": "modern-hotel-booking/modern-hotel-booking.php"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Azure Bay Resort",
+        "show_on_front": "page",
+        "permalink_structure": "/%postname%/"
+      }
+    },
+    {
+      "step": "runPHP",
+      "code": "<?php require_once '/wordpress/wp-load.php'; global $wpdb; $home_content = '<!-- wp:modern-hotel-booking/booking-form /-->'; $home_id = wp_insert_post(['post_title' => 'Home', 'post_content' => $home_content, 'post_status' => 'publish', 'post_type' => 'page']); update_option('page_on_front', $home_id);"
+    }
+  ]
+}

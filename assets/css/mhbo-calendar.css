@@ -284,6 +284,7 @@
     color: #2d3748 !important;
 }
 
+
 /* Unbookable dates (no price set) - Same red as booked */
 .mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-unbookable {
     background: rgba(229, 62, 62, 0.15) !important;
@@ -379,6 +380,7 @@
     font-size: 0.85em;
     opacity: 0.9;
 }
+
 
 .mhbo-calendar-wrapper .flatpickr-day.selected .mhbo-fp-price,
 .mhbo-calendar-wrapper .flatpickr-day.startRange .mhbo-fp-price,
@@ -770,6 +772,7 @@
     from { opacity: 0; transform: translateX(10px); }
     to { opacity: 1; transform: translateX(0); }
 }
+
 
 /* --- ULTRA SELECTION PRIORITY (Fix for Contrast on 16th/Caps) --- */
 /* These must be defined after all booking-status colors to override half-booked states */
