@@ -1,0 +1,64 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/company-info",
+    "version": "2.3.8",
+    "title": "Hotel: Company Info",
+    "category": "hotel-booking",
+    "icon": "id-alt",
+    "description": "Display your hotel address, contact details, and social links.",
+    "example": {
+        "attributes": {
+            "showLogo": true,
+            "showAddress": true,
+            "layout": "vertical"
+        }
+    },
+    "keywords": [
+        "company",
+        "info",
+        "hotel"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "attributes": {
+        "showLogo": {
+            "type": "boolean",
+            "default": true
+        },
+        "showAddress": {
+            "type": "boolean",
+            "default": true
+        },
+        "showContact": {
+            "type": "boolean",
+            "default": true
+        },
+        "showRegistration": {
+            "type": "boolean",
+            "default": false
+        },
+        "layout": {
+            "type": "string",
+            "default": "vertical"
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "color": {
+            "background": true,
+            "text": true,
+            "gradients": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": true
+        }
+    },
+    "editorScript": "file:./block.js"
+}

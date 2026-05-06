@@ -1,0 +1,49 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/booking-form",
+    "version": "2.3.8",
+    "title": "Hotel: Booking Form",
+    "category": "hotel-booking",
+    "icon": "building",
+    "description": "A modern, elegant booking form for your rooms.",
+    "example": {
+        "attributes": {
+            "roomId": 0
+        }
+    },
+    "keywords": [
+        "hotel",
+        "booking",
+        "reservation"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "attributes": {
+        "roomId": {
+            "type": "number",
+            "default": 0
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "color": {
+            "background": true,
+            "text": true,
+            "gradients": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": true
+        }
+    },
+    "editorScript": "file:./block.js",
+    "editorStyle": "file:./block.css",
+    "viewScriptModule": "mhbo-booking-form-view",
+    "style": "mhbo-calendar-style"
+}

@@ -1,0 +1,808 @@
+/* MHB Calendar - Modern Responsive Layout */
+
+.mhbo-calendar-wrapper * {
+    box-sizing: border-box;
+}
+
+.mhbo-calendar-container {
+    max-width: 600px;
+    margin: 20px auto;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+    padding: 0 15px;
+}
+
+.mhbo-calendar-guide {
+    text-align: center;
+    margin-bottom: 30px;
+    font-size: 1.5rem;
+    color: var(--mhbo-primary);
+    font-weight: 900;
+    letter-spacing: -0.8px;
+    text-shadow: 0 10px 20px rgba(0, 0, 0, 0.05);
+    animation: mhboFadeSlideIn 0.6s ease-out forwards;
+}
+
+@keyframes mhboFadeSlideIn {
+    from { opacity: 0; transform: translateY(-10px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+/* --- Booking Status Legend --- */
+.mhbo-calendar-legend {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-bottom: 15px;
+    flex-wrap: wrap;
+    font-size: 0.85rem;
+}
+
+.mhbo-legend-item {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.mhbo-legend-color {
+    width: 16px;
+    height: 16px;
+    border-radius: 4px;
+    border: 1px solid rgba(0, 0, 0, 0.1);
+}
+
+.mhbo-legend-color.mhbo-legend-confirmed {
+    background-color: #e53e3e;
+}
+
+.mhbo-legend-color.mhbo-legend-pending {
+    background-color: #dd6b20;
+}
+
+/* --- Flatpickr Global Overrides --- */
+/* Scope everything to avoid global pollution */
+/* CRITICAL: Override flatpickr.min.css fixed dimensions and max-height */
+.mhbo-calendar-wrapper .flatpickr-calendar,
+.mhbo-calendar-wrapper .flatpickr-calendar.inline,
+.mhbo-calendar-wrapper .flatpickr-calendar.open {
+    box-shadow: 0 25px 60px rgba(0, 0, 0, 0.15) !important;
+    border: 1px solid rgba(255, 255, 255, 0.6) !important;
+    border-radius: 28px !important;
+    font-family: inherit !important;
+    width: 100% !important;
+    max-width: 100% !important;
+    max-height: none !important;
+    padding: 15px !important;
+    background: var(--mhbo-glass) !important;
+    backdrop-filter: blur(25px) saturate(180%);
+    -webkit-backdrop-filter: blur(25px) saturate(180%);
+    overflow: visible !important;
+    height: auto !important;
+    min-height: unset !important;
+    display: block !important;
+    transition: transform 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.mhbo-calendar-wrapper .flatpickr-months {
+    padding: 15px 0 !important;
+    background: transparent !important;
+    border-bottom: 1.5px solid var(--mhbo-border) !important;
+    border-radius: 12px 12px 0 0 !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-month {
+    height: 40px !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-current-month {
+    font-size: 1.25rem !important;
+    padding-top: 0 !important;
+    font-weight: 700 !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-weekdays {
+    background: transparent !important;
+    margin-bottom: 5px !important;
+    padding: 10px 0 !important;
+}
+
+.mhbo-calendar-wrapper span.flatpickr-weekday {
+    color: var(--mhbo-primary) !important;
+    font-weight: 800 !important;
+    font-size: 0.9rem !important;
+    text-transform: uppercase;
+}
+
+/* --- Day Cells --- */
+/* CRITICAL: Override flatpickr.min.css overflow:hidden and fixed width */
+.mhbo-calendar-wrapper .flatpickr-days {
+    width: 100% !important;
+    padding: 5px !important;
+    overflow: visible !important;
+    display: flex !important;
+    flex-wrap: wrap !important;
+}
+
+.mhbo-calendar-wrapper .dayContainer {
+    width: 100% !important;
+    max-width: 100% !important;
+    min-width: 100% !important;
+    justify-content: space-between !important;
+    overflow: visible !important;
+}
+
+/* Ensure calendar container expands to fit all day cells with prices */
+.mhbo-calendar-wrapper .flatpickr-innerContainer,
+.mhbo-calendar-wrapper .flatpickr-rContainer {
+    overflow: visible !important;
+    display: block !important;
+    width: 100% !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day {
+    border-radius: 16px !important;
+    border: 1.5px solid var(--mhbo-border) !important;
+    margin: 3px !important;
+    height: 95px !important;
+    /* Fixed height for consistency */
+    flex-basis: calc(14.28% - 6px) !important;
+    /* 7 days minus margin */
+    max-width: calc(14.28% - 6px) !important;
+    display: flex !important;
+    flex-direction: column !important;
+    justify-content: space-between !important;
+    align-items: flex-start !important;
+    padding: 8px !important;
+    box-sizing: border-box !important;
+    line-height: normal !important;
+    background: rgba(255, 255, 255, 0.5) !important;
+    color: #2d3748 !important;
+    transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    position: relative;
+    overflow: hidden !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day:hover:not(.flatpickr-disabled) {
+    background: #fff !important;
+    border-color: var(--mhbo-primary) !important;
+    transform: translateY(-4px) scale(1.05);
+    box-shadow: 0 10px 20px rgba(0,0,0,0.08);
+    z-index: 10 !important;
+}
+
+/* Force high-contrast text on hover for all date states */
+.mhbo-calendar-wrapper .flatpickr-day.selected:hover,
+.mhbo-calendar-wrapper .flatpickr-day.startRange:hover,
+.mhbo-calendar-wrapper .flatpickr-day.endRange:hover,
+.mhbo-calendar-wrapper .flatpickr-day.selected.startRange.endRange:hover {
+    background: linear-gradient(135deg, color-mix(in srgb, var(--mhbo-primary), #000 15%) 0%, color-mix(in srgb, var(--mhbo-primary), #000 35%) 100%) !important;
+    color: #ffffff !important;
+    border-color: var(--mhbo-primary) !important;
+    box-shadow: 0 8px 25px color-mix(in srgb, var(--mhbo-primary), transparent 50%) !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.inRange:hover,
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-range-hover:hover {
+    background: #ffffff !important;
+    color: var(--mhbo-primary) !important;
+    border-color: var(--mhbo-primary) !important;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1) !important;
+}
+
+/* Ensure price text always follows contrast rules */
+.mhbo-calendar-wrapper .flatpickr-day.selected:hover .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-day.startRange:hover .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-day.inRange:hover .mhbo-fp-price {
+    color: inherit !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.inRange {
+    background: color-mix(in srgb, var(--mhbo-primary), white 85%) !important;
+    border-color: transparent !important;
+    color: var(--mhbo-primary) !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    margin-left: -3px !important;
+    margin-right: -3px !important;
+    flex-basis: calc(14.28%) !important;
+    max-width: calc(14.28%) !important;
+}
+
+/* selection-box moved to bottom for priority */
+
+/* Range glow effect */
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-range-hover {
+    background: color-mix(in srgb, var(--mhbo-primary), white 92%) !important;
+    box-shadow: 0 0 15px color-mix(in srgb, var(--mhbo-primary), transparent 90%) !important;
+}
+
+/* Hide the price display on the checkout date so it's clear you only pay per night */
+.mhbo-calendar-wrapper .flatpickr-day.endRange .mhbo-fp-price {
+    display: none !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled {
+    background: #f7fafc !important;
+    color: #cbd5e0 !important;
+    cursor: not-allowed !important;
+    opacity: 0.6 !important;
+}
+
+/* --- Booking Status Colors (Subtle Glass Effect) --- */
+/* Confirmed bookings - Subtle Red */
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-booking-confirmed {
+    background: rgba(229, 62, 62, 0.15) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-color: rgba(229, 62, 62, 0.3) !important;
+    color: #742a2a !important;
+    opacity: 1 !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-booking-confirmed .mhbo-day-number {
+    color: #742a2a !important;
+}
+
+/* Pending bookings - Subtle Orange */
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-booking-pending {
+    background: rgba(221, 107, 32, 0.15) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-color: rgba(221, 107, 32, 0.3) !important;
+    color: #744210 !important;
+    opacity: 1 !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-booking-pending .mhbo-day-number {
+    color: #744210 !important;
+}
+
+/* --- Half-Day Changeover Styling (Split Backgrounds) --- */
+
+/* Confirmed: Check-in day (afternoon booked, morning free) */
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-booking-confirmed.mhbo-half-booked-checkin {
+    background: linear-gradient(to bottom right, #fff 50%, rgba(229, 62, 62, 0.15) 50%) !important;
+}
+
+/* Confirmed: Check-out day (morning booked, afternoon free) */
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-booking-confirmed.mhbo-half-booked-checkout {
+    background: linear-gradient(to top right, rgba(229, 62, 62, 0.15) 50%, #fff 50%) !important;
+}
+
+/* Pending: Check-in day (afternoon booked, morning free) */
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-booking-pending.mhbo-half-booked-checkin {
+    background: linear-gradient(to bottom right, #fff 50%, rgba(221, 107, 32, 0.15) 50%) !important;
+}
+
+/* Pending: Check-out day (morning booked, afternoon free) */
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-booking-pending.mhbo-half-booked-checkout {
+    background: linear-gradient(to top right, rgba(221, 107, 32, 0.15) 50%, #fff 50%) !important;
+}
+
+/* Overriding the text color for half-booked days to ensure readability */
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-half-booked-checkin .mhbo-day-number,
+.mhbo-calendar-wrapper .flatpickr-day.mhbo-half-booked-checkout .mhbo-day-number {
+    color: #2d3748 !important;
+}
+
+/* Unbookable dates (no price set) - Same red as booked */
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-unbookable {
+    background: rgba(229, 62, 62, 0.15) !important;
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    border-color: rgba(229, 62, 62, 0.3) !important;
+    color: #742a2a !important;
+    opacity: 1 !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.flatpickr-disabled.mhbo-unbookable .mhbo-day-number {
+    color: #742a2a !important;
+}
+
+/* --- Inner Day Content --- */
+.mhbo-calendar-wrapper .mhbo-day-number {
+    font-size: 1.1rem !important;
+    font-weight: 700 !important;
+    display: block !important;
+    line-height: 1 !important;
+}
+
+/* --- Stay Restriction Badges (PRO) --- */
+.mhbo-stay-badges {
+    display: flex;
+    flex-direction: column;
+    gap: 2px;
+    position: absolute;
+    top: 8px;
+    right: 8px;
+    align-items: flex-end;
+}
+
+.mhbo-badge-min, .mhbo-badge-max {
+    font-size: 0.65rem;
+    font-weight: 800;
+    padding: 1px 4px;
+    border-radius: 4px;
+    text-transform: uppercase;
+    white-space: nowrap;
+    line-height: 1.2;
+}
+
+.mhbo-badge-min {
+    background: color-mix(in srgb, var(--mhbo-primary), transparent 90%);
+    color: var(--mhbo-primary);
+    border: 1px solid color-mix(in srgb, var(--mhbo-primary), transparent 80%);
+}
+
+.mhbo-badge-max {
+    background: #edf2f7;
+    color: #4a5568;
+    border: 1px solid #e2e8f0;
+}
+
+/* Ensure badges turn white when selected */
+.flatpickr-day.selected .mhbo-badge-min,
+.flatpickr-day.startRange .mhbo-badge-min,
+.flatpickr-day.endRange .mhbo-badge-min,
+.flatpickr-day.selected .mhbo-badge-max,
+.flatpickr-day.startRange .mhbo-badge-max,
+.flatpickr-day.endRange .mhbo-badge-max {
+    background: rgba(255, 255, 255, 0.2) !important;
+    color: #fff !important;
+    border-color: rgba(255, 255, 255, 0.4) !important;
+}
+
+.mhbo-calendar-wrapper .mhbo-fp-price {
+    font-size: 1rem !important;
+    font-weight: 900 !important;
+    color: var(--mhbo-primary) !important;
+    text-align: center !important;
+    width: 100% !important;
+    display: flex !important;
+    flex-direction: row !important;
+    flex-wrap: wrap !important;
+    justify-content: center !important;
+    align-items: center !important;
+    gap: 2px !important;
+    margin-top: auto !important;
+    padding-bottom: 5px;
+    line-height: 1 !important;
+    white-space: normal !important;
+    text-overflow: clip !important;
+    overflow: visible !important;
+}
+
+.mhbo-price-part-amount {
+    white-space: nowrap !important;
+}
+
+.mhbo-price-part-currency {
+    font-size: 0.85em;
+    opacity: 0.9;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.selected .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-day.startRange .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-day.selected:hover .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-day.startRange:hover .mhbo-fp-price {
+    color: #fff !important;
+}
+
+.mhbo-calendar-wrapper .mhbo-day-number {
+    color: inherit !important; /* Always inherit from parent for dynamic contrast */
+}
+
+/* Hide price on the checkout date when a range is selected */
+.mhbo-calendar-wrapper .flatpickr-day.endRange .mhbo-fp-price {
+    display: none !important;
+}
+
+.mhbo-calendar-wrapper .flatpickr-day.inRange .mhbo-fp-price {
+    color: var(--mhbo-primary) !important;
+}
+
+/* --- Selection Box --- */
+.mhbo-selection-box {
+    margin-top: 25px;
+    background: #fff;
+    border: 1.5px solid var(--mhbo-border);
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 6px rgba(0, 0, 0, 0.05);
+    display: none; /* Default hidden */
+}
+
+/* Visibility Utilities (2026 best practice) */
+.mhbo-hidden {
+    display: none !important;
+}
+
+.mhbo-visible {
+    display: block !important;
+}
+
+/* Hardened Error Box Styling */
+.mhbo-calendar-errors {
+    margin: 15px 0 !important;
+    padding: 12px !important;
+    border-radius: 8px !important;
+    background: #fff5f5 !important;
+    border: 1px solid #feb2b2 !important;
+    color: #c53030 !important;
+    font-size: 0.9rem !important;
+    display: none; /* Managed by JS */
+}
+
+/* Stay constraint hint — warning tone (amber), not error (red).
+   Displayed persistently until user picks a valid date range. */
+.mhbo-calendar-errors.mhbo-constraint-hint {
+    background: #fffbeb !important;
+    border-color: #f6ad55 !important;
+    color: #92400e !important;
+    font-weight: 500 !important;
+}
+
+/* Prevent empty shell showing */
+.mhbo-calendar-errors:empty {
+    display: none !important;
+}
+
+.mhbo-selection-header h3 {
+    margin: 0 0 15px;
+    font-size: 1.25rem;
+    color: #2d3748;
+    border-bottom: 2px solid var(--mhbo-border);
+    padding-bottom: 10px;
+}
+
+.mhbo-selection-details {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin-bottom: 20px;
+}
+
+.mhbo-selection-dates {
+    display: flex;
+    gap: 30px;
+}
+
+.mhbo-label {
+    display: block;
+    font-size: 0.75rem;
+    text-transform: uppercase;
+    color: #718096;
+    font-weight: 700;
+    margin-bottom: 4px;
+}
+
+.mhbo-value {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+}
+
+/* --- Check-in/out Time Info --- */
+.mhbo-time-info {
+    display: block;
+    font-size: 0.75rem;
+    color: #718096;
+    font-weight: 500;
+    margin-top: 2px;
+    font-style: italic;
+}
+
+.mhbo-price-value {
+    font-size: 1.5rem;
+    font-weight: 800;
+    color: var(--mhbo-primary);
+}
+
+.mhbo-btn-primary {
+    width: 100%;
+    max-width: 100%;
+    background: linear-gradient(135deg, var(--mhbo-primary) 0%, color-mix(in srgb, var(--mhbo-primary), #000 20%) 100%) !important;
+    box-shadow: 0 4px 12px color-mix(in srgb, var(--mhbo-primary) 20%, transparent) !important;
+    color: white;
+    font-weight: 600;
+    padding: 12px 20px;
+    border-radius: 8px;
+    border: none;
+    cursor: pointer;
+    font-size: 1rem;
+    transition: background 0.2s;
+    text-align: center;
+    box-sizing: border-box;
+    display: block;
+    margin: 20px auto 0;
+    clear: both;
+}
+
+.mhbo-btn-primary:empty::before {
+    content: "Search Rooms";
+}
+
+.mhbo-btn-primary:hover {
+    filter: brightness(1.2);
+}
+
+/* --- Responsive Layout --- */
+@media (max-width: 768px) {
+    .mhbo-calendar-wrapper .flatpickr-day {
+        height: 80px !important;
+        padding: 4px !important;
+    }
+
+    .mhbo-calendar-wrapper .mhbo-day-number {
+        font-size: 1rem !important;
+    }
+
+    .mhbo-calendar-wrapper .mhbo-fp-price {
+        font-size: 0.95rem !important;
+    }
+
+    .mhbo-selection-details {
+        flex-direction: column;
+        align-items: stretch;
+    }
+
+    .mhbo-selection-price {
+        text-align: right;
+    }
+}
+
+@media (max-width: 480px) {
+    .mhbo-calendar-wrapper .flatpickr-day {
+        height: 78px !important;
+        padding: 5px 3px !important;
+        position: relative !important;
+    }
+
+    .mhbo-calendar-wrapper .mhbo-day-number {
+        font-size: 0.95rem !important;
+    }
+
+    /* Absolute positioning pins currency + amount as a tight unit at the
+       cell floor — margin-top:auto depended on cell proportions and caused
+       the pair to look separated at certain screen sizes. */
+    .mhbo-calendar-wrapper .mhbo-fp-price {
+        position: absolute !important;
+        bottom: 4px !important;
+        left: 0 !important;
+        right: 0 !important;
+        margin-top: 0 !important;
+        padding-bottom: 0 !important;
+        flex-direction: column !important;
+        flex-wrap: nowrap !important;
+        align-items: center !important;
+        gap: 0 !important;
+        font-size: 0.82rem !important;
+        line-height: 1 !important;
+    }
+
+    .mhbo-calendar-tooltip {
+        padding: 8px 12px;
+        font-size: 0.85rem;
+    }
+}
+
+/* --- Mobile Calendar Width Optimisation (400–540px) --- */
+/* Shrink the card's own chrome so day cells get maximum available width. */
+@media (max-width: 540px) {
+    .mhbo-calendar-wrapper .flatpickr-calendar,
+    .mhbo-calendar-wrapper .flatpickr-calendar.inline,
+    .mhbo-calendar-wrapper .flatpickr-calendar.open {
+        padding: 6px !important;
+        border-radius: 12px !important;
+    }
+
+    .mhbo-calendar-wrapper .flatpickr-days {
+        padding: 1px !important;
+    }
+
+    /* 1px margins give each cell ~4px more width vs the default 3px */
+    .mhbo-calendar-wrapper .flatpickr-day {
+        margin: 1px !important;
+        flex-basis: calc(14.28% - 2px) !important;
+        max-width: calc(14.28% - 2px) !important;
+        border-radius: 10px !important;
+    }
+
+    /* Keep inRange stripe continuous with the new 1px margin */
+    .mhbo-calendar-wrapper .flatpickr-day.inRange {
+        margin-left: -1px !important;
+        margin-right: -1px !important;
+        flex-basis: calc(14.28%) !important;
+        max-width: calc(14.28%) !important;
+    }
+
+    .mhbo-calendar-container {
+        padding: 0 !important;
+        /* Bleed past the theme's content-area padding so the calendar fills
+           the screen edge-to-edge on mobile. Override --mhbo-mobile-bleed in
+           your theme CSS if your content padding differs from the 20px default. */
+        --mhbo-mobile-bleed: 20px;
+        margin-left: calc(-1 * var(--mhbo-mobile-bleed)) !important;
+        margin-right: calc(-1 * var(--mhbo-mobile-bleed)) !important;
+        width: calc(100% + 2 * var(--mhbo-mobile-bleed)) !important;
+        max-width: none !important;
+    }
+
+    /* Make currency symbol the same visual weight as the amount so the
+       stacked layout looks balanced */
+    .mhbo-price-part-currency {
+        font-size: 1em !important;
+        opacity: 1 !important;
+    }
+}
+
+/* --- Widget Context Overrides --- */
+.mhbo-widget-context .mhbo-calendar-container {
+    margin: 0;
+    padding: 0;
+    max-width: 100%;
+}
+
+.mhbo-widget-context .mhbo-calendar-guide {
+    font-size: 1.1rem;
+    margin-bottom: 15px;
+}
+
+.mhbo-widget-context .mhbo-calendar-legend {
+    gap: 10px;
+    font-size: 0.75rem;
+}
+
+.mhbo-widget-context .mhbo-calendar-wrapper .flatpickr-day {
+    height: 60px !important;
+    /* Smaller height for widgets */
+}
+
+.mhbo-widget-context .mhbo-calendar-wrapper .mhbo-day-number {
+    font-size: 0.9rem !important;
+}
+
+.mhbo-widget-context .mhbo-calendar-wrapper .mhbo-fp-price {
+    font-size: 0.8rem !important;
+}
+
+.mhbo-widget-context .mhbo-selection-box {
+    padding: 15px;
+    margin-top: 15px;
+}
+
+.mhbo-widget-context .mhbo-selection-details {
+    flex-direction: column;
+    align-items: stretch;
+    gap: 10px;
+}
+
+.mhbo-widget-context .mhbo-selection-dates {
+    gap: 15px;
+    justify-content: space-between;
+}
+
+.mhbo-widget-context .mhbo-selection-price {
+    text-align: center;
+    border-top: 1.5px solid var(--mhbo-border);
+    padding-top: 10px;
+    margin-top: 5px;
+}
+
+.mhbo-widget-context .mhbo-btn-primary {
+    font-size: 0.9rem;
+    padding: 10px;
+}
+
+/* --- Floating Price Tooltip (2026 BP) --- */
+.mhbo-calendar-tooltip {
+    position: fixed;
+    pointer-events: none;
+    background: rgba(26, 54, 93, 0.9);
+    color: #fff;
+    padding: 10px 18px;
+    border-radius: 100px; /* Pill shape */
+    font-size: 0.95rem;
+    font-weight: 600;
+    z-index: 10000;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.25);
+    backdrop-filter: blur(8px);
+    -webkit-backdrop-filter: blur(8px);
+    border: 1px solid rgba(255, 255, 255, 0.15);
+    transform: translate(-50%, -100%) translateY(-20px);
+    transition: opacity 0.15s ease-out, transform 0.15s ease-out;
+    opacity: 0;
+    display: flex;
+    flex-direction: row; /* Horizontal for a more compact "pill" feel */
+    align-items: center;
+    gap: 10px;
+    white-space: nowrap;
+}
+
+.mhbo-calendar-tooltip.mhbo-visible {
+    opacity: 1;
+    transform: translate(-50%, -100%) translateY(-25px);
+}
+
+/* Tooltip turns amber when the hovered range violates a stay constraint */
+.mhbo-calendar-tooltip.mhbo-tooltip-warn {
+    background: rgba(146, 64, 14, 0.92);
+    border-color: rgba(246, 173, 85, 0.4);
+}
+
+.mhbo-tooltip-constraint {
+    font-size: 0.8rem;
+    font-weight: 700;
+    opacity: 0.95;
+    letter-spacing: 0.2px;
+    border-left: 1px solid rgba(255, 255, 255, 0.3);
+    padding-left: 10px;
+}
+
+.mhbo-tooltip-nights {
+    font-size: 0.9rem;
+    letter-spacing: 0.3px;
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+
+.mhbo-tooltip-price {
+    background: rgba(255, 255, 255, 0.2);
+    padding: 2px 8px;
+    border-radius: 6px;
+    font-weight: 800;
+    font-family: var(--mhbo-font-heading);
+}
+
+/* --- Month Transition Animations --- */
+.mhbo-calendar-wrapper .flatpickr-months {
+    position: relative;
+    overflow: hidden;
+}
+
+.mhbo-calendar-wrapper .flatpickr-month {
+    animation: mhboMonthFadeIn 0.4s ease-out;
+}
+
+@keyframes mhboMonthFadeIn {
+    from { opacity: 0; transform: translateX(10px); }
+    to { opacity: 1; transform: translateX(0); }
+}
+
+/* --- ULTRA SELECTION PRIORITY (Fix for Contrast on 16th/Caps) --- */
+/* These must be defined after all booking-status colors to override half-booked states */
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.selected,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.startRange,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.endRange,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.selected.inRange,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.startRange.inRange,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.endRange.inRange,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.selected:hover,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.startRange:hover,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.endRange:hover {
+    background: var(--mhbo-primary) !important;
+    background: linear-gradient(135deg, var(--mhbo-primary) 0%, color-mix(in srgb, var(--mhbo-primary), #000 20%) 100%) !important;
+    color: #ffffff !important;
+    border-color: var(--mhbo-primary) !important;
+    box-shadow: 0 8px 24px color-mix(in srgb, var(--mhbo-primary), transparent 60%) !important;
+    transform: scale(1.05) !important;
+    z-index: 10 !important;
+    border-radius: 12px !important;
+}
+
+/* Force price text to be white on selected caps */
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.selected .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.startRange .mhbo-fp-price,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.endRange .mhbo-fp-price {
+    color: #ffffff !important;
+    opacity: 1 !important;
+}
+
+/* Force day number to be white on selected caps */
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.selected .mhbo-day-number,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.startRange .mhbo-day-number,
+.mhbo-calendar-wrapper .flatpickr-days .dayContainer .flatpickr-day.endRange .mhbo-day-number {
+    color: #ffffff !important;
+}

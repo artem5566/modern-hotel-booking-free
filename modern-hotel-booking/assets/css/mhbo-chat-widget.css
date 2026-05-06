@@ -1,0 +1,1225 @@
+/**
+ * MHBO AI Concierge Chat Widget Styles
+ *
+ * CSS custom properties allow hotel-specific brand overrides via the Customizer.
+ * Mobile-first. Dark mode via prefers-color-scheme.
+ * Animations respect prefers-reduced-motion.
+ *
+ * @package modern-hotel-booking
+ * @since   2.4.0
+ */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Custom Properties (brand overrideable)
+───────────────────────────────────────────────────────────────────────────── */
+
+:root {
+    --mhbo-chat-accent:        #2C3E50;
+    --mhbo-chat-accent-hover:  #1a252f;
+    --mhbo-chat-bg:            rgba(255, 255, 255, 0.75);
+    --mhbo-chat-surface:       rgba(248, 249, 250, 0.6);
+    --mhbo-chat-border:        rgba(226, 232, 240, 0.5);
+    --mhbo-chat-text:          #1a202c;
+    --mhbo-chat-text-muted:    #718096;
+    --mhbo-chat-bubble-ai:     rgba(241, 245, 249, 0.8);
+    --mhbo-chat-bubble-user:   var(--mhbo-chat-accent);
+    --mhbo-chat-bubble-user-text: #ffffff;
+    --mhbo-chat-error:         rgba(254, 215, 215, 0.9);
+    --mhbo-chat-error-text:    #9b2c2c;
+    --mhbo-chat-radius:        20px;
+    --mhbo-chat-radius-sm:     8px;
+    --mhbo-chat-shadow:        0 8px 32px rgba(0, 0, 0, 0.1), 0 1px 2px rgba(0, 0, 0, 0.06);
+    --mhbo-chat-glass-blur:    blur(20px) saturate(180%);
+    --mhbo-chat-fab-size:      60px;
+    --mhbo-chat-panel-width:   380px;
+    --mhbo-chat-panel-height:  600px;
+    --mhbo-chat-font:          'Outfit', system-ui, -apple-system, sans-serif;
+    --mhbo-chat-transition:    0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    --mhbo-chat-z:             999999;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Dark Mode (Adaptive)
+───────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-color-scheme: dark) {
+    /* Only apply adaptive dark mode if NO specific premium theme is active (except 'dark' itself) */
+    .mhbo-chat-widget:not(.mhbo-theme-luxury):not(.mhbo-theme-boutique):not(.mhbo-theme-modern):not(.mhbo-theme-minimal) {
+        --mhbo-chat-bg:         rgba(15, 23, 42, 0.9);
+        --mhbo-chat-surface:    rgba(30, 41, 59, 0.7);
+        --mhbo-chat-border:     rgba(51, 65, 85, 0.5);
+        --mhbo-chat-text:       #f8fafc;
+        --mhbo-chat-text-muted: #94a3b8;
+        --mhbo-chat-bubble-ai:  rgba(30, 41, 59, 0.8);
+        --mhbo-chat-error:      rgba(153, 27, 27, 0.9);
+        --mhbo-chat-error-text: #fee2e2;
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Container
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-widget {
+    position: fixed;
+    z-index: var(--mhbo-chat-z);
+    font-family: var(--mhbo-chat-font);
+    font-size: 14px;
+    line-height: 1.5;
+    box-sizing: border-box;
+}
+
+.mhbo-chat-widget *,
+.mhbo-chat-widget *::before,
+.mhbo-chat-widget *::after {
+    box-sizing: inherit;
+    text-transform: none;
+    letter-spacing: normal;
+    word-spacing: normal;
+}
+
+/* Theme isolation: reset button/input base styles that themes commonly override */
+.mhbo-chat-widget button,
+.mhbo-chat-widget input,
+.mhbo-chat-widget textarea {
+    font-family: var(--mhbo-chat-font);
+    font-size: inherit;
+    line-height: inherit;
+    /* NOTE: Do NOT set color:inherit here — it would win over all .mhbo-* button color rules due to higher specificity (0,1,1 > 0,1,0) */
+    text-transform: none;
+    letter-spacing: normal;
+    appearance: none;
+    -webkit-appearance: none;
+    margin: 0;
+    box-sizing: border-box;
+    /* Prevent themes from forcing block/full-width on all buttons */
+    display: inline-flex;
+    width: auto;
+    height: auto;
+}
+
+/* Positions */
+.mhbo-chat-widget--bottom-right { bottom: 24px; right: 24px; }
+.mhbo-chat-widget--bottom-left  { bottom: 24px; left:  24px; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   FAB
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-fab {
+    width:  var(--mhbo-chat-fab-size) !important;
+    height: var(--mhbo-chat-fab-size) !important;
+    border-radius: 50% !important;
+    background: var(--mhbo-chat-accent) !important;
+    color: #fff !important;
+    border: none !important;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: var(--mhbo-chat-shadow);
+    transition: background var(--mhbo-chat-transition), transform var(--mhbo-chat-transition);
+    position: relative;
+    flex-shrink: 0;
+    padding: 0 !important;
+    line-height: 0 !important;
+}
+
+.mhbo-chat-fab:hover,
+.mhbo-chat-fab:focus-visible {
+    background: var(--mhbo-chat-accent-hover);
+    outline: 3px solid var(--mhbo-chat-accent);
+    outline-offset: 3px;
+}
+
+.mhbo-chat-fab--active {
+    transform: scale(0.9);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mhbo-chat-fab--active {
+        animation: mhbo-fab-pulse 2s infinite;
+    }
+}
+
+@keyframes mhbo-fab-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(44, 62, 80, 0.4); }
+    50%       { box-shadow: 0 0 0 10px rgba(44, 62, 80, 0); }
+}
+
+.mhbo-chat-fab-badge {
+    position: absolute;
+    top: 2px;
+    right: 2px;
+    width: 12px;
+    height: 12px;
+    background: #e53e3e;
+    border-radius: 50%;
+    border: 2px solid var(--mhbo-chat-bg);
+    display: none;
+}
+
+.mhbo-chat-fab-badge--visible { display: block; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Panel
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-panel {
+    position: absolute;
+    bottom: calc(var(--mhbo-chat-fab-size) + 16px);
+    right: 0;
+    width: var(--mhbo-chat-panel-width);
+    height: var(--mhbo-chat-panel-height);
+    /* Solid white fallback before backdrop-filter — prevents dark bleed-through on image/dark theme pages */
+    background: #ffffff;
+    background: var(--mhbo-chat-bg);
+    backdrop-filter: var(--mhbo-chat-glass-blur);
+    -webkit-backdrop-filter: var(--mhbo-chat-glass-blur);
+    border-radius: var(--mhbo-chat-radius);
+    box-shadow: var(--mhbo-chat-shadow);
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+    border: 1px solid var(--mhbo-chat-border);
+    transition: transform 0.4s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+    transform-origin: bottom right;
+}
+
+.mhbo-chat-widget--bottom-left .mhbo-chat-panel {
+    right: auto;
+    left: 0;
+    transform-origin: bottom left;
+}
+
+.mhbo-chat-panel[hidden] {
+    display: flex !important; /* Keep for transition */
+    opacity: 0;
+    transform: translateY(20px) scale(0.9);
+    pointer-events: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mhbo-chat-panel--opening {
+        animation: mhbo-panel-in 0.25s cubic-bezier(0.34, 1.56, 0.64, 1) both;
+    }
+}
+
+@keyframes mhbo-panel-in {
+    from { opacity: 0; transform: translateY(12px) scale(0.95); }
+    to   { opacity: 1; transform: translateY(0) scale(1); }
+}
+
+/* ── Tablet (601px – 900px): shrink panel width slightly ── */
+@media (min-width: 601px) and (max-width: 900px) {
+    :root {
+        --mhbo-chat-panel-width:  320px;
+        --mhbo-chat-panel-height: 520px;
+    }
+}
+
+/* ── Mobile (≤600px): full-screen panel, accessible touch targets ── */
+@media (max-width: 600px) {
+    :root {
+        --mhbo-chat-fab-size: 52px; /* slightly smaller FAB on mobile */
+    }
+
+    /* Keep widget at its anchor position; panel goes full-screen via fixed */
+    .mhbo-chat-widget--open {
+        /* Do NOT stretch the container full-screen — FAB stays anchored */
+    }
+
+    .mhbo-chat-panel {
+        position: fixed !important;
+        top: 0 !important;
+        left: 0 !important;
+        right: 0 !important;
+        bottom: 0 !important;
+        width: 100% !important;
+        height: 100% !important;
+        border-radius: 0 !important;
+        margin: 0 !important;
+        transform-origin: bottom center;
+    }
+
+    .mhbo-chat-panel[hidden] {
+        transform: translateY(100%) scale(1) !important;
+        opacity: 0 !important;
+    }
+
+    /* Hide FAB while panel is open so it doesn't overlap content */
+    .mhbo-chat-widget--open .mhbo-chat-fab {
+        display: none !important;
+    }
+
+    /* Larger touch targets on mobile */
+    .mhbo-chat-voice-btn,
+    .mhbo-chat-send {
+        width: 44px !important;
+        height: 44px !important;
+    }
+
+    /* Suggestion pills: horizontal scroll on narrow screens */
+    .mhbo-chat-suggestions {
+        flex-wrap: nowrap;
+        overflow-x: auto;
+        -webkit-overflow-scrolling: touch;
+        scrollbar-width: none;
+        padding-bottom: 12px;
+    }
+
+    .mhbo-chat-suggestions::-webkit-scrollbar {
+        display: none;
+    }
+
+    .mhbo-chat-suggestion {
+        flex-shrink: 0 !important;
+        max-width: 80vw;
+    }
+
+    /* More breathing room in the input row */
+    .mhbo-chat-input-row {
+        padding: 10px 12px;
+    }
+
+    .mhbo-chat-input {
+        font-size: 16px; /* Prevent iOS auto-zoom on focus */
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Header
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 14px 16px;
+    background: var(--mhbo-chat-accent);
+    color: #fff;
+    flex-shrink: 0;
+}
+
+.mhbo-chat-avatar {
+    font-size: 22px;
+    line-height: 1;
+    flex-shrink: 0;
+}
+
+.mhbo-chat-header-text {
+    flex: 1;
+    overflow: hidden;
+}
+
+.mhbo-chat-header-text strong {
+    display: block;
+    font-size: 14px;
+    font-weight: 600;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mhbo-chat-subtitle {
+    display: block;
+    font-size: 11px;
+    opacity: 0.8;
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+
+.mhbo-chat-header-actions {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+}
+
+.mhbo-chat-header-actions button {
+    background: none !important;
+    border: none !important;
+    cursor: pointer;
+    color: rgba(255,255,255,0.85) !important;
+    padding: 4px !important;
+    border-radius: var(--mhbo-chat-radius-sm) !important;
+    line-height: 0 !important;
+    transition: color var(--mhbo-chat-transition), background var(--mhbo-chat-transition);
+    width: auto !important;
+    height: auto !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}
+
+.mhbo-chat-header-actions button:hover,
+.mhbo-chat-header-actions button:focus-visible {
+    color: #fff;
+    background: rgba(255,255,255,0.15);
+    outline: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Messages
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-messages {
+    flex: 1;
+    overflow-y: auto;
+    padding: 16px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    scroll-behavior: smooth;
+}
+
+.mhbo-chat-bubble {
+    display: flex;
+    max-width: 85%;
+}
+
+.mhbo-chat-bubble--user {
+    align-self: flex-end;
+    flex-direction: row-reverse;
+}
+
+.mhbo-chat-bubble--assistant,
+.mhbo-chat-bubble--error {
+    align-self: flex-start;
+}
+
+.mhbo-chat-bubble-inner {
+    padding: 10px 14px;
+    border-radius: var(--mhbo-chat-radius);
+    color: var(--mhbo-chat-text);
+    background: var(--mhbo-chat-bubble-ai);
+    word-break: break-word;
+    position: relative;
+    font-family: var(--mhbo-chat-font); /* Strengthened for bubbles */
+    letter-spacing: normal;
+}
+
+.mhbo-chat-link {
+    color: var(--mhbo-chat-accent);
+    text-decoration: underline;
+    font-weight: 600;
+    word-break: break-all;
+}
+
+.mhbo-chat-link:hover {
+    text-decoration: none;
+    filter: brightness(1.2);
+}
+
+/* 2026 BP: High-visibility Button CTAs (Pay Now / Resume) */
+.mhbo-chat-link-button {
+    display: block;
+    width: 100%;
+    margin: 12px 0;
+    padding: 12px 16px;
+    background: var(--mhbo-chat-accent);
+    color: #ffffff !important;
+    text-align: center;
+    text-decoration: none !important;
+    font-weight: 700;
+    border-radius: var(--mhbo-chat-radius-sm);
+    box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+    transition: transform var(--mhbo-chat-transition), filter var(--mhbo-chat-transition);
+    user-select: none;
+    font-family: var(--mhbo-chat-font);
+}
+
+.mhbo-chat-link-button:hover,
+.mhbo-chat-link-button:focus-visible {
+    transform: translateY(-2px);
+    filter: brightness(1.1);
+    box-shadow: 0 6px 16px rgba(0,0,0,0.15);
+}
+
+.mhbo-chat-link-button:active {
+    transform: translateY(0);
+}
+
+.mhbo-chat-bubble--user .mhbo-chat-bubble-inner {
+    background: var(--mhbo-chat-bubble-user);
+    color: var(--mhbo-chat-bubble-user-text);
+    border-bottom-right-radius: 4px;
+}
+
+.mhbo-chat-bubble--assistant .mhbo-chat-bubble-inner {
+    border-bottom-left-radius: 4px;
+}
+
+.mhbo-chat-bubble--error .mhbo-chat-bubble-inner {
+    background: var(--mhbo-chat-error);
+    color: var(--mhbo-chat-error-text);
+}
+
+/* 2026 BP: Real-Time Status Bar (SSE Progress) */
+.mhbo-chat-status-bar {
+    align-self: flex-start;
+    font-size: 11px;
+    font-weight: 500;
+    color: var(--mhbo-chat-text-muted);
+    background: var(--mhbo-chat-surface);
+    border: 1px solid var(--mhbo-chat-border);
+    padding: 4px 12px;
+    border-radius: 100px;
+    margin: 4px 0 8px 0;
+    opacity: 0;
+    transform: translateY(4px);
+    transition: opacity 0.3s ease, transform 0.3s ease;
+    backdrop-filter: var(--mhbo-chat-glass-blur);
+    -webkit-backdrop-filter: var(--mhbo-chat-glass-blur);
+    max-width: fit-content;
+}
+
+.mhbo-chat-status-bar--active {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+.mhbo-chat-status-bar::before {
+    content: "●";
+    margin-right: 6px;
+    color: var(--mhbo-chat-accent);
+    animation: mhbo-flicker 1.5s infinite;
+}
+
+@keyframes mhbo-flicker {
+    0%, 100% { opacity: 0.3; }
+    50%       { opacity: 1; }
+}
+
+.mhbo-chat-bubble-time {
+    display: block;
+    font-size: 10px;
+    opacity: 0.6;
+    margin-top: 4px;
+    text-align: right;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Typing Indicator
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-typing .mhbo-chat-bubble-inner {
+    padding: 12px 16px;
+}
+
+.mhbo-typing-dot {
+    display: inline-block;
+    width: 8px;
+    height: 8px;
+    border-radius: 50%;
+    background: var(--mhbo-chat-text-muted);
+    margin: 0 2px;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mhbo-typing-dot {
+        animation: mhbo-typing 1.4s infinite ease-in-out;
+    }
+    .mhbo-typing-dot:nth-child(2) { animation-delay: 0.2s; }
+    .mhbo-typing-dot:nth-child(3) { animation-delay: 0.4s; }
+}
+
+@keyframes mhbo-typing {
+    0%, 80%, 100% { transform: scale(0.8); opacity: 0.5; }
+    40%           { transform: scale(1.2); opacity: 1; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Suggestions
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-suggestions {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+    padding: 0 16px 10px;
+    flex-shrink: 0;
+}
+
+.mhbo-chat-suggestion {
+    background: var(--mhbo-chat-surface) !important;
+    border: 1px solid var(--mhbo-chat-border) !important;
+    border-radius: 100px !important;
+    padding: 6px 14px !important;
+    font-size: 12px !important;
+    color: var(--mhbo-chat-text) !important;
+    cursor: pointer;
+    transition: background var(--mhbo-chat-transition), border-color var(--mhbo-chat-transition);
+    white-space: nowrap;
+    /* Prevent themes from stretching buttons to full width */
+    display: inline-flex !important;
+    width: auto !important;
+    max-width: calc(100% - 16px);
+    align-items: center;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    flex-shrink: 0;
+    line-height: 1.4 !important;
+}
+
+.mhbo-chat-suggestion:hover,
+.mhbo-chat-suggestion:focus-visible {
+    background: var(--mhbo-chat-accent);
+    color: #fff;
+    border-color: var(--mhbo-chat-accent);
+    outline: none;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Input Row
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-input-row {
+    display: flex !important;
+    align-items: center !important;
+    gap: 8px;
+    padding: 12px 16px;
+    border-top: 1px solid var(--mhbo-chat-border);
+    background: var(--mhbo-chat-bg);
+    flex-shrink: 0;
+    margin: 0 !important;
+    min-height: 64px;
+}
+
+.mhbo-chat-input {
+    flex: 1 1 0%;
+    min-width: 0;
+    /* Override the button/input base reset display so input stays a proper flex child */
+    display: block !important;
+    width: 100% !important;
+    padding: 8px 12px;
+    border: 1px solid var(--mhbo-chat-border) !important;
+    border-radius: 100px !important;
+    font-size: 14px;
+    font-family: var(--mhbo-chat-font);
+    background: var(--mhbo-chat-surface) !important;
+    color: var(--mhbo-chat-text) !important;
+    outline: none;
+    transition: border-color var(--mhbo-chat-transition);
+    height: auto !important;
+    box-shadow: none !important;
+}
+
+.mhbo-chat-input:focus {
+    border-color: var(--mhbo-chat-accent);
+}
+
+.mhbo-chat-input::placeholder {
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-chat-voice-btn,
+.mhbo-chat-send {
+    flex-shrink: 0 !important;
+    width: 36px !important;
+    height: 36px !important;
+    border-radius: 50% !important;
+    border: none !important;
+    cursor: pointer;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: background var(--mhbo-chat-transition), transform var(--mhbo-chat-transition);
+    line-height: 0 !important;
+    padding: 0 !important;
+}
+
+.mhbo-chat-voice-btn {
+    background: var(--mhbo-chat-surface) !important;
+    color: var(--mhbo-chat-text-muted) !important;
+}
+
+.mhbo-chat-voice-btn:hover,
+.mhbo-chat-voice-btn:focus-visible {
+    background: var(--mhbo-chat-border);
+    color: var(--mhbo-chat-text);
+    outline: none;
+}
+
+.mhbo-chat-voice-btn--recording {
+    background: #fed7d7;
+    color: #c53030;
+    animation: mhbo-recording-pulse 1s infinite;
+}
+
+@keyframes mhbo-recording-pulse {
+    0%, 100% { box-shadow: 0 0 0 0 rgba(197, 48, 48, 0.4); }
+    50%       { box-shadow: 0 0 0 8px rgba(197, 48, 48, 0); }
+}
+
+.mhbo-chat-send {
+    background: var(--mhbo-chat-accent) !important;
+    color: #fff !important;
+}
+
+.mhbo-chat-send:hover,
+.mhbo-chat-send:focus-visible {
+    background: var(--mhbo-chat-accent-hover);
+    outline: none;
+}
+
+.mhbo-chat-send:disabled {
+    opacity: 0.5;
+    cursor: not-allowed;
+    transform: none;
+}
+
+@media (prefers-reduced-motion: no-preference) {
+    .mhbo-chat-send:not(:disabled):active {
+        transform: scale(0.9);
+    }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   PRO Themes (Override specific components)
+───────────────────────────────────────────────────────────────────────────── */
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Accessibility: reduced motion overrides
+───────────────────────────────────────────────────────────────────────────── */
+
+@media (prefers-reduced-motion: reduce) {
+    .mhbo-chat-fab,
+    .mhbo-chat-panel,
+    .mhbo-chat-suggestion,
+    .mhbo-chat-input,
+    .mhbo-chat-send,
+    .mhbo-chat-voice-btn {
+        transition: none;
+        animation: none;
+    }
+    .mhbo-typing-dot {
+        animation: none;
+        opacity: 0.7;
+    }
+}
+
+/* Focus-visible (keyboard navigation). */
+.mhbo-chat-widget :focus-visible {
+    outline: 2px solid var(--mhbo-chat-accent);
+    outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Book Now CTA (intent-driven)
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-book-now-cta {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 8px;
+    margin: 0 16px 10px;
+    padding: 10px 14px;
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border: 1px solid #a5d6a7;
+    border-radius: var(--mhbo-chat-radius);
+    flex-shrink: 0;
+    animation: mhbo-cta-in 0.3s ease both;
+}
+
+@media (prefers-color-scheme: dark) {
+    .mhbo-book-now-cta {
+        background: linear-gradient(135deg, #1b3a1f 0%, #1e4823 100%);
+        border-color: #2e7d32;
+    }
+}
+
+@keyframes mhbo-cta-in {
+    from { opacity: 0; transform: translateY(6px); }
+    to   { opacity: 1; transform: translateY(0); }
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mhbo-book-now-cta { animation: none; }
+}
+
+.mhbo-book-now-label {
+    font-size: 13px;
+    font-weight: 600;
+    color: #1b5e20;
+    flex: 1;
+}
+
+@media (prefers-color-scheme: dark) {
+    .mhbo-book-now-label { color: #a5d6a7; }
+}
+
+.mhbo-book-now-btn {
+    padding: 6px 14px;
+    background: #2e7d32;
+    color: #fff;
+    border: none;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    cursor: pointer;
+    text-decoration: none;
+    white-space: nowrap;
+    transition: background var(--mhbo-chat-transition);
+    display: inline-flex;
+    align-items: center;
+}
+
+.mhbo-book-now-btn:hover,
+.mhbo-book-now-btn:focus-visible {
+    background: #1b5e20;
+    outline: none;
+    color: #fff;
+    text-decoration: none;
+}
+
+.mhbo-book-now-dismiss {
+    background: none;
+    border: none;
+    cursor: pointer;
+    color: #388e3c;
+    padding: 2px 4px;
+    border-radius: 4px;
+    font-size: 16px;
+    line-height: 1;
+    opacity: 0.7;
+    transition: opacity var(--mhbo-chat-transition);
+    flex-shrink: 0;
+}
+
+.mhbo-book-now-dismiss:hover { opacity: 1; }
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Handoff / Escalation Bar
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-handoff-bar {
+    padding: 10px 16px;
+    background: var(--mhbo-chat-surface);
+    border-top: 1px solid var(--mhbo-chat-border);
+    flex-shrink: 0;
+    animation: mhbo-cta-in 0.3s ease both;
+}
+
+@media (prefers-reduced-motion: reduce) {
+    .mhbo-handoff-bar { animation: none; }
+}
+
+.mhbo-handoff-intro {
+    font-size: 12px;
+    color: var(--mhbo-chat-text-muted);
+    margin-bottom: 8px;
+    display: block;
+}
+
+.mhbo-handoff-buttons {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 6px;
+}
+
+.mhbo-handoff-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 5px;
+    padding: 5px 12px;
+    border-radius: 100px;
+    font-size: 12px;
+    font-weight: 600;
+    text-decoration: none;
+    border: 1.5px solid transparent;
+    cursor: pointer;
+    transition: background var(--mhbo-chat-transition), color var(--mhbo-chat-transition), border-color var(--mhbo-chat-transition);
+    white-space: nowrap;
+}
+
+.mhbo-handoff-btn--whatsapp {
+    background: #e8f5e9;
+    color: #2e7d32;
+    border-color: #a5d6a7;
+}
+
+.mhbo-handoff-btn--whatsapp:hover,
+.mhbo-handoff-btn--whatsapp:focus-visible {
+    background: #25D366;
+    color: #fff;
+    border-color: #25D366;
+    outline: none;
+    text-decoration: none;
+}
+
+.mhbo-handoff-btn--email {
+    background: #e3f2fd;
+    color: #1565c0;
+    border-color: #90caf9;
+}
+
+.mhbo-handoff-btn--email:hover,
+.mhbo-handoff-btn--email:focus-visible {
+    background: #1976d2;
+    color: #fff;
+    border-color: #1976d2;
+    outline: none;
+    text-decoration: none;
+}
+
+.mhbo-handoff-btn--phone {
+    background: #fce4ec;
+    color: #880e4f;
+    border-color: #f48fb1;
+}
+
+.mhbo-handoff-btn--phone:hover,
+.mhbo-handoff-btn--phone:focus-visible {
+    background: #c2185b;
+    color: #fff;
+    border-color: #c2185b;
+    outline: none;
+    text-decoration: none;
+}
+
+@media (prefers-color-scheme: dark) {
+    .mhbo-handoff-btn--whatsapp { background: #1b3a1f; color: #a5d6a7; border-color: #2e7d32; }
+    .mhbo-handoff-btn--email    { background: #0d2137; color: #90caf9; border-color: #1565c0; }
+    .mhbo-handoff-btn--phone    { background: #3b0a1f; color: #f48fb1; border-color: #880e4f; }
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Tool Result Cards (Booking Summary, Business Card)
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-chat-bubble--tool-result {
+    max-width: 90%;
+    align-self: flex-start;
+}
+
+.mhbo-tool-card {
+    background: var(--mhbo-chat-surface);
+    border: 1px solid var(--mhbo-chat-border);
+    border-radius: var(--mhbo-chat-radius-sm);
+    padding: 14px;
+    margin-top: 8px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+    font-size: 13px;
+    color: var(--mhbo-chat-text);
+}
+
+/* Booking Summary Card */
+.mhbo-booking-summary {
+    border-left: 4px solid var(--mhbo-chat-accent);
+}
+
+.mhbo-booking-summary-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 12px;
+}
+
+.mhbo-booking-summary-title {
+    font-weight: 600;
+    font-size: 14px;
+    display: block;
+}
+
+.mhbo-booking-summary-dates {
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-booking-summary-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 10px;
+    margin-bottom: 15px;
+}
+
+.mhbo-summary-item label {
+    display: block;
+    font-size: 10px;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-summary-item span {
+    font-weight: 600;
+}
+
+.mhbo-booking-summary-footer {
+    border-top: 1px solid var(--mhbo-chat-border);
+    padding-top: 12px;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mhbo-booking-link-btn {
+    display: block;
+    width: 100%;
+    padding: 10px;
+    background: var(--mhbo-chat-accent);
+    color: #fff;
+    text-align: center;
+    border-radius: 100px;
+    text-decoration: none;
+    font-weight: 600;
+    transition: filter 0.2s;
+}
+
+.mhbo-booking-link-btn:hover {
+    filter: brightness(1.2);
+    color: #fff;
+    text-decoration: none;
+}
+
+/* Business Card */
+.mhbo-business-card {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.mhbo-biz-section {
+    padding-bottom: 10px;
+    border-bottom: 1px solid var(--mhbo-chat-border);
+}
+
+.mhbo-biz-section:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.mhbo-biz-section-title {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-weight: 600;
+    font-size: 11px;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+    color: var(--mhbo-chat-accent);
+}
+
+.mhbo-biz-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 4px;
+    gap: 10px;
+}
+
+.mhbo-biz-row span:first-child {
+    color: var(--mhbo-chat-text-muted);
+    font-size: 11px;
+    white-space: nowrap;
+}
+
+.mhbo-biz-row code {
+    background: rgba(0,0,0,0.05);
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: ui-monospace, monospace;
+    font-size: 11px;
+    flex: 1;
+    text-align: right;
+    cursor: copy;
+}
+
+.mhbo-qr-thumb {
+    width: 60px;
+    height: 60px;
+    border-radius: 4px;
+    border: 1px solid var(--mhbo-chat-border);
+    cursor: zoom-in;
+    transition: transform 0.2s;
+}
+
+.mhbo-qr-thumb:hover {
+    transform: scale(1.05);
+}
+
+.mhbo-copy-hint {
+    font-size: 9px;
+    color: var(--mhbo-chat-accent);
+    text-align: right;
+    margin-top: -2px;
+    opacity: 0;
+    transition: opacity 0.2s;
+}
+
+.mhbo-biz-row code:hover + .mhbo-copy-hint {
+    opacity: 1;
+}
+
+/* ─────────────────────────────────────────────────────────────────────────────
+   Availability Results Cards
+───────────────────────────────────────────────────────────────────────────── */
+
+.mhbo-availability-results {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.mhbo-avail-header {
+    font-size: 11px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.05em;
+    color: var(--mhbo-chat-text-muted);
+    padding-bottom: 6px;
+    border-bottom: 1px solid var(--mhbo-chat-border);
+}
+
+.mhbo-room-avail-card {
+    background: var(--mhbo-chat-bg);
+    border: 1px solid var(--mhbo-chat-border);
+    border-radius: var(--mhbo-chat-radius-sm);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+    transition: box-shadow var(--mhbo-chat-transition);
+}
+
+.mhbo-room-avail-card--multi {
+    border-left: 3px solid var(--mhbo-chat-accent);
+}
+
+.mhbo-dist-breakdown {
+    margin-top: 10px;
+    border-top: 1px solid var(--mhbo-chat-border);
+    padding-top: 8px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+}
+
+.mhbo-dist-row {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 12px;
+}
+
+.mhbo-dist-label {
+    font-weight: 600;
+    color: var(--mhbo-chat-text);
+}
+
+.mhbo-dist-guests {
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-multi-notice {
+    margin: 8px 0 0;
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+    font-style: italic;
+}
+
+.mhbo-room-thumb-wrap {
+    width: 100%;
+    height: 90px;
+    overflow: hidden;
+    flex-shrink: 0;
+}
+
+.mhbo-room-thumb {
+    width: 100%;
+    height: 100%;
+    object-fit: cover;
+    display: block;
+}
+
+.mhbo-room-avail-body {
+    padding: 10px 12px 4px;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    flex: 1;
+}
+
+.mhbo-room-avail-name-row {
+    display: flex;
+    align-items: flex-start;
+    justify-content: space-between;
+    gap: 6px;
+}
+
+.mhbo-room-avail-name {
+    font-weight: 600;
+    font-size: 13px;
+    line-height: 1.3;
+}
+
+.mhbo-room-badges {
+    display: flex;
+    gap: 4px;
+    flex-shrink: 0;
+    flex-wrap: wrap;
+    justify-content: flex-end;
+}
+
+.mhbo-room-badge {
+    font-size: 10px;
+    font-weight: 700;
+    padding: 2px 7px;
+    border-radius: 100px;
+    white-space: nowrap;
+    line-height: 1.4;
+}
+
+.mhbo-room-badge--hot {
+    background: #fff0f0;
+    color: #c53030;
+    border: 1px solid #fed7d7;
+}
+
+.mhbo-room-badge--low {
+    background: #fffbeb;
+    color: #b7791f;
+    border: 1px solid #fbd38d;
+}
+
+.mhbo-room-badge--multi {
+    background: #ebf8ff;
+    color: #2b6cb0;
+    border: 1px solid #bee3f8;
+}
+
+@media (prefers-color-scheme: dark) {
+    .mhbo-room-badge--hot   { background: #3b0a0a; color: #fc8181; border-color: #c53030; }
+    .mhbo-room-badge--low   { background: #2d2007; color: #fbd38d; border-color: #b7791f; }
+    .mhbo-room-badge--multi { background: #0d2137; color: #90caf9; border-color: #2b6cb0; }
+}
+
+.mhbo-room-capacity {
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-room-price {
+    display: flex;
+    align-items: baseline;
+    gap: 6px;
+}
+
+.mhbo-room-price strong {
+    font-size: 15px;
+    font-weight: 700;
+    color: var(--mhbo-chat-text);
+}
+
+.mhbo-room-price small {
+    font-size: 11px;
+    color: var(--mhbo-chat-text-muted);
+}
+
+.mhbo-room-avail-card .mhbo-booking-link-btn {
+    margin: 8px 12px 12px;
+    font-size: 12px;
+    padding: 8px;
+    border-radius: 100px;
+}

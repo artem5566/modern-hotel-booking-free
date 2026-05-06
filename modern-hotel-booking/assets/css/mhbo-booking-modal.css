@@ -1,0 +1,198 @@
+/* MHBO Booking Modal — Shell, Overlay, Drawer, Animations */
+
+/* ── Overlay ─────────────────────────────────────────────── */
+.mhbo-modal-overlay {
+    position: fixed;
+    inset: 0;
+    z-index: 99998;
+    background: rgba(15, 23, 42, 0.6);
+    backdrop-filter: blur(4px);
+    -webkit-backdrop-filter: blur(4px);
+    opacity: 0;
+    transition: opacity 0.25s ease;
+    pointer-events: none;
+}
+
+.mhbo-modal-overlay.is-open {
+    opacity: 1;
+    pointer-events: auto;
+}
+
+/* ── Drawer ──────────────────────────────────────────────── */
+.mhbo-modal-drawer {
+    position: fixed;
+    top: 0;
+    right: 0;
+    z-index: 99999;
+    box-sizing: border-box;
+    width: min(560px, 100vw);
+    height: 100dvh;
+    background: var(--mhbo-bg, #ffffff);
+    box-shadow: -8px 0 40px rgba(0, 0, 0, 0.18);
+    display: flex;
+    flex-direction: column;
+    transform: translateX(100%);
+    transition: transform 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    will-change: transform;
+    overflow: hidden;
+}
+
+.mhbo-modal-overlay.is-open .mhbo-modal-drawer {
+    transform: translateX(0);
+}
+
+/* ── Header ──────────────────────────────────────────────── */
+.mhbo-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 20px 24px;
+    border-bottom: 1px solid var(--mhbo-border, rgba(26, 54, 93, 0.15));
+    flex-shrink: 0;
+    background: var(--mhbo-primary, #1a365d);
+    color: #fff;
+}
+
+.mhbo-modal-title {
+    margin: 0;
+    font-size: 1.75rem;
+    font-weight: 800;
+    color: #ffffff;
+}
+
+.mhbo-modal-close {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 36px;
+    height: 36px;
+    border: none;
+    background: rgba(255, 255, 255, 0.15);
+    border-radius: 50%;
+    cursor: pointer;
+    color: #fff;
+    font-size: 1.2rem;
+    line-height: 1;
+    padding: 0;
+    transition: background 0.15s ease;
+    flex-shrink: 0;
+}
+
+.mhbo-modal-close:hover,
+.mhbo-modal-close:focus-visible {
+    background: rgba(255, 255, 255, 0.28);
+    outline: 2px solid rgba(255, 255, 255, 0.5);
+    outline-offset: 2px;
+}
+
+/* ── Body (scrollable) ───────────────────────────────────── */
+.mhbo-modal-body {
+    flex: 1 1 auto;
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    padding: 24px;
+    box-sizing: border-box;
+    scroll-padding-top: 16px;
+}
+
+.mhbo-modal-body::-webkit-scrollbar {
+    width: 5px;
+}
+
+.mhbo-modal-body::-webkit-scrollbar-thumb {
+    background: var(--mhbo-primary, #1a365d);
+    border-radius: 4px;
+}
+
+/* ── Loading state ───────────────────────────────────────── */
+.mhbo-modal-loading {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    gap: 16px;
+    padding: 60px 24px;
+    color: var(--mhbo-text-light, #64748b);
+    font-size: 0.9rem;
+}
+
+.mhbo-modal-close svg {
+    width: 32px;
+    height: 32px;
+    stroke-width: 2.5;
+}
+
+.mhbo-modal-spinner {
+    width: 40px;
+    height: 40px;
+    border: 3px solid var(--mhbo-border, rgba(26, 54, 93, 0.15));
+    border-top-color: var(--mhbo-primary, #1a365d);
+    border-radius: 50%;
+    animation: mhboSpin 0.7s linear infinite;
+}
+
+@keyframes mhboSpin {
+    to { transform: rotate(360deg); }
+}
+
+/* ── Error state ─────────────────────────────────────────── */
+.mhbo-modal-error {
+    margin: 24px 0;
+    padding: 16px 20px;
+    background: #fef2f2;
+    border: 1px solid #fecaca;
+    border-left: 4px solid #ef4444;
+    border-radius: var(--mhbo-radius, 12px);
+    color: #991b1b;
+    font-size: 0.9rem;
+    line-height: 1.5;
+}
+
+/* ── Mobile: bottom drawer ───────────────────────────────── */
+@media (max-width: 768px) {
+    .mhbo-modal-drawer {
+        top: auto;
+        right: 0;
+        bottom: 0;
+        left: 0;
+        width: 100%;
+        height: 92dvh;
+        border-radius: var(--mhbo-radius-lg, 24px) var(--mhbo-radius-lg, 24px) 0 0;
+        transform: translateY(100%);
+        box-shadow: 0 -8px 40px rgba(0, 0, 0, 0.18);
+    }
+
+    .mhbo-modal-overlay.is-open .mhbo-modal-drawer {
+        transform: translateY(0);
+    }
+
+    /* Drag handle indicator */
+    .mhbo-modal-header::before {
+        content: '';
+        position: absolute;
+        top: 10px;
+        left: 50%;
+        transform: translateX(-50%);
+        width: 40px;
+        height: 4px;
+        background: rgba(255, 255, 255, 0.4);
+        border-radius: 2px;
+    }
+
+    .mhbo-modal-header {
+        position: relative;
+        padding-top: 24px;
+    }
+}
+
+/* ── Reduced motion ──────────────────────────────────────── */
+@media (prefers-reduced-motion: reduce) {
+    .mhbo-modal-overlay,
+    .mhbo-modal-drawer {
+        transition: none;
+    }
+
+    .mhbo-modal-spinner {
+        animation-duration: 1.5s;
+    }
+}

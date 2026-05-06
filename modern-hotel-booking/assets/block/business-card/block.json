@@ -1,0 +1,46 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/business-card",
+    "version": "2.3.8",
+    "title": "Hotel: Business Card",
+    "category": "hotel-booking",
+    "icon": "id",
+    "description": "A compact summary of your hotel for headers or footers.",
+    "example": {
+        "attributes": {
+            "sections": "all"
+        }
+    },
+    "keywords": [
+        "business",
+        "card",
+        "contact"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "attributes": {
+        "sections": {
+            "type": "string",
+            "default": "company,whatsapp,banking,revolut"
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "color": {
+            "background": true,
+            "text": true,
+            "gradients": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": true
+        }
+    },
+    "editorScript": "file:./block.js"
+}
