@@ -90,11 +90,7 @@ class ChatSession {
      * @return array<array{role:string,content:string}>
      */
     public static function get_history( string $session_id ): array {
-        /* BUILD_PRO_START */
-        if ( License::is_active() ) {
-            return self::db_get_history( $session_id );
-        }
-        /* BUILD_PRO_END */
+        
         $transient_key = self::transient_key( $session_id );
         $history       = \get_transient( $transient_key );
 
@@ -110,14 +106,8 @@ class ChatSession {
      * @param array<mixed> $meta Optional metadata (tool_calls, raw_parts, thought_signature).
      */
     public static function add_message( string $session_id, string $role, string $content, array $meta = [] ): void {
-        /* BUILD_PRO_START */
-        if ( License::is_active() ) {
-            self::db_add_message( $session_id, $role, $content, $meta );
-            return;
-        }
-        /* BUILD_PRO_END */
 
-        // Free path: transient.
+// Free path: transient.
         $transient_key = self::transient_key( $session_id );
         $history       = \get_transient( $transient_key );
         if ( ! \is_array( $history ) ) {
@@ -382,12 +372,7 @@ class ChatSession {
     public static function clear_session( string $session_id ): void {
         \delete_transient( self::transient_key( $session_id ) );
 
-        /* BUILD_PRO_START */
-        if ( License::is_active() ) {
-            self::db_delete_session( $session_id );
-        }
-        /* BUILD_PRO_END */
-    }
+}
 
     // -------------------------------------------------------------------------
     // Helpers
@@ -405,145 +390,4 @@ class ChatSession {
     // PRO: DB storage
     // -------------------------------------------------------------------------
 
-    /* BUILD_PRO_START */
-
-    /**
-     * Create the chat sessions DB table on Pro activation.
-     * Also called automatically if the table is missing during a query.
-     */
-    public static function create_table(): void {
-        global $wpdb;
-        $table_name      = $wpdb->prefix . 'mhbo_chat_sessions';
-        $charset_collate = $wpdb->get_charset_collate();
-
-        $sql = "CREATE TABLE IF NOT EXISTS {$table_name} (
-            id              BIGINT(20)   UNSIGNED NOT NULL AUTO_INCREMENT,
-            session_id      CHAR(64)     NOT NULL,
-            guest_email     VARCHAR(200) DEFAULT NULL,
-            message_role    ENUM('user','assistant','tool') NOT NULL,
-            message_content LONGTEXT     NOT NULL,
-            tool_calls_json LONGTEXT     DEFAULT NULL,
-            booking_id      BIGINT(20)   UNSIGNED DEFAULT NULL,
-            created_at      DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
-            PRIMARY KEY (id),
-            KEY idx_session (session_id),
-            KEY idx_guest_email (guest_email),
-            KEY idx_booking (booking_id)
-        ) {$charset_collate};";
-
-        require_once \ABSPATH . 'wp-admin/includes/upgrade.php';
-        \dbDelta( $sql );
-    }
-
-    /**
-     * Get history from DB for a session.
-     *
-     * @param string $session_id
-     * @return array<array{role:string,content:string}>
-     */
-    private static function db_get_history( string $session_id ): array {
-        global $wpdb;
-        $table = $wpdb->prefix . 'mhbo_chat_sessions';
-
-        // Self-heal table if missing.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Rationale: Schema existence check for AI-concierge table; self-healing logic.
-        $table_exists = (bool) $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
-        if ( ! $table_exists ) {
-            self::create_table();
-        }
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Rationale: Retrieving chat history for active AI session; caching is handled at the application layer if needed.
-        $rows = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT message_role, message_content, tool_calls_json FROM %i WHERE session_id = %s ORDER BY id ASC",
-                $table,
-                $session_id
-            )
-        );
-
-        if ( ! \is_array( $rows ) ) {
-            return [];
-        }
-
-        return \array_map( static function ( object $row ): array {
-            $msg = [
-                'role'    => (string) $row->message_role,
-                'content' => (string) $row->message_content,
-            ];
-            if ( null !== $row->tool_calls_json && '' !== (string) $row->tool_calls_json ) {
-                $meta = \json_decode( (string) $row->tool_calls_json, true );
-                if ( \is_array( $meta ) ) {
-                    $msg = \array_merge( $msg, $meta );
-                }
-            }
-            return $msg;
-        }, (array) $rows );
-    }
-
-    /**
-     * Insert a message row into the DB.
-     *
-     * @param string       $session_id
-     * @param string       $role
-     * @param string       $content
-     * @param array<mixed> $meta
-     */
-    private static function db_add_message( string $session_id, string $role, string $content, array $meta = [] ): void {
-        global $wpdb;
-        $table = $wpdb->prefix . 'mhbo_chat_sessions';
-
-        // Self-heal table if missing.
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Rationale: Schema existence check for AI-concierge table; self-healing logic.
-        $table_exists = (bool) $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
-        if ( ! $table_exists ) {
-            self::create_table();
-        }
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
-        $wpdb->insert(
-            $table,
-            [
-                'session_id'      => $session_id,
-                'message_role'    => $role,
-                'message_content' => $content,
-                'tool_calls_json' => [] !== (array) $meta ? \wp_json_encode( $meta ) : null,
-            ],
-            [ '%s', '%s', '%s', '%s' ]
-        );
-    }
-
-    /**
-     * Delete all rows for a session from the DB.
-     *
-     * @param string $session_id
-     */
-    private static function db_delete_session( string $session_id ): void {
-        global $wpdb;
-        $table = $wpdb->prefix . 'mhbo_chat_sessions';
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $wpdb->delete( $table, [ 'session_id' => $session_id ], [ '%s' ] );
-    }
-
-    /**
-     * Link a booking ID to all messages in a session for attribution.
-     *
-     * @param string $session_id
-     * @param int    $booking_id
-     */
-    public static function link_booking( string $session_id, int $booking_id ): void {
-        global $wpdb;
-        $table = $wpdb->prefix . 'mhbo_chat_sessions';
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Rationale: Linking booking attribution to AI session; non-cacheable write.
-        $wpdb->update(
-            $table,
-            [ 'booking_id' => $booking_id ],
-            [ 'session_id' => $session_id ],
-            [ '%d' ],
-            [ '%s' ]
-        );
-    }
-
-    /* BUILD_PRO_END */
 }

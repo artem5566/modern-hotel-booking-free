@@ -867,14 +867,7 @@ class Client {
                 $body['tools'] = $tools;
             }
 
-            /* BUILD_PRO_START */
-            $effort = (string) get_option( 'mhbo_ai_reasoning_effort', 'none' );
-            if ( $effort !== 'none' && ( str_contains( $model, 'gpt-5.4' ) || str_contains( $model, 'o1' ) ) ) {
-                $body['reasoning'] = [ 'effort' => $effort ];
-            }
-            /* BUILD_PRO_END */
-
-            // 2026 BP: Standardize reasoning content for multi-turn persistence.
+// 2026 BP: Standardize reasoning content for multi-turn persistence.
             foreach ( $body['messages'] as &$bm ) {
                 if ( 'assistant' === ( $bm['role'] ?? '' ) && '' !== (string) ( $bm['thought'] ?? '' ) ) {
                     $bm['reasoning_content'] = $bm['thought'];
@@ -1030,17 +1023,7 @@ class Client {
             }, $messages ),
         ];
 
-        /* BUILD_PRO_START */
-        // Claude 4.6 Adaptive Thinking (April 2026 Protocol)
-        if ( str_contains( $model, '4-6' ) ) {
-            $body['thinking'] = [ 'type' => 'adaptive' ];
-            $effort = (string) get_option( 'mhbo_ai_reasoning_effort', 'none' );
-            if ( $effort !== 'none' ) {
-                $body['effort'] = $effort;
-            }
-        }
-        /* BUILD_PRO_END */
-        if ( [] !== $tools ) {
+if ( [] !== $tools ) {
             $body['tools'] = array_map( function ( $t ) {
                 return [
                     'name'         => $t['function']['name'] ?? $t['name'] ?? '',

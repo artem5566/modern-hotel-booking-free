@@ -146,20 +146,7 @@ jQuery(document).ready(function ($) {
                         checkout: item.can_checkout !== false
                     };
 
-                    /* BUILD_PRO_START */
-                    // Store stay restrictions (only if they exist)
-                    if (item.min_stay) {
-                        minStayData[item.date] = parseInt(item.min_stay);
-                    }
-                    if (item.max_stay) {
-                        maxStayData[item.date] = parseInt(item.max_stay);
-                    }
-                    // Store block reason for tooltip display
-                    if (item.reason) {
-                        reasonData[item.date] = item.reason;
-                    }
-                    /* BUILD_PRO_END */
-                });
+});
             }
 
             function renderFlatpickr() {
@@ -212,60 +199,8 @@ jQuery(document).ready(function ($) {
                         }
 
                         // 3. Guard: Min/Max Stay Enforcement (PRO)
-                        /* BUILD_PRO_START */
-                        if (selectedDates.length === 2) {
-                            const checkIn    = selectedDates[0];
-                            const checkOut   = selectedDates[1];
-                            const checkInStr = instance.formatDate(checkIn, "Y-m-d");
 
-                            const nights     = Math.round((checkOut - checkIn) / (1000 * 60 * 60 * 24));
-                            const minRequired = minStayData[checkInStr];
-                            const maxAllowed  = maxStayData[checkInStr];
-
-                            if (minRequired && nights < minRequired) {
-                                // Build actionable message: tell user the earliest valid checkout date
-                                const earliest = new Date(checkIn);
-                                earliest.setDate(earliest.getDate() + minRequired);
-                                const earliestStr = earliest.toLocaleDateString(
-                                    document.documentElement.lang || 'en',
-                                    { month: 'short', day: 'numeric' }
-                                );
-                                // translators: %1$d = number of nights, %2$s = earliest checkout date
-                                const base = (mhbo_calendar.i18n.api_err_min_stay || 'Minimum stay is %d nights.');
-                                const hint = (mhbo_calendar.i18n.min_stay_hint || 'Please select %s or later as your check-out date.');
-                                const msg  = base.replace('%d', minRequired).replace('%1$d', minRequired)
-                                           + ' ' + hint.replace('%s', earliestStr).replace('%2$s', earliestStr);
-                                showConstraintHint(msg);
-                                // Keep check-in selected so user just needs to pick a different checkout
-                                instance.setDate([checkIn], false);
-                                return;
-                            }
-
-                            if (maxAllowed && nights > maxAllowed) {
-                                // Build actionable message: tell user the latest valid checkout date
-                                const latest = new Date(checkIn);
-                                latest.setDate(latest.getDate() + maxAllowed);
-                                const latestStr = latest.toLocaleDateString(
-                                    document.documentElement.lang || 'en',
-                                    { month: 'short', day: 'numeric' }
-                                );
-                                // translators: %1$d = number of nights, %2$s = latest checkout date
-                                const base = (mhbo_calendar.i18n.api_err_max_stay || 'Maximum stay is %d nights.');
-                                const hint = (mhbo_calendar.i18n.max_stay_hint || 'Please select %s or earlier as your check-out date.');
-                                const msg  = base.replace('%d', maxAllowed).replace('%1$d', maxAllowed)
-                                           + ' ' + hint.replace('%s', latestStr).replace('%2$s', latestStr);
-                                showConstraintHint(msg);
-                                // Keep check-in selected so user just needs to pick a different checkout
-                                instance.setDate([checkIn], false);
-                                return;
-                            }
-
-                            // Valid selection — clear any lingering constraint hint
-                            hideConstraintHint();
-                        }
-                        /* BUILD_PRO_END */
-
-                        // 2. Guard: Check-Out Eligibility 
+// 2. Guard: Check-Out Eligibility 
                         if (selectedDates.length === 2 && dateStrClicked && eligibilityData[dateStrClicked]) {
                             if (!eligibilityData[dateStrClicked].checkout) {
                                 showInlineError(mhbo_calendar.i18n.checkin_only_error || 'This date is restricted to check-ins only.');
@@ -400,12 +335,7 @@ jQuery(document).ready(function ($) {
                             $(dayElem).addClass('has-price');
                         }
 
-                        /* BUILD_PRO_START */
-                        // Stay restriction data is stored in minStayData/maxStayData but NOT
-                        // rendered as badges — constraints are enforced via the onChange validator
-                        // and communicated through the inline error box and hover tooltip instead.
-                        /* BUILD_PRO_END */
-                    }
+}
                 });
 
                 // ATTACH INSTANCE TO WRAPPER (CRITICAL FOR HARDENING)
@@ -413,33 +343,8 @@ jQuery(document).ready(function ($) {
 
                 // --- INTERACTIVE PRICE-ON-HOVER (2026 BP) ---
                 $wrapper.on('mousemove', '.flatpickr-day', function (e) {
-                    /* BUILD_PRO_START */
-                    // Show block reason tooltip for disabled dates (works with or without check-in selected)
-                    if ($(this).hasClass('flatpickr-disabled') && this.dateObj) {
-                        const disabledDateStr = picker ? picker.formatDate(this.dateObj, "Y-m-d") : '';
-                        const reason = disabledDateStr ? reasonData[disabledDateStr] : null;
-                        if (reason) {
-                            const reasonLabels = {
-                                booked:      mhbo_calendar.i18n.reason_booked      || 'Booked',
-                                manual:      mhbo_calendar.i18n.reason_manual      || 'Unavailable',
-                                maintenance: mhbo_calendar.i18n.reason_maintenance || 'Maintenance'
-                            };
-                            $tooltip.find('.mhbo-tooltip-nights').text('');
-                            $tooltip.find('.mhbo-tooltip-price').hide();
-                            $tooltip.find('.mhbo-tooltip-constraint')
-                                .text(reasonLabels[reason] || reason)
-                                .show();
-                            $tooltip.css({ left: e.clientX, top: e.clientY })
-                                .addClass('mhbo-visible')
-                                .removeClass('mhbo-tooltip-warn');
-                            return;
-                        }
-                    }
-                    /* BUILD_PRO_END */
 
-
-
-                    if (!picker || picker.selectedDates.length !== 1) {
+if (!picker || picker.selectedDates.length !== 1) {
                         $tooltip.removeClass('mhbo-visible');
                         $wrapper.find('.mhbo-range-hover').removeClass('mhbo-range-hover');
                         return;
@@ -503,33 +408,7 @@ jQuery(document).ready(function ($) {
                         $tooltip.find('.mhbo-tooltip-price').hide();
                     }
 
-                    /* BUILD_PRO_START */
-                    // Show live constraint info/warning in tooltip so user knows the rule before clicking.
-                    // — Violating (nights < min or nights > max): show ⚠ warning style.
-                    // — Complying/No constraint: hide the span.
-                    const checkInStr = picker.formatDate(start, "Y-m-d");
-                    const minReqHover = minStayData[checkInStr];
-                    const maxAllHover = maxStayData[checkInStr];
-                    const $constraintSpan = $tooltip.find('.mhbo-tooltip-constraint');
-                    
-                    if (minReqHover && nights < minReqHover) {
-                        $constraintSpan
-                            .text((mhbo_calendar.i18n.tooltip_min_hint || '⚠ Min stay: %d nights').replace('%d', minReqHover))
-                            .show();
-                        $tooltip.addClass('mhbo-tooltip-warn');
-                    } else if (maxAllHover && nights > maxAllHover) {
-                        $constraintSpan
-                            .text((mhbo_calendar.i18n.tooltip_max_hint || '⚠ Max stay: %d nights').replace('%d', maxAllHover))
-                            .show();
-                        $tooltip.addClass('mhbo-tooltip-warn');
-                    } else {
-                        // Meets constraint OR no constraint: hide the span
-                        $constraintSpan.hide();
-                        $tooltip.removeClass('mhbo-tooltip-warn');
-                    }
-                    /* BUILD_PRO_END */
-
-                    // Use clientX/Y for position:fixed elements to avoid scroll offsets
+// Use clientX/Y for position:fixed elements to avoid scroll offsets
                     $tooltip.css({
                         left: e.clientX,
                         top: e.clientY
@@ -662,32 +541,7 @@ jQuery(document).ready(function ($) {
                 return;
             }
 
-            /* BUILD_PRO_START */
-            // Final min/max stay guard — prevents bypassing the calendar validator by, e.g.,
-            // typing dates directly or arriving via a deep-link with pre-filled values.
-            const minStayFinal = $wrapper.data('mhbo-min-stay-data') || {};
-            const maxStayFinal = $wrapper.data('mhbo-max-stay-data') || {};
-            if (minStayFinal[checkIn] !== undefined || maxStayFinal[checkIn] !== undefined) {
-                const ciParts = checkIn.split('-');
-                const coParts = checkOut.split('-');
-                const nightsFinal = Math.round(
-                    (new Date(coParts[0], coParts[1] - 1, coParts[2]) -
-                     new Date(ciParts[0], ciParts[1] - 1, ciParts[2])) / 86400000
-                );
-                const minReq = minStayFinal[checkIn];
-                const maxAll = maxStayFinal[checkIn];
-                if (minReq && nightsFinal < minReq) {
-                    showError((mhbo_calendar.i18n.api_err_min_stay || 'Minimum stay is %d nights.').replace('%d', minReq).replace('%1$d', minReq));
-                    return;
-                }
-                if (maxAll && nightsFinal > maxAll) {
-                    showError((mhbo_calendar.i18n.api_err_max_stay || 'Maximum stay is %d nights.').replace('%d', maxAll).replace('%1$d', maxAll));
-                    return;
-                }
-            }
-            /* BUILD_PRO_END */
-
-            // Modal mode: dispatch event instead of submitting the form
+// Modal mode: dispatch event instead of submitting the form
             const modalMode = $wrapper.data('modal-mode') === '1' || $wrapper.data('modal-mode') === 1;
             if (modalMode && typeof window.MhboModal !== 'undefined') {
                 document.dispatchEvent(new CustomEvent('mhboBookNow', {

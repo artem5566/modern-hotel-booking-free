@@ -52,9 +52,7 @@ class Info {
        ADMIN MENU
        ═══════════════════════════════════════════════════════════════ */
 
-
-
-    /* ═══════════════════════════════════════════════════════════════
+/* ═══════════════════════════════════════════════════════════════
        ADMIN ASSETS
        ═══════════════════════════════════════════════════════════════ */
 
@@ -458,8 +456,7 @@ class Info {
     private function render_tab_company( array $data ): void {
         ?>
 
-
-            <table class="form-table" role="presentation">
+<table class="form-table" role="presentation">
                 <tbody>
                     <tr>
                         <th scope="row"><label for="company_name"><?php echo esc_html(I18n::get_label('business_label_company_name')); ?></label></th>
@@ -688,4 +685,3 @@ class Info {
         <?php
     }
 }
-

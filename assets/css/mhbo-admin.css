@@ -1622,7 +1622,6 @@
     }
 }
 
-
 @media (max-width: 480px) {
     .mhbo-header-actions {
         flex-direction: column;
@@ -1979,8 +1978,6 @@
     transform: translateY(-4px);
     box-shadow: 0 8px 16px hsla(258, 68%, 55%, 0.3) !important;
 }
-
-
 
 /* ==========================================================================
    PREMIUM CONFIGURATION FORM (GLASSMORPHISM LIGHT)

@@ -230,95 +230,7 @@ class Pricing
         return [] !== $available ? $available[0] : false;
     }
 
-    /* BUILD_PRO_START */
-    /**
-     * Calculate a multi-room booking suggestion for a group that exceeds single-unit capacity.
-     *
-     * @param int    $type_id     Room type ID.
-     * @param string $check_in    Check-in date.
-     * @param string $check_out   Check-out date.
-     * @param int    $adults      Total adults.
-     * @param int    $children    Total children.
-     * @param int[]  $child_ages  Array of child ages.
-     * @return array<string, mixed>|false Multi-room suggestion data or false.
-     */
-    public static function calculate_multi_room_booking(int $type_id, string $check_in, string $check_out, int $adults, int $children, array $child_ages = []): array|false
-    {
-        global $wpdb;
-        // 1. Get Room Type Policy
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Rationale: One-off fetch for multi-room grouping policy; derived metadata.
-        $type = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}mhbo_room_types WHERE id = %d", $type_id));
-        if (null === $type) return false;
-
-        $max_a = (int)$type->max_adults;
-        $max_c = (int)$type->max_children;
-        $max_t = $max_a + $max_c;
-
-        if ($max_t <= 0) return false;
-
-        // 2. Calculate needed units (conservative)
-        $needed_by_total = (int) ceil(($adults + $children) / $max_t);
-        $needed_by_adults = $max_a > 0 ? (int) ceil($adults / $max_a) : 0;
-        $num_rooms = max($needed_by_total, $needed_by_adults);
-
-        // 3. Verify availability of N units
-        $available_ids = self::get_available_unit_ids_of_type($type_id, $check_in, $check_out);
-        if (count($available_ids) < $num_rooms) return false;
-
-        $room_units = array_slice($available_ids, 0, $num_rooms);
-        $currency   = self::get_currency_code();
-        $total_sum  = Money::fromCents(0, $currency);
-        $nights     = (int) ceil((strtotime($check_out) - strtotime($check_in)) / DAY_IN_SECONDS);
-        $breakdown  = [];
-
-        // 4. Distribute guests
-        $rem_a = $adults;
-        $rem_c = $children;
-        $rem_ages = $child_ages;
-
-        for ($i = 0; $i < $num_rooms; $i++) {
-            // Fair distribution: Try to put 1 adult in each room first
-            $room_a = 0;
-            if ($rem_a > ($num_rooms - $i - 1)) {
-                $room_a = (int) ceil($rem_a / ($num_rooms - $i));
-            }
-            $room_a = min($room_a, $max_a);
-
-            // Remaining slots for children
-            $room_c = min($rem_c, $max_t - $room_a);
-            $room_c = min($room_c, $max_c); // Stay within child cap per room if possible
-
-            $room_ages = array_slice($rem_ages, 0, $room_c);
-
-            // Calculate price for THIS room
-            $calc = self::calculate_booking_money($room_units[$i], $check_in, $check_out, $room_a, [], $room_c, $room_ages);
-            if ($calc && isset($calc['total'])) {
-                $total_sum = $total_sum->add($calc['total']);
-                $breakdown[] = [
-                    'room_id' => $room_units[$i],
-                    'adults'  => $room_a,
-                    'children' => $room_c,
-                    'total'   => (float) $calc['total']->toDecimal()
-                ];
-            }
-
-            $rem_a -= $room_a;
-            $rem_c -= $room_c;
-            $rem_ages = array_slice($rem_ages, $room_c);
-        }
-
-        return [
-            'type_id'     => $type_id,
-            'num_rooms'   => $num_rooms,
-            'total_price' => (float) $total_sum->toDecimal(),
-            'currency'    => $currency,
-            'nights'      => $nights,
-            'breakdown'   => $breakdown
-        ];
-    }
-    /* BUILD_PRO_END */
-
-    /**
+/**
      * Bulk prime the room cache for a list of IDs.
      *
      * @param array<int> $room_ids Array of room IDs.
@@ -523,9 +435,7 @@ class Pricing
         int $children,
         array $child_ages
     ): array|false {
-        /* BUILD_PRO_START */
-        self::ensure_pro_init();
-        /* BUILD_PRO_END */
+        
         $room = self::get_room_pricing_data($room_id);
         if (!$room) {
             return false;
@@ -563,219 +473,18 @@ class Pricing
         // --- Children pricing (Pro) ---
         $children_total_money = Money::fromCents(0, $currency);
 
-        /* BUILD_PRO_START */
-        $children_enabled = (bool) get_option('mhbo_children_enabled', 1);
-
-        if ($children_enabled && $children > 0) {
-            $free_limit  = (int) ($room->child_age_free_limit ?? 0);
-            $child_rate  = Money::fromDecimal((string) ($room->child_rate ?? '0'), $currency);
-
-            // Classify: ages present → use them; missing ages default to chargeable (2026 BP safety)
-            // When free_limit = 0 it means "no free age — charge all children regardless of age."
-            // Only when free_limit > 0 do we exempt children at or below that age.
-            $chargeable = 0;
-            // 1. Process provided ages (Strict Age check: If age > limit, child is chargeable).
-            // This fix ensures that if free_limit = 0, age 0 (baby) stays FREE, and age 1+ are charged.
-            foreach ($child_ages as $age) {
-                if ((int) $age > $free_limit) {
-                    $chargeable++;
-                }
-            }
-
-            // 2. Default for missing ages: Assume "Child Free Age + 1" (Chargeable by default).
-            // This provides a conservative price quote before specific ages are entered.
-            $missing = max(0, $children - count($child_ages));
-            $chargeable += $missing;
-
-            // Smart allocation: fill empty adult slots before billing children
-            $empty_adult_slots = max(0, $max_adults - $adults);
-            $billed            = max(0, $chargeable - $empty_adult_slots);
-
-            if ($billed > 0 && $child_rate->isPositive()) {
-                $children_total_money = $child_rate->multiply((string) $billed)->multiply((string) $nights);
-            }
-        }
-        /* BUILD_PRO_END */
-
-        // --- Extras pricing (Pro) ---
+// --- Extras pricing (Pro) ---
         $extras_total_money = Money::fromCents(0, $currency);
         $extras_breakdown   = [];
 
-        /* BUILD_PRO_START */
-        // Auto-inject compulsory extras regardless of user selection (e.g. cleaning fees, resort fees).
-        // Server-side injection is authoritative — the hidden frontend inputs are for live preview only.
-        $all_defined_extras = (array) get_option('mhbo_pro_extras', []);
-        foreach ($all_defined_extras as $_compulsory_ex) {
-            if ( (bool) ( $_compulsory_ex['compulsory'] ?? false ) && isset( $_compulsory_ex['id'] ) ) {
-                $_cid = (string) $_compulsory_ex['id'];
-                if (!isset($extras[$_cid])) {
-                    $extras[$_cid] = 1;
-                }
-            }
-        }
-        /* BUILD_PRO_END */
-
-        /* BUILD_PRO_START */
-        if (is_array($extras) && [] !== $extras) {
-            $available_extras = (array) get_option('mhbo_pro_extras', []);
-            $extras_map       = [];
-            foreach ($available_extras as $ex) {
-                if (isset($ex['id'])) {
-                    $extras_map[ (string) $ex['id'] ] = $ex;
-                }
-            }
-
-            $total_occupancy = $adults + $children;
-
-            foreach ($extras as $raw_id => $raw_val) {
-                $ex_id = sanitize_key((string) $raw_id);
-                if (!isset($extras_map[$ex_id])) {
-                    continue;
-                }
-
-                $extra        = $extras_map[$ex_id];
-                $control_type = $extra['control_type'] ?? 'checkbox';
-                $pricing_type = $extra['pricing_type'] ?? 'fixed';
-                $quantity     = 0;
-
-                if ('checkbox' === $control_type && '1' === (string) $raw_val) {
-                    $quantity = 1;
-                } elseif ('quantity' === $control_type) {
-                    $quantity = absint($raw_val);
-                    // Overflow protection: cap quantity to the relevant head-count maximum.
-                    if (in_array($pricing_type, ['per_person', 'per_person_per_night'], true)) {
-                        $quantity = min($quantity, max(1, $total_occupancy));
-                    } elseif (in_array($pricing_type, ['per_adult', 'per_adult_per_night'], true)) {
-                        $quantity = min($quantity, max(1, $adults));
-                    } elseif (in_array($pricing_type, ['per_child', 'per_child_per_night'], true)) {
-                        $quantity = min($quantity, max(0, $children));
-                    }
-                }
-
-                if ($quantity <= 0) {
-                    continue;
-                }
-
-                $price      = Money::fromDecimal((string) ($extra['price'] ?? '0'), $currency);
-                $extra_cost = Money::fromCents(0, $currency);
-
-                // Resolve head-count for person-based pricing:
-                //   per_person / per_person_per_night → total occupancy (adults + children)
-                //   per_adult  / per_adult_per_night  → adults only
-                //   per_child  / per_child_per_night  → children only
-                // For checkbox control the person count comes from the booking occupancy.
-                // For quantity control the guest entered a count directly.
-                $total_guests = $adults + $children; // "Per Guest Selection" semantic
-
-                $effective_multiplier = 1;
-
-                switch ($pricing_type) {
-                    case 'per_person':
-                        // "Per Guest Selection" — price × total occupancy (adults + kids)
-                        $people              = ('checkbox' === $control_type) ? max(1, $total_guests) : max(1, $quantity);
-                        $extra_cost          = $price->multiply((string) $people);
-                        $effective_multiplier = $people;
-                        break;
-
-                    case 'per_person_per_night':
-                        // "Guest Count × Nights" — price × total occupancy × nights
-                        $people              = ('checkbox' === $control_type) ? max(1, $total_guests) : max(1, $quantity);
-                        $extra_cost          = $price->multiply((string) $people)->multiply((string) $nights);
-                        $effective_multiplier = $people * $nights;
-                        break;
-
-                    case 'per_adult':
-                        // "Per Adult Selection" — price × adults only
-                        $people              = ('checkbox' === $control_type) ? max(1, $adults) : max(1, $quantity);
-                        $extra_cost          = $price->multiply((string) $people);
-                        $effective_multiplier = $people;
-                        break;
-
-                    case 'per_adult_per_night':
-                        // "Adult Count × Nights"
-                        $people              = ('checkbox' === $control_type) ? max(1, $adults) : max(1, $quantity);
-                        $extra_cost          = $price->multiply((string) $people)->multiply((string) $nights);
-                        $effective_multiplier = $people * $nights;
-                        break;
-
-                    case 'per_child':
-                        // "Per Child Selection" — price × children only (0 children = no cost)
-                        $people              = ('checkbox' === $control_type) ? $children : max(0, $quantity);
-                        if ($people > 0) {
-                            $extra_cost = $price->multiply((string) $people);
-                        }
-                        $effective_multiplier = $people;
-                        break;
-
-                    case 'per_child_per_night':
-                        // "Child Count × Nights"
-                        $people              = ('checkbox' === $control_type) ? $children : max(0, $quantity);
-                        if ($people > 0) {
-                            $extra_cost = $price->multiply((string) $people)->multiply((string) $nights);
-                        }
-                        $effective_multiplier = $people * $nights;
-                        break;
-
-                    case 'per_night':
-                        // "Nightly Recurring" — price × quantity × nights (quantity=1 for checkbox)
-                        $extra_cost          = $price->multiply((string) $quantity)->multiply((string) $nights);
-                        $effective_multiplier = $quantity * $nights;
-                        break;
-
-                    default: // fixed — one-time flat fee, quantity=1 for checkbox
-                        $extra_cost          = $price->multiply((string) $quantity);
-                        $effective_multiplier = $quantity;
-                        break;
-                }
-
-                $extras_total_money = $extras_total_money->add($extra_cost);
-
-                // Rule 10 (DREAM_STATE fault #1): associative map keyed by ID, not indexed array
-                $extras_breakdown[$ex_id] = [
-                    'id'           => $ex_id,
-                    'name'         => $extra['name'] ?? '',
-                    'price'        => $price,
-                    'quantity'     => $quantity,
-                    'multiplier'   => $effective_multiplier,
-                    'pricing_type' => $pricing_type,
-                    'total'        => $extra_cost,
-                    'compulsory'   => (bool) ( $extra['compulsory'] ?? false ) ? 1 : 0,
-                ];
-            }
-        }
-        /* BUILD_PRO_END */
-
-        // --- Pre-fee subtotal (room + children + extras, pre-tax) ---
+// --- Pre-fee subtotal (room + children + extras, pre-tax) ---
         $pre_fee_subtotal_money = $room_total_money->add($children_total_money)->add($extras_total_money);
 
         // --- Service Fee (Pro) ---
         $service_fee_money = Money::fromCents(0, $currency);
         $service_fee_label = '';
-        /* BUILD_PRO_START */
-        if (get_option('mhbo_service_fee_enabled', 0)) {
-            $sf_type       = (string) get_option('mhbo_service_fee_type', 'fixed');
-            $service_fee_label = (string) get_option('mhbo_service_fee_label', 'Service Fee');
 
-            if ('percentage' === $sf_type) {
-                $sf_pct = (float) get_option('mhbo_service_fee_percentage', 0);
-                if ($sf_pct > 0) {
-                    // Percentage is applied to the pre-fee subtotal (pre-tax gross).
-                    // 2026 BP: Guard bcdiv for hosts missing bcmath.
-                    $sf_divisor = function_exists( 'bcdiv' )
-                        ? bcdiv( (string) $sf_pct, '100', 6 )
-                        : number_format( $sf_pct / 100, 6, '.', '' );
-                    $service_fee_money = $pre_fee_subtotal_money->multiply( (string) $sf_divisor );
-                }
-            } else {
-                $sf_amount = (string) get_option('mhbo_service_fee_amount', '0');
-                if ((float) $sf_amount > 0) {
-                    $service_fee_money = Money::fromDecimal($sf_amount, $currency);
-                }
-            }
-        }
-        /* BUILD_PRO_END */
-
-        // Full subtotal includes service fee (used when tax is disabled)
+// Full subtotal includes service fee (used when tax is disabled)
         $subtotal_money = $pre_fee_subtotal_money->add($service_fee_money);
 
         // Build extras list for tax engine (Tax expects indexed array with id/name/total)

@@ -44,7 +44,6 @@ use function strtotime;
 use function class_exists;
 use function implode;
 
-
 if ( ! \defined( 'ABSPATH' ) ) {
     exit;
 }
@@ -133,30 +132,7 @@ class CreateBookingLink {
 
         $nights = (int) ( ( $co_ts - $ci_ts ) / \DAY_IN_SECONDS );
 
-        /* BUILD_PRO_START */
-        // ── Validate stay restrictions (min/max nights) ─────────────
-        if ( \class_exists( \MHBO\Pro\AdminCalendar::class ) ) {
-            $min_stay = \MHBO\Pro\AdminCalendar::resolve_min_stay( $room_id, $check_in );
-            $max_stay = \MHBO\Pro\AdminCalendar::resolve_max_stay( $room_id, $check_in );
-
-            if ( null !== $min_stay && $nights < $min_stay ) {
-                return [
-                    'error'            => \sprintf( I18n::get_label( 'api_err_min_stay' ), $min_stay ),
-                    'error_code'       => 'min_stay',
-                    'internal_message' => \sprintf( 'Guest requested %d night(s) but minimum stay is %d nights. Ask them to adjust the check-out date.', $nights, $min_stay ),
-                ];
-            }
-            if ( null !== $max_stay && $nights > $max_stay ) {
-                return [
-                    'error'            => \sprintf( I18n::get_label( 'api_err_max_stay' ), $max_stay ),
-                    'error_code'       => 'max_stay',
-                    'internal_message' => \sprintf( 'Guest requested %d night(s) but maximum stay is %d nights. Ask them to shorten the stay.', $nights, $max_stay ),
-                ];
-            }
-        }
-        /* BUILD_PRO_END */
-
-        // ── Validate room exists ────────────────────────────────────
+// ── Validate room exists ────────────────────────────────────
         global $wpdb;
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
         $room = $wpdb->get_row( $wpdb->prepare(

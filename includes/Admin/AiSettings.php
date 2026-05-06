@@ -63,23 +63,7 @@ class AiSettings {
             'callback'            => [ self::class, 'rest_test_fallback' ],
             'permission_callback' => fn() => current_user_can( 'manage_options' ),
         ] );
-        /* BUILD_PRO_START */
-        register_rest_route( 'mhbo/v1', '/ai/sync-discovery', [
-            'methods'             => 'POST',
-            'callback'            => [ self::class, 'rest_sync_discovery' ],
-            'permission_callback' => fn() => current_user_can( 'manage_options' ),
-        ] );
-        register_rest_route( 'mhbo/v1', '/ai/cleanup-discovery', [
-            'methods'             => 'POST',
-            'callback'            => [ self::class, 'rest_cleanup_discovery' ],
-            'permission_callback' => fn() => current_user_can( 'manage_options' ),
-        ] );
-        register_rest_route( 'mhbo/v1', '/ai/create-analytics-table', [
-            'methods'             => 'POST',
-            'callback'            => [ self::class, 'rest_create_analytics_table' ],
-            'permission_callback' => fn() => current_user_can( 'manage_options' ),
-        ] );
-        /* BUILD_PRO_END */
+        
         register_rest_route( 'mhbo/v1', '/ai/clear-lock', [
             'methods'             => 'POST',
             'callback'            => [ self::class, 'rest_clear_lock' ],
@@ -144,28 +128,7 @@ class AiSettings {
         ], 200 );
     }
 
-    /* BUILD_PRO_START */
-    /**
-     * REST Callback: Sync Discovery.
-     */
-    public static function rest_sync_discovery( WP_REST_Request $request ): WP_REST_Response {
-        $result = LlmFile::sync();
-        if ( $result['success'] ) {
-            return new WP_REST_Response( $result, 200 );
-        }
-        return new WP_REST_Response( $result, 400 );
-    }
-
-    /**
-     * REST Callback: Cleanup Discovery.
-     */
-    public static function rest_cleanup_discovery( WP_REST_Request $request ): WP_REST_Response {
-        LlmFile::cleanup();
-        return new WP_REST_Response( [ 'success' => true, 'message' => __( 'Discovery files removed.', 'modern-hotel-booking' ) ], 200 );
-    }
-    /* BUILD_PRO_END */
-
-    /**
+/**
      * REST endpoint to create the analytics database table.
      *
      * @param \WP_REST_Request $request
@@ -288,9 +251,7 @@ class AiSettings {
         $provider      = (string) get_option( 'mhbo_ai_provider', 'gemini' );
         $api_key       = (string) get_option( 'mhbo_ai_api_key', '' );
         $model         = (string) get_option( 'mhbo_ai_model', 'gemini-3.1-flash-lite-preview' );
-        /* BUILD_PRO_START */
-        $reasoning_effort = (string) get_option( 'mhbo_ai_reasoning_effort', 'none' );
-        /* BUILD_PRO_END */
+        
         /* BUILD_FREE_START
         $reasoning_effort = 'none';
         BUILD_FREE_END */
@@ -321,11 +282,8 @@ class AiSettings {
 
         // Language detection — runs on every page load so the badge is live.
         [ 'locale' => $detected_locale, 'source' => $lang_source, 'label' => $lang_source_label ] = self::get_multilang_status();
-        /* BUILD_PRO_START */
-        $mcp_url       = McpServer::get_endpoint_url();
-        /* BUILD_PRO_END */
 
-        $is_pro = License::is_pro_active();
+$is_pro = false;
 
         // KB info.
         $kb_snapshot_time = (string) get_option( 'mhbo_kb_snapshot_updated', '' );
@@ -335,10 +293,7 @@ class AiSettings {
             'general'    => __( 'General', 'modern-hotel-booking' ),
             'persona'    => __( 'Assistant Persona', 'modern-hotel-booking' ),
             'appearance' => __( 'Appearance', 'modern-hotel-booking' ),
-            /* BUILD_PRO_START */
-            'discovery'  => __( 'AI Discovery (GEO)', 'modern-hotel-booking' ),
-            'analytics'  => __( 'Analytics', 'modern-hotel-booking' ),
-            /* BUILD_PRO_END */
+            
         ];
 
         ?>
@@ -357,10 +312,7 @@ class AiSettings {
                 'general'    => 'dashicons-admin-generic',
                 'persona'    => 'dashicons-admin-users',
                 'appearance' => 'dashicons-format-image',
-                /* BUILD_PRO_START */
-                'discovery'  => 'dashicons-cloud',
-                'analytics'  => 'dashicons-chart-bar',
-                /* BUILD_PRO_END */
+                
             ] );
             ?>
 
@@ -474,11 +426,7 @@ class AiSettings {
                                     <p style="margin: 0; font-size: 13px; color: #78350f;">
                                         <?php esc_html_e( 'By default, free projects are capped at 20 RPM. Enabling billing (Tier 1) immediately increases your limits by 10x.', 'modern-hotel-booking' ); ?>
                                     </p>
-                                    <?php /* BUILD_PRO_START */ ?>
-                                    <a href="https://aistudio.google.com/" target="_blank" class="button button-link" style="padding-left:0; margin-top:10px;">
-                                        <?php esc_html_e( 'Upgrade to Tier 1 →', 'modern-hotel-booking' ); ?>
-                                    </a>
-                                    <?php /* BUILD_PRO_END */ ?>
+                                    
                                 </div>
                                 <div style="display: flex; gap: 10px; align-items: center;">
                                     <button type="button" id="mhbo_ai_clear_lock" class="button button-secondary">
@@ -563,9 +511,7 @@ class AiSettings {
                                                     <?php
                                                     $openai_models = [
                                                         'gpt-5.4-mini' => \__( 'GPT-5.4 Mini ⚡ (Fast & Smart)', 'modern-hotel-booking' ),
-                                                        /* BUILD_PRO_START */
-                                                        'gpt-5.4'      => \__( 'GPT-5.4 Frontier (Flagship Intelligence)', 'modern-hotel-booking' ),
-                                                        /* BUILD_PRO_END */
+                                                        
                                                         'gpt-4o'       => \__( 'GPT-4o (Legacy Stable)', 'modern-hotel-booking' ),
                                                         'gpt-4o-mini'  => \__( 'GPT-4o Mini (Legacy Budget)', 'modern-hotel-booking' ),
                                                         'custom'       => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
@@ -584,9 +530,7 @@ class AiSettings {
                                                     <?php
                                                     $anthropic_models = [
                                                         'claude-sonnet-4-6' => \__( 'Claude Sonnet 4.6 (Most Balanced)', 'modern-hotel-booking' ),
-                                                        /* BUILD_PRO_START */
-                                                        'claude-opus-4-6'   => \__( 'Claude Opus 4.6 (Supreme Reasoning)', 'modern-hotel-booking' ),
-                                                        /* BUILD_PRO_END */
+                                                        
                                                         'claude-3-5-sonnet-20240620' => \__( 'Claude 3.5 Sonnet (Legacy)', 'modern-hotel-booking' ),
                                                         'custom'            => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
                                                     ];
@@ -609,20 +553,7 @@ class AiSettings {
                                                 </div>
                                             </td>
                                         </tr>
-                                        <?php /* BUILD_PRO_START */ ?>
-                                        <tr id="mhbo_ai_reasoning_effort_row" style="display:<?php echo in_array($provider, ['openai', 'anthropic'], true) ? 'table-row' : 'none'; ?>;">
-                                            <th><?php esc_html_e( 'Reasoning Intensity', 'modern-hotel-booking' ); ?></th>
-                                            <td>
-                                                <select name="mhbo_ai_reasoning_effort" style="width: 100%;">
-                                                    <option value="none"    <?php selected( $reasoning_effort, 'none' ); ?>><?php esc_html_e( 'Auto (Balanced)', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="low"     <?php selected( $reasoning_effort, 'low' ); ?>><?php esc_html_e( 'Low (Speed Focused)', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="medium"  <?php selected( $reasoning_effort, 'medium' ); ?>><?php esc_html_e( 'Medium (Deeper Reasoning)', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="high"    <?php selected( $reasoning_effort, 'high' ); ?>><?php esc_html_e( 'High (Advanced Complex)', 'modern-hotel-booking' ); ?></option>
-                                                </select>
-                                                <p class="description"><?php esc_html_e( 'Higher intensity increases intelligence and accuracy but raises operational token costs. (GPT-5.4 & Claude 4.6+)', 'modern-hotel-booking' ); ?></p>
-                                            </td>
-                                        </tr>
-                                        <?php /* BUILD_PRO_END */ ?>
+                                        
                                         <tr id="mhbo_custom_url_row" style="display:<?php echo in_array( $provider, ['ollama','custom'], true ) ? 'table-row' : 'none'; ?>">
                                             <th><?php esc_html_e( 'Endpoint', 'modern-hotel-booking' ); ?></th>
                                             <td>
@@ -796,29 +727,7 @@ class AiSettings {
                                         </td>
                                     </tr>
                                     <?php if ( $is_pro ) : ?>
-                                    <?php /* BUILD_PRO_START */ ?>
-                                    <tr>
-                                        <th><?php esc_html_e( 'Pro Theme', 'modern-hotel-booking' ); ?></th>
-                                        <td>
-                                            <?php
-                                            $current_theme = (string) get_option( 'mhbo_ai_theme', '' );
-                                            $themes = [
-                                                ''         => __( 'Default Premium', 'modern-hotel-booking' ),
-                                                'minimal'  => __( 'Minimalist', 'modern-hotel-booking' ),
-                                                'luxury'   => __( 'Luxury Gold', 'modern-hotel-booking' ),
-                                                'boutique' => __( 'Boutique', 'modern-hotel-booking' ),
-                                                'modern'   => __( 'Modern Edge', 'modern-hotel-booking' ),
-                                                'dark'     => __( 'Solid Dark', 'modern-hotel-booking' ),
-                                            ];
-                                            ?>
-                                            <select name="mhbo_ai_theme" style="width: 100%;">
-                                                <?php foreach ( $themes as $val => $label ) : ?>
-                                                    <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $current_theme, $val ); ?>><?php echo esc_html( $label ); ?></option>
-                                                <?php endforeach; ?>
-                                            </select>
-                                        </td>
-                                    </tr>
-                                    <?php /* BUILD_PRO_END */ ?>
+                                    
                                     <?php endif; ?>
                                     <tr>
                                         <th><?php esc_html_e( 'Proactive Suggestion', 'modern-hotel-booking' ); ?></th>
@@ -852,17 +761,7 @@ class AiSettings {
                                         <th><?php esc_html_e( 'Voice Output', 'modern-hotel-booking' ); ?></th>
                                         <td><input type="checkbox" name="mhbo_ai_voice_output_enabled" value="1" <?php checked( $voice_output, 1 ); ?>> <?php esc_html_e( 'Enable Neural TTS', 'modern-hotel-booking' ); ?></td>
                                     </tr>
-                                    <?php /* BUILD_PRO_START */ ?>
-                                    <?php if ( $is_pro ) : ?>
-                                    <tr>
-                                        <th><?php esc_html_e( 'ElevenLabs Key', 'modern-hotel-booking' ); ?></th>
-                                        <td>
-                                            <input type="password" name="mhbo_ai_elevenlabs_key" value="<?php echo esc_attr( $elevenlabs ); ?>" class="regular-text" style="width: 100%;" placeholder="eleven_...">
-                                            <p class="description"><?php esc_html_e( 'Required for premium high-fidelity voice.', 'modern-hotel-booking' ); ?></p>
-                                        </td>
-                                    </tr>
-                                    <?php endif; ?>
-                                    <?php /* BUILD_PRO_END */ ?>
+                                    
                                 </table>
                             <?php AdminUI::render_card_end(); ?>
                         </div>
@@ -893,89 +792,8 @@ class AiSettings {
                             <?php AdminUI::render_card_end(); ?>
                         </div>
                     <?php endif; ?>
-                    <?php /* BUILD_PRO_START */ ?>
-                    <?php if ( $current_tab === 'discovery' ) : ?>
-                        <div class="mhbo-settings-column" style="grid-column: 1 / -1;">
-                             <?php AdminUI::render_card_start( __( 'AI Discovery (GEO)', 'modern-hotel-booking' ) ); ?>
-                                <?php 
-                                $discovery_status = LlmFile::get_status(); 
-                                $is_live          = $discovery_status['summary'] && $discovery_status['full'];
-                                ?>
-                                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
-                                    <div>
-                                        <div style="padding: 20px; background: <?php echo $is_live ? '#f0fdf4' : '#fff7ed'; ?>; border-radius: 12px; margin-bottom: 24px; border: 1px solid <?php echo $is_live ? '#bbf7d0' : '#ffedd5'; ?>;">
-                                            <div style="display: flex; align-items: center; justify-content: space-between;">
-                                                <div>
-                                                    <p style="margin: 0; font-size: 18px; font-weight: 600; color: <?php echo $is_live ? '#166534' : '#9a3412'; ?>;">
-                                                        <?php echo $is_live ? esc_html__( 'Manifest is Live', 'modern-hotel-booking' ) : esc_html__( 'Not Indexable', 'modern-hotel-booking' ); ?>
-                                                    </p>
-                                                    <p style="margin: 6px 0 0; font-size: 13px; color: #64748b;">
-                                                        <?php if ( $discovery_sync ) : ?>
-                                                            <?php 
-                                                            // translators: %s: date of the manifest publication
-                                                            printf( esc_html__( 'Published to root: %s', 'modern-hotel-booking' ), esc_html( $discovery_sync ) ); 
-                                                            
-                                                            // Calculate KB integrity vs Discovery parity.
-                                                            if ( $kb_snapshot_time && strtotime( $kb_snapshot_time ) > strtotime( $discovery_sync ) ) : ?>
-                                                                <br><span style="color: #b91c1c; font-weight: 600; font-size: 11px; text-transform: uppercase;">
-                                                                    <?php esc_html_e( 'Outdated: KB is newer than manifest.', 'modern-hotel-booking' ); ?>
-                                                                </span>
-                                                            <?php endif; ?>
-                                                        <?php else : ?>
-                                                            <?php esc_html_e( 'Property discovery files are not currently present.', 'modern-hotel-booking' ); ?>
-                                                        <?php endif; ?>
-                                                    </p>
-                                                </div>
-                                                <div style="font-size: 32px;"><?php echo $is_live ? '✅' : '⚠️'; ?></div>
-                                            </div>
-                                        </div>
-                                        
-                                        <div style="display: flex; gap: 15px;">
-                                            <button type="button" id="mhbo_ai_discovery_sync" class="button button-primary button-large" style="flex: 1;">
-                                                <?php echo $is_live ? esc_html__( 'Update Manifest Now', 'modern-hotel-booking' ) : esc_html__( 'Publish Discovery Files', 'modern-hotel-booking' ); ?>
-                                            </button>
-                                            <?php if ( $is_live ) : ?>
-                                                <button type="button" id="mhbo_ai_discovery_cleanup" class="button button-link-delete">
-                                                    <?php esc_html_e( 'Takedown Manifest', 'modern-hotel-booking' ); ?>
-                                                </button>
-                                            <?php endif; ?>
-                                        </div>
-                                    </div>
 
-                                    <div>
-                                        <table class="form-table mhbo-compact-table" style="margin: 0;">
-                                            <tr>
-                                                <th style="padding: 0 10px 10px 0;"><?php esc_html_e( 'Auto-Sync (Pro)', 'modern-hotel-booking' ); ?></th>
-                                                <td style="padding: 0 0 10px 0;">
-                                                    <label class="mhbo-toggle">
-                                                        <input type="checkbox" name="mhbo_ai_discovery_auto_sync" value="1" <?php checked( $discovery_auto, 1 ); ?>>
-                                                        <span class="mhbo-toggle-slider"></span>
-                                                    </label>
-                                                    <p class="description"><?php esc_html_e( 'Automatically refresh discovery summary when hotel data changes.', 'modern-hotel-booking' ); ?></p>
-                                                </td>
-                                            </tr>
-                                        </table>
-                                        <div style="margin-top: 20px; padding: 15px; background: #f8fafc; border-radius: 8px; border: 1px solid #e2e8f0;">
-                                            <h4 style="margin: 0 0 10px; font-size: 14px;"><?php esc_html_e( 'Impact of Discovery', 'modern-hotel-booking' ); ?></h4>
-                                            <p style="margin: 0; font-size: 13px; line-height: 1.5; color: #475569;">
-                                                <?php esc_html_e( 'By publishing llms.txt, you provide AI agents (like Perplexity, ChatGPT, and AI Travel Assistants) a structured map of your hotel. This ensures accurate pricing, amenity listings, and direct booking links appear in conversational search results.', 'modern-hotel-booking' ); ?>
-                                            </p>
-                                        </div>
-                                    </div>
-                                </div>
-                            <?php AdminUI::render_card_end(); ?>
-                        </div>
-
-                    <?php elseif ( $current_tab === 'analytics' ) : ?>
-                        <!-- ── Analytics (Pro) ─────────────────────────────────── -->
-                        <div class="mhbo-grid-column" style="grid-column: 1 / -1;">
-                            <?php AdminUI::render_card_start( __( 'AI Performance & Analytics', 'modern-hotel-booking' ) ); ?>
-                                <?php self::render_analytics(); ?>
-                            <?php AdminUI::render_card_end(); ?>
-                    <?php endif; ?>
-                    <?php /* BUILD_PRO_END */ ?>
-
-                </div>
+</div>
 
                 <div class="mhbo-form-actions-dock" style="margin-top: 0; background: #fff; padding: 20px; border-radius: 12px; box-shadow: 0 -4px 12px rgba(0,0,0,0.05); border: 1px solid #e2e8f0;">
                     <?php submit_button( __( 'Apply AI Configuration', 'modern-hotel-booking' ), 'primary large' ); ?>
@@ -1131,108 +949,7 @@ class AiSettings {
         ];
     }
 
-    /* BUILD_PRO_START */
-
-    /**
-     * Render the Pro analytics section.
-     */
-    private static function render_analytics(): void {
-        global $wpdb;
-        $table = $wpdb->prefix . 'mhbo_chat_sessions';
-
-        // Check table exists; auto-create if missing (self-healing).
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
-        if ( $exists !== $table ) {
-            try {
-                ChatSession::create_table();
-                // Re-check after creation attempt.
-                // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-                $exists = $wpdb->get_var( $wpdb->prepare( 'SHOW TABLES LIKE %s', $table ) );
-            } catch ( \Throwable $e ) {
-                $exists = null;
-            }
-        }
-        if ( $exists !== $table ) {
-            echo '<div class="notice notice-error inline" style="margin-top: 0; border-radius: 8px;"><p>' . esc_html__( 'The chat sessions table could not be created. Please deactivate and reactivate the plugin, or contact support.', 'modern-hotel-booking' ) . '</p></div>';
-            return;
-        }
-
-        $month_start = gmdate( 'Y-m-01 00:00:00' );
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $total_this_month = (int) $wpdb->get_var(
-            $wpdb->prepare( "SELECT COUNT(DISTINCT session_id) FROM %i WHERE created_at >= %s", $table, $month_start )
-        );
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $top_questions = $wpdb->get_results(
-            $wpdb->prepare(
-                "SELECT message_content, COUNT(*) AS cnt FROM %i WHERE message_role = 'user' AND created_at >= %s GROUP BY message_content ORDER BY cnt DESC LIMIT 5",
-                $table,
-                $month_start
-            )
-        );
-
-        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
-        $conversions = (int) $wpdb->get_var(
-            $wpdb->prepare( "SELECT COUNT(DISTINCT session_id) FROM %i WHERE booking_id IS NOT NULL AND created_at >= %s", $table, $month_start )
-        );
-
-        $conv_rate = $total_this_month > 0 ? round( ( $conversions / $total_this_month ) * 100, 1 ) : 0;
-
-        ?>
-        <div class="mhbo-analytics-dashboard">
-            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px; margin-bottom: 30px;">
-                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
-                    <p style="margin: 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase;"><?php esc_html_e( 'Chats (Monthly)', 'modern-hotel-booking' ); ?></p>
-                    <p style="margin: 10px 0 0; font-size: 28px; font-weight: 700; color: #1e293b;"><?php echo esc_html( (string) $total_this_month ); ?></p>
-                </div>
-                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
-                    <p style="margin: 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase;"><?php esc_html_e( 'Bookings Influenced', 'modern-hotel-booking' ); ?></p>
-                    <p style="margin: 10px 0 0; font-size: 28px; font-weight: 700; color: #10b981;"><?php echo esc_html( (string) $conversions ); ?></p>
-                </div>
-                <div style="background: #f8fafc; padding: 20px; border-radius: 12px; border: 1px solid #e2e8f0; text-align: center;">
-                    <p style="margin: 0; color: #64748b; font-size: 13px; font-weight: 600; text-transform: uppercase;"><?php esc_html_e( 'Conversion Rate', 'modern-hotel-booking' ); ?></p>
-                    <p style="margin: 10px 0 0; font-size: 28px; font-weight: 700; color: #3b82f6;"><?php echo esc_html( (string) $conv_rate ); ?>%</p>
-                </div>
-            </div>
-
-            <div style="display: grid; grid-template-columns: 2fr 1fr; gap: 30px;">
-                <div>
-                    <h4 style="margin: 0 0 15px;"><?php esc_html_e( 'Trending Questions', 'modern-hotel-booking' ); ?></h4>
-                    <?php if ( [] === $top_questions || null === $top_questions ) : ?>
-                        <div style="padding: 20px; background: #fdf2f2; border-radius: 8px; color: #991b1b; font-size: 13px;">
-                            <?php esc_html_e( 'No trending questions detected in the current period.', 'modern-hotel-booking' ); ?>
-                        </div>
-                    <?php else : ?>
-                        <div style="background: #fff; border-radius: 8px; border: 1px solid #e2e8f0; overflow: hidden;">
-                            <?php foreach ( $top_questions as $q ) : ?>
-                                <div style="padding: 12px 15px; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center;">
-                                    <span style="font-size: 14px; color: #475569; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; max-width: 80%;"><?php echo esc_html( (string) $q->message_content ); ?></span>
-                                    <span class="mhbo-status-badge" style="background: #f1f5f9; color: #64748b; min-width: 30px; text-align: center;"><?php echo (int) $q->cnt; ?></span>
-                                </div>
-                            <?php endforeach; ?>
-                        </div>
-                    <?php endif; ?>
-                </div>
-
-                <div style="background: #f1f5f9; padding: 20px; border-radius: 12px; display: flex; flex-direction: column; justify-content: center; align-items: center; text-align: center;">
-                    <span class="dashicons dashicons-download" style="font-size: 40px; width: 40px; height: 40px; color: #64748b; margin-bottom: 15px;"></span>
-                    <h4 style="margin: 0 0 10px;"><?php esc_html_e( 'Deep Dive Data', 'modern-hotel-booking' ); ?></h4>
-                    <p style="margin: 0 0 20px; font-size: 13px; color: #64748b;"><?php esc_html_e( 'Download the full interaction logs for sentiment analysis and fine-tuning.', 'modern-hotel-booking' ); ?></p>
-                    <a href="<?php echo esc_url( admin_url( 'admin-ajax.php?action=mhbo_export_chat_logs&nonce=' . wp_create_nonce( 'mhbo_export_chat' ) ) ); ?>" class="button button-primary button-large" style="width: 100%;">
-                        <?php esc_html_e( 'Export CSV', 'modern-hotel-booking' ); ?>
-                    </a>
-                </div>
-            </div>
-        </div>
-        <?php
-    }
-
-    /* BUILD_PRO_END */
-
-    // -------------------------------------------------------------------------
+// -------------------------------------------------------------------------
     // Inline JS
     // -------------------------------------------------------------------------
 
