@@ -1262,11 +1262,25 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
             $assigned_room_id = ($room_id_filter > 0 && (int)$room->id === (int)$room_id_filter) ? $room_id_filter : $room->id;
 
             $checkout_url = $this->get_booking_page_url();
-            echo '<form method="get" action="' . esc_url($checkout_url) . '">';
-            self::render_url_hidden_inputs($checkout_url);
-            wp_nonce_field('mhbo_book_now_action', 'mhbo_book_now_nonce');
-            echo '<input type="hidden" name="check_in" value="' . esc_attr($check_in) . '"><input type="hidden" name="check_out" value="' . esc_attr($check_out) . '"><input type="hidden" name="room_id" value="' . esc_attr((string) $assigned_room_id) . '"><input type="hidden" name="type_id" value="' . esc_attr((string) $room->type_id) . '"><input type="hidden" name="guests" value="' . esc_attr((string) max(1, $guests)) . '"><input type="hidden" name="children" value="' . esc_attr((string) max(0, $children)) . '"><input type="hidden" name="total_price" value="' . esc_attr((string)$total->toDecimal()) . '">';
-            echo '<button type="submit" name="mhbo_book_room" class="mhbo-btn">' . esc_html(I18n::get_label('btn_book_now')) . '</button>';
+            // Clean URL to prevent parameter pollution/duplication in the GET form
+            $clean_checkout_url = $this->remove_mhbo_query_args($checkout_url);
+            
+            echo '<form method="get" action="' . esc_url($clean_checkout_url) . '">';
+            self::render_url_hidden_inputs($clean_checkout_url);
+            
+            // Critical: Add the auto-book flag and correct nonce for GET-based processing
+            echo '<input type="hidden" name="mhbo_auto_book" value="1">';
+            echo '<input type="hidden" name="mhbo_nonce" value="' . esc_attr(wp_create_nonce('mhbo_auto_action')) . '">';
+            
+            echo '<input type="hidden" name="check_in" value="' . esc_attr($check_in) . '">';
+            echo '<input type="hidden" name="check_out" value="' . esc_attr($check_out) . '">';
+            echo '<input type="hidden" name="room_id" value="' . esc_attr((string)$assigned_room_id) . '">';
+            echo '<input type="hidden" name="type_id" value="' . esc_attr((string)$room->type_id) . '">';
+            echo '<input type="hidden" name="guests" value="' . esc_attr((string)max(1, $guests)) . '">';
+            echo '<input type="hidden" name="children" value="' . esc_attr((string)max(0, $children)) . '">';
+            echo '<input type="hidden" name="total_price" value="' . esc_attr((string)$total->toDecimal()) . '">';
+            
+            echo '<button type="submit" class="mhbo-btn">' . esc_html(I18n::get_label('btn_book_now')) . '</button>';
             echo '</form></div></div>';
         }
         }
