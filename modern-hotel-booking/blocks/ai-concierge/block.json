@@ -1,0 +1,70 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/ai-concierge",
+    "version": "2.3.8",
+    "title": "Hotel: AI Concierge",
+    "category": "hotel-booking",
+    "icon": "format-chat",
+    "description": "Embed the AI Concierge chat widget anywhere on your site.",
+    "keywords": [
+        "hotel",
+        "ai",
+        "artificial intelligence",
+        "concierge",
+        "chat",
+        "assistant",
+        "booking",
+        "widget",
+        "support"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "example": {
+        "viewportWidth": 800,
+        "attributes": {
+            "variant": "inline",
+            "position": "bottom-right",
+            "welcomeMessage": ""
+        }
+    },
+    "attributes": {
+        "variant": {
+            "type": "string",
+            "default": "floating",
+            "enum": ["floating", "inline"]
+        },
+        "position": {
+            "type": "string",
+            "default": "bottom-right",
+            "enum": ["bottom-right", "bottom-left"]
+        },
+        "welcomeMessage": {
+            "type": "string",
+            "default": ""
+        },
+        "theme": {
+            "type": "string",
+            "default": ""
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "align": ["wide", "full"],
+        "color": {
+            "background": true,
+            "text": false
+        },
+        "typography": {
+            "fontSize": false,
+            "lineHeight": false
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true
+        }
+    },
+    "editorScript": "file:./index.js",
+    "editorStyle": "file:./editor.css",
+    "style": "mhbo-chat-widget"
+}

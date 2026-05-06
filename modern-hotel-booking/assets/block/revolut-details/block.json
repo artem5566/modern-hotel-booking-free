@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/revolut-details",
+    "version": "2.3.8",
+    "title": "Hotel: Revolut Details",
+    "category": "hotel-booking",
+    "icon": "money",
+    "description": "Information for payments via Revolut (RevTag or Link).",
+    "example": {
+        "attributes": {
+            "showQR": true,
+            "layout": "card"
+        }
+    },
+    "keywords": [
+        "revolut",
+        "payment",
+        "pay"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "attributes": {
+        "showQR": {
+            "type": "boolean",
+            "default": true
+        },
+        "showLink": {
+            "type": "boolean",
+            "default": true
+        },
+        "layout": {
+            "type": "string",
+            "default": "card"
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "color": {
+            "background": true,
+            "text": true,
+            "gradients": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": true
+        }
+    },
+    "editorScript": "file:./block.js"
+}

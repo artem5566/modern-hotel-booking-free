@@ -1,0 +1,55 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/room-calendar",
+    "version": "2.3.8",
+    "title": "Hotel: Room Calendar",
+    "category": "hotel-booking",
+    "icon": "calendar-alt",
+    "description": "Show an interactive availability calendar for a specific room.",
+    "example": {
+        "attributes": {
+            "roomId": 0
+        }
+    },
+    "keywords": [
+        "hotel",
+        "calendar",
+        "availability"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "attributes": {
+        "roomId": {
+            "type": "number",
+            "default": 0
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "color": {
+            "background": true,
+            "text": true,
+            "gradients": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": true
+        }
+    },
+    "editorScript": "file:./block.js",
+    "editorStyle": "file:./block.css",
+    "viewScriptModule": [
+        "mhbo-flatpickr-module",
+        "mhbo-room-calendar-view"
+    ],
+    "style": [
+        "mhbo-flatpickr-css",
+        "mhbo-calendar-style"
+    ]
+}

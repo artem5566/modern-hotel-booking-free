@@ -1,0 +1,51 @@
+{
+    "$schema": "https://schemas.wp.org/trunk/block.json",
+    "apiVersion": 3,
+    "name": "modern-hotel-booking/banking-details",
+    "version": "2.3.8",
+    "title": "Hotel: Banking Details",
+    "category": "hotel-booking",
+    "icon": "money-alt",
+    "description": "Displays bank account information for direct bank transfers.",
+    "example": {
+        "attributes": {
+            "showInstructions": true,
+            "layout": "card"
+        }
+    },
+    "keywords": [
+        "bank",
+        "payment",
+        "transfer"
+    ],
+    "textdomain": "modern-hotel-booking",
+    "attributes": {
+        "showInstructions": {
+            "type": "boolean",
+            "default": true
+        },
+        "layout": {
+            "type": "string",
+            "default": "card"
+        }
+    },
+    "supports": {
+        "html": false,
+        "anchor": true,
+        "color": {
+            "background": true,
+            "text": true,
+            "gradients": true
+        },
+        "typography": {
+            "fontSize": true,
+            "lineHeight": true
+        },
+        "spacing": {
+            "margin": true,
+            "padding": true,
+            "blockGap": true
+        }
+    },
+    "editorScript": "file:./block.js"
+}

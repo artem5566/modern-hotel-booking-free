@@ -1,0 +1,290 @@
+/**
+ * MHBO Business Frontend Styles (2026 BP Edition)
+ *
+ * Premium, clean, and responsive styling for business info components.
+ * Focused on a high-end "Hotel White" aesthetic with subtle glass effects.
+ */
+
+:root {
+    --mhbo-card-bg: #ffffff;
+    --mhbo-card-border: rgba(229, 231, 235, 0.6);
+    --mhbo-card-shadow: 0 10px 15px -3px rgba(0, 0, 0, 0.05), 0 4px 6px -2px rgba(0, 0, 0, 0.02);
+    --mhbo-text-main: #1f2937;
+    --mhbo-text-muted: #6b7280;
+    --mhbo-primary: #1e293b;
+    --mhbo-accent-whatsapp: #10b981;
+    --mhbo-accent-revolut: #000000;
+    --mhbo-field-bg: #f8fafc;
+    --mhbo-radius: 16px;
+    --mhbo-transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+/* Base Card Styling - Increased Specificity */
+div.mhbo-card-premium, 
+section.mhbo-card-premium, 
+article.mhbo-card-premium {
+    display: block !important;
+    background: var(--mhbo-card-bg) !important;
+    border: 1px solid var(--mhbo-card-border) !important;
+    border-radius: var(--mhbo-radius) !important;
+    padding: 32px !important;
+    box-shadow: var(--mhbo-card-shadow) !important;
+    transition: var(--mhbo-transition) !important;
+    margin-bottom: 30px !important;
+    position: relative !important;
+    overflow: hidden !important;
+    color: var(--mhbo-text-main) !important;
+}
+
+div.mhbo-card-premium:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.08), 0 10px 10px -5px rgba(0, 0, 0, 0.03) !important;
+}
+
+/* Card Header */
+.mhbo-card-header, .mhbo-rev-header {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+    margin-bottom: 24px;
+    padding-bottom: 20px;
+    border-bottom: 1px solid var(--mhbo-card-border);
+}
+
+.mhbo-icon-wrapper, .mhbo-rev-badge {
+    width: 40px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    background: var(--mhbo-field-bg);
+    color: var(--mhbo-primary);
+    border-radius: 10px;
+    transition: var(--mhbo-transition);
+}
+
+.mhbo-card-header h4, .mhbo-rev-header h4 {
+    margin: 0 !important;
+    font-size: 1.25rem !important;
+    font-weight: 700 !important;
+    color: var(--mhbo-text-main) !important;
+    letter-spacing: -0.025em !important;
+}
+
+/* Grid & Fields */
+.mhbo-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(240px, 1fr));
+    gap: 24px;
+}
+
+.mhbo-field {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    margin-bottom: 16px;
+}
+
+.mhbo-field:last-child {
+    margin-bottom: 0;
+}
+
+.mhbo-field strong {
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.05em !important;
+    color: var(--mhbo-text-muted) !important;
+    font-weight: 600 !important;
+    margin-bottom: 4px !important;
+}
+
+.mhbo-field span {
+    font-size: 1rem !important;
+    color: var(--mhbo-text-main) !important;
+}
+
+/* Copy-to-Clipboard Functionality */
+.mhbo-copy-wrapper {
+    display: flex;
+    align-items: center;
+    background: var(--mhbo-field-bg);
+    border: 1px solid var(--mhbo-card-border);
+    border-radius: 8px;
+    padding: 4px;
+    transition: var(--mhbo-transition);
+}
+
+.mhbo-copy-wrapper:focus-within {
+    border-color: var(--mhbo-primary);
+    box-shadow: 0 0 0 3px rgba(30, 41, 59, 0.05);
+}
+
+.mhbo-copy-wrapper code {
+    flex: 1;
+    background: transparent !important;
+    border: none !important;
+    padding: 6px 12px !important;
+    font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace !important;
+    font-size: 0.9rem !important;
+    color: var(--mhbo-primary) !important;
+    word-break: break-all !important;
+    margin: 0 !important;
+}
+
+.mhbo-copy-btn {
+    background: #ffffff !important;
+    border: 1px solid var(--mhbo-card-border) !important;
+    border-radius: 6px !important;
+    padding: 6px !important;
+    cursor: pointer !important;
+    color: var(--mhbo-text-muted) !important;
+    display: flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    transition: var(--mhbo-transition) !important;
+    margin-right: 2px !important;
+    box-shadow: none !important;
+}
+
+.mhbo-copy-btn:hover {
+    background: var(--mhbo-primary) !important;
+    color: #ffffff !important;
+    border-color: var(--mhbo-primary) !important;
+}
+
+/* WhatsApp Link - Professional Edition */
+.mhbo-whatsapp-link {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 12px !important;
+    background: var(--mhbo-accent-whatsapp) !important;
+    color: #ffffff !important;
+    padding: 14px 28px !important;
+    border-radius: 50px !important;
+    text-decoration: none !important;
+    font-weight: 600 !important;
+    font-size: 0.95rem !important;
+    box-shadow: 0 4px 14px 0 rgba(16, 185, 129, 0.39) !important;
+    transition: var(--mhbo-transition) !important;
+    border: none !important;
+}
+
+.mhbo-whatsapp-link:hover {
+    background: #059669 !important;
+    color: #ffffff !important;
+    transform: translateY(-2px) !important;
+    box-shadow: 0 6px 20px rgba(16, 185, 129, 0.23) !important;
+}
+
+/* WhatsApp Floating Logic - FIX (Aggressive Baseline) */
+.mhbo-wa-floating {
+    position: fixed !important;
+    z-index: 99999 !important;
+    width: auto !important; 
+    max-width: fit-content !important;
+    height: auto !important;
+    display: block !important;
+}
+
+.mhbo-wa-floating .mhbo-whatsapp-link {
+    display: inline-flex !important;
+    width: auto !important;
+    margin: 0 !important;
+}
+
+.mhbo-wa-pos-bottom-right { bottom: 30px !important; right: 30px !important; left: auto !important; top: auto !important; }
+.mhbo-wa-pos-bottom-left { bottom: 30px !important; left: 30px !important; right: auto !important; top: auto !important; }
+.mhbo-wa-pos-top-right { top: 30px !important; right: 30px !important; bottom: auto !important; left: auto !important; }
+.mhbo-wa-pos-top-left { top: 30px !important; left: 30px !important; bottom: auto !important; right: auto !important; }
+
+@keyframes mhbo-pulse-soft {
+    0% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0.4); }
+    70% { box-shadow: 0 0 0 10px rgba(16, 185, 129, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(16, 185, 129, 0); }
+}
+
+.mhbo-wa-button {
+    animation: mhbo-pulse-soft 2s infinite;
+}
+
+/* Revolut Premium */
+.mhbo-rev-badge {
+    background: var(--mhbo-accent-revolut);
+    color: #ffffff;
+}
+
+.mhbo-btn-premium {
+    background: var(--mhbo-accent-revolut) !important;
+    color: #ffffff !important;
+    padding: 12px 24px !important;
+    border-radius: 8px !important;
+    text-decoration: none !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    font-weight: 600 !important;
+    transition: var(--mhbo-transition) !important;
+    border: none !important;
+    text-align: center !important;
+    margin-top: 15px !important;
+    margin-bottom: 10px !important;
+}
+
+.mhbo-btn-premium:hover {
+    background: #333333 !important;
+    transform: scale(1.02) !important;
+}
+
+/* Company Info - Identity Layout */
+.mhbo-company-info {
+    margin-bottom: 40px !important;
+}
+
+.mhbo-company-name {
+    font-size: 1.75rem !important;
+    font-weight: 800 !important;
+    color: var(--mhbo-text-main) !important;
+    letter-spacing: -0.04em !important;
+    margin: 0 0 16px 0 !important;
+}
+
+.mhbo-address {
+    font-style: normal !important;
+    font-size: 0.95rem !important;
+    color: var(--mhbo-text-muted) !important;
+    line-height: 1.7 !important;
+    border-left: 3px solid var(--mhbo-primary) !important;
+    padding-left: 20px !important;
+    margin-bottom: 24px !important;
+    display: block !important;
+}
+
+/* Business Card View */
+.mhbo-business-card {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.mhbo-business-card .mhbo-card-premium {
+    margin-bottom: 0 !important;
+    box-shadow: none !important;
+    border-radius: 0 !important;
+    border-left: none !important;
+    border-right: none !important;
+    border-top: none !important;
+}
+
+.mhbo-business-card .mhbo-card-premium:first-child { border-radius: var(--mhbo-radius) var(--mhbo-radius) 0 0 !important; border-top: 1px solid var(--mhbo-card-border) !important; }
+.mhbo-business-card .mhbo-card-premium:last-child { border-radius: 0 0 var(--mhbo-radius) var(--mhbo-radius) !important; border-bottom: 1px solid var(--mhbo-card-border) !important; }
+
+/* Responsive Adjustments */
+@media (max-width: 768px) {
+    div.mhbo-card-premium { padding: 24px !important; }
+    .mhbo-grid { grid-template-columns: 1fr; }
+    .mhbo-flex { flex-direction: column; gap: 20px; }
+    .mhbo-rev-qr { text-align: center; }
+    .mhbo-rev-qr img { max-width: 120px; }
+    .mhbo-wa-pos-bottom-right { bottom: 20px !important; right: 20px !important; }
+    .mhbo-wa-pos-bottom-left { bottom: 20px !important; left: 20px !important; }
+}
