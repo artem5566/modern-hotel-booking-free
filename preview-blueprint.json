@@ -1,39 +1,24 @@
 {
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
-    "title": "Modern Hotel Booking - Public Preview",
-    "description": "Live demo of the Modern Hotel Booking plugin.",
-    "author": "StartMySuccess"
+    "title": "Modern Hotel Booking - Official Showcase (2026)",
+    "description": "Full production-ready demo with pre-seeded data and custom layout.",
+    "author": "Antigravity Architect"
   },
   "preferredVersions": {
     "php": "8.3",
     "wp": "latest"
   },
-  "features": {
-    "networking": true
-  },
+  "landingPage": "/",
+  "login": true,
   "steps": [
     {
-      "step": "installPlugin",
-      "pluginData": {
-        "resource": "wordpress.org/plugins",
-        "slug": "modern-hotel-booking"
+      "step": "unzip",
+      "zipFile": {
+        "resource": "url",
+        "url": "https://raw.githubusercontent.com/leslieradue-web/modern-hotel-booking-free/playground-changes-2026-05-06T18-30-27-681Z/modern-hotel-booking/playground.zip"
       },
-      "options": {
-        "activate": true
-      }
-    },
-    {
-      "step": "setSiteOptions",
-      "options": {
-        "blogname": "Azure Bay Resort",
-        "show_on_front": "page",
-        "permalink_structure": "/%postname%/"
-      }
-    },
-    {
-      "step": "runPHP",
-      "code": "<?php require_once '/wordpress/wp-load.php'; global $wpdb; $home_content = '<!-- wp:modern-hotel-booking/booking-form /-->'; $home_id = wp_insert_post(['post_title' => 'Home', 'post_content' => $home_content, 'post_status' => 'publish', 'post_type' => 'page']); update_option('page_on_front', $home_id);"
+      "extractToPath": "/wordpress"
     }
   ]
 }
