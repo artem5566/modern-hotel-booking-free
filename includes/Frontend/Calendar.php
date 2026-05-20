@@ -206,6 +206,7 @@ class Calendar
                     'api_err_max_stay'   => I18n::get_label('api_err_max_stay'),
                     
                 ],
+                'inline_modal' => (int) get_option('mhbo_modal_enabled', 1) === 1,
                 'current_lang' => $current_lang
             ]);
         }
@@ -227,7 +228,7 @@ class Calendar
 
     private static $calendar_instance_rendered = false;
 
-    public function render_shortcode($atts): string
+    public function render_shortcode(array|string|false $atts): string
     {
         $atts = shortcode_atts(['room_id' => 0], $atts);
         $room_id = absint($atts['room_id']);
@@ -290,8 +291,26 @@ class Calendar
             }
 
             // Fallback: If no booking page is configured, use the home URL to avoid relative path issues
-            if ('' === $action_url) {
+            if ('' === (string)$action_url) {
                 $action_url = home_url('/');
+            }
+
+            // 2026 BP: Playground/Local Domain and Path correction.
+            // If the current site is being accessed via a different host (e.g. 127.0.0.1:9400 vs playground.wordpress.net),
+            // we MUST ensure the action URL uses the current host and strip any Playground scope segments to avoid 404 errors.
+            $current_host   = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
+            $current_scheme = (isset($_SERVER['HTTPS']) && 'on' === $_SERVER['HTTPS']) ? 'https://' : 'http://';
+            if ('' !== $current_host && (str_contains($action_url, 'playground.wordpress.net') || str_contains($action_url, '127.0.0.1'))) {
+                $parsed_url = wp_parse_url($action_url);
+                if (isset($parsed_url['host']) && $parsed_url['host'] !== $current_host) {
+                    $action_url = str_replace($parsed_url['host'], $current_host, $action_url);
+                }
+                // Strip Playground scope segment (e.g. /scope:excited-abandoned-ocean/) if present
+                if (str_contains($action_url, '/scope:')) {
+                    $action_url = (string) preg_replace('/\/scope:[^\/]+\//', '/', $action_url);
+                }
+                // Force scheme to match current to avoid HTTPS errors on 127.0.0.1
+                $action_url = str_replace(['https://', 'http://'], $current_scheme, $action_url);
             }
 
             /*

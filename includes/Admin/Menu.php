@@ -1173,6 +1173,7 @@ if ($ex['control_type'] === 'quantity') {
                                 <th><?php echo esc_html(I18n::get_label('label_discount_amount')); ?></th>
                                 <td><input type="number" step="any" name="discount_amount" id="mhbo_edit_discount_amount"
                                         value="<?php echo esc_attr(Money::fromDecimal((string)($edit_data->discount_amount ?? 0))->toDecimal()); ?>" class="regular-text">
+                                    
                                 </td>
                             </tr>
 
@@ -1826,8 +1827,10 @@ global $wpdb;
         // iCal Mode
         if ('ical' === $action && $get_id > 0) {
             // Sub-actions (delete_feed, sync_now) carry their own nonces — skip page-level check for them.
-            if ( ( '' === $sub_action || null === $sub_action ) && (!$nonce || !wp_verify_nonce($nonce, 'mhbo_ical_room_' . $get_id))) {
-                wp_die(esc_html(I18n::get_label('msg_security_check_failed')));
+            if ( '' === $sub_action || null === $sub_action ) {
+                if (!$nonce || !wp_verify_nonce($nonce, 'mhbo_ical_room_' . $get_id)) {
+                    wp_die(esc_html(I18n::get_label('msg_security_check_failed')));
+                }
             }
 
 if (!MHBO_IS_PRO) {

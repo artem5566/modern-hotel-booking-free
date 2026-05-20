@@ -3,12 +3,13 @@
  * AI Client — unified gateway to any configured AI provider.
  *
  * Supports:
- *  - WP 7.0+ native wp_ai_client() (when available).
- *  - WP 6.9 standalone wordpress/ai-client SDK (when installed via Composer).
+ *  - WP 7.0+ native wp_ai_client_prompt() builder API (when available).
+ *  - WP 6.x standalone wordpress/ai-client SDK (when installed via Composer).
  *  - Direct HTTP fallback using the stored API key from plugin settings.
  *
  * @package MHBO\AI
  * @since 2.3.8
+ * @since 2.4.0 Migrated Path 1 to WP 7.0 wp_ai_client_prompt() builder API.
  */
 
 declare(strict_types=1);
@@ -45,17 +46,13 @@ class Client {
     /**
      * Return a configured AI client object.
      *
-     * Prefers the WP 7.0 native client, falls back to the standalone SDK,
-     * then returns null (callers must use the prompt() method which handles all paths).
+     * On WP 7.0+ the recommended path is wp_ai_client_prompt() (the builder API),
+     * not a raw client object. This method is preserved for Path 2 (standalone SDK)
+     * backward compatibility. Callers should prefer the prompt() method.
      *
      * @return mixed|null
      */
     public static function get_client(): mixed {
-        // WP 7.0+ native AI Client.
-        if ( function_exists( 'wp_ai_client' ) ) {
-            return call_user_func( 'wp_ai_client' );
-        }
-
         // Optimization 2026: Use dynamic class name to silence IDE "Undefined type" for optional SDKs.
         if ( class_exists( '\WordPress\AI\Client' ) ) {
             $provider        = self::get_configured_provider();
@@ -67,6 +64,28 @@ class Client {
         }
 
         return null;
+    }
+
+    /**
+     * Whether the WP 7.0+ native AI Client is available AND has at least
+     * one provider configured that supports text generation.
+     *
+     * This is a FAST, zero-cost check (no API calls are made).
+     * Internally respects wp_supports_ai() kill switch.
+     *
+     * @since 2.4.0
+     * @return bool
+     */
+    public static function is_native_available(): bool {
+        if ( ! function_exists( 'wp_ai_client_prompt' ) ) {
+            return false;
+        }
+        try {
+            // @phpstan-ignore function.notFound (WP 7.0 Core function; guarded by function_exists above)
+            return \wp_ai_client_prompt( 'test' )->is_supported_for_text_generation();
+        } catch ( Throwable ) {
+            return false;
+        }
     }
 
     /**
@@ -94,16 +113,50 @@ class Client {
             ] );
         }
 
-        // ── Path 1: WP 7.0 native AI Client ──────────────────────────────────
-        if ( function_exists( 'wp_ai_client' ) ) {
+        // ── Path 1: WP 7.0+ native AI Client (prompt builder API) ─────────
+        //    The builder supports text generation only — no tool/function calling.
+        //    When tools are present (concierge flow), we skip to Path 2/3 which
+        //    have full agentic tool calling support.
+        if ( [] === $tools && function_exists( 'wp_ai_client_prompt' ) ) {
             try {
-                $client   = call_user_func( 'wp_ai_client' );
-                $payload  = self::build_native_payload( $messages, $system_prompt, $tools );
-                $response = $client->chat( $payload );
-                return self::parse_native_response( $response );
+                // Build the last user message as the prompt text.
+                $last_message = end( $messages );
+                $prompt_text  = is_array( $last_message ) ? (string) ( $last_message['content'] ?? '' ) : '';
+
+                // Build conversation history (everything except the final message).
+                $history_slice = count( $messages ) > 1 ? array_slice( $messages, 0, -1 ) : [];
+
+                // @phpstan-ignore function.notFound (WP 7.0 Core function; guarded by function_exists above)
+                $builder = \wp_ai_client_prompt( $prompt_text )
+                    ->using_system_instruction( $system_prompt );
+
+                // Attach conversation history for multi-turn context.
+                if ( [] !== $history_slice ) {
+                    $builder->with_history( $history_slice );
+                }
+
+                // Apply model preference from plugin settings.
+                $model = (string) get_option( self::OPT_PREFIX . 'model', '' );
+                if ( $model ) {
+                    $builder->using_model_preference( $model );
+                }
+
+                // Zero-cost feature detection — skip if no provider supports text generation.
+                if ( ! $builder->is_supported_for_text_generation() ) {
+                    // Fall through to Path 2/3 silently.
+                    self::log_error( 'WP 7.0 native AI: text generation not supported (no provider configured).' );
+                } else {
+                    $text = $builder->generate_text();
+
+                    if ( is_wp_error( $text ) ) {
+                        self::log_error( 'wp_ai_client_prompt error: ' . $text->get_error_message() . '. Falling back to standalone/HTTP.' );
+                    } else {
+                        return self::parse_native_text( (string) $text );
+                    }
+                }
             } catch ( Throwable $e ) {
-                self::log_error( 'wp_ai_client error: ' . $e->getMessage() );
-                return array_merge( $empty, [ 'error' => $e->getMessage() ] );
+                self::log_error( 'wp_ai_client_prompt exception: ' . $e->getMessage() );
+                // Fall through to Path 2/3 for resilience.
             }
         }
 
@@ -197,7 +250,7 @@ class Client {
             self::PROVIDER_GEMINI    => self::http_gemini( $api_key, $model ?: 'gemini-3.1-flash-lite-preview', $messages, $system_prompt, $tools ),
             self::PROVIDER_OPENAI    => self::http_openai( $api_key, $model ?: 'gpt-5.4-mini', $messages, $system_prompt, $tools, ( str_contains( $model, 'gpt-5' ) ) ? 'https://api.openai.com/v1/responses' : 'https://api.openai.com/v1/chat/completions' ),
             self::PROVIDER_OPENROUTER => self::http_openai( $api_key, $model, $messages, $system_prompt, $tools, 'https://openrouter.ai/api/v1/chat/completions' ),
-            self::PROVIDER_ANTHROPIC => self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-6', $messages, $system_prompt, $tools ),
+            self::PROVIDER_ANTHROPIC => self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-7', $messages, $system_prompt, $tools ),
             self::PROVIDER_OLLAMA    => self::http_openai( '', $model ?: 'llama3', $messages, $system_prompt, $tools, (string) get_option( self::OPT_PREFIX . 'fallback_custom_url', 'http://localhost:11434/v1/chat/completions' ) ),
             self::PROVIDER_CUSTOM    => self::http_openai( $api_key, $model, $messages, $system_prompt, $tools, (string) get_option( self::OPT_PREFIX . 'fallback_custom_url', '' ) ),
             default                  => [ 'content' => '', 'tool_calls' => [], 'finish_reason' => 'error', 'error' => \MHBO\Core\I18n::get_label( 'ai_error_unknown_fallback' ) ],
@@ -209,7 +262,7 @@ class Client {
     // -------------------------------------------------------------------------
 
     /**
-     * Build a payload for the WP 7.0 native AI client.
+     * Build a payload for the standalone wordpress/ai-client SDK (Path 2).
      *
      * @param array<mixed> $messages
      * @param string       $system_prompt
@@ -234,7 +287,28 @@ class Client {
     }
 
     /**
-     * Parse a response from the WP 7.0 native AI client into our standard format.
+     * Parse a plain text response from the WP 7.0 native prompt builder
+     * into our standard response array.
+     *
+     * The builder's generate_text() returns a string — no tool calls,
+     * no structured metadata. This is the simplest response path.
+     *
+     * @since 2.4.0
+     * @param string $text
+     * @return array{content:string,tool_calls:array<mixed>,finish_reason:string,error:string|null}
+     */
+    private static function parse_native_text( string $text ): array {
+        return [
+            'content'       => $text,
+            'tool_calls'    => [],
+            'finish_reason' => 'stop',
+            'error'         => null,
+        ];
+    }
+
+    /**
+     * Parse a response from the standalone wordpress/ai-client SDK (Path 2)
+     * or legacy native client into our standard format.
      *
      * @param mixed $response
      * @return array{content:string,tool_calls:array<mixed>,finish_reason:string,error:string|null}
@@ -301,7 +375,7 @@ class Client {
                 return self::http_openai( $api_key, $model, $messages, $system_prompt, $tools, 'https://openrouter.ai/api/v1/chat/completions' );
  
             case self::PROVIDER_ANTHROPIC:
-                return self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-6', $messages, $system_prompt, $tools );
+                return self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-7', $messages, $system_prompt, $tools );
  
             case self::PROVIDER_OLLAMA:
                 // Ollama is local-only by design; localhost is intentional.

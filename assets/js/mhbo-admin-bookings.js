@@ -114,6 +114,9 @@
                     });
                 }
 
+                const couponInput = document.getElementById(prefix + '_coupon_code');
+                const couponCode = couponInput ? couponInput.value : '';
+
                 // Visual feedback
                 totalPriceInput.style.opacity = '0.5';
 
@@ -130,15 +133,23 @@
                         guests: guests,
                         children: children,
                         children_ages: childrenAges,
-                        extras: extras
+                        extras: extras,
+                        coupon_code: couponCode
                     })
                 })
                     .then(function (response) { return response.json(); })
                     .then(function (data) {
                         totalPriceInput.style.opacity = '1';
                         if (data.success) {
-                            const discount = parseFloat(discountInput ? discountInput.value : 0) || 0;
-                            const total = data.total - discount;
+                            let total = data.total;
+                            if (data.coupon_applied) {
+                                if (discountInput) {
+                                    discountInput.value = data.coupon_discount.toFixed(2);
+                                }
+                            } else {
+                                const discount = parseFloat(discountInput ? discountInput.value : 0) || 0;
+                                total = total - discount;
+                            }
                             totalPriceInput.value = total.toFixed(2);
 
                             if (outstandingInput && depositInput) {

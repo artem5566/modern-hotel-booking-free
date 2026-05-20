@@ -347,6 +347,7 @@ class Shortcode
                 'label_payment_capture_failed' => I18n::get_label('label_payment_capture_failed'),
                 'label_generic_error' => I18n::get_label('api_err_generic'),
                 'label_network_error' => I18n::get_label('api_err_network'),
+                'inline_modal'        => (int) get_option('mhbo_modal_enabled', 1) === 1,
             );
 
             $localized_data = apply_filters('mhbo_frontend_localized_data', $localized_data);
@@ -1000,6 +1001,7 @@ $localized_data = [
         }
 
         // 3. Check for Automatic Booking/Search (GET)
+        // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Search parameters do not require nonce verification.
         $is_auto_book = isset($_GET['mhbo_auto_book']);
         $is_auto_search = isset($_GET['mhbo_auto_search']) || (isset($_GET['check_in']) && isset($_GET['check_out']));
 
@@ -1011,6 +1013,7 @@ $localized_data = [
             $guests   = isset($_GET['guests']) ? absint(wp_unslash($_GET['guests'])) : 2;
             $children = isset($_GET['children']) ? absint(wp_unslash($_GET['children'])) : 0;
             $exclude_id = isset($_GET['exclude_id']) ? absint(wp_unslash($_GET['exclude_id'])) : 0;
+            // phpcs:enable WordPress.Security.NonceVerification.Recommended
 
             if ($is_auto_book) {
                 $nonce = isset($_GET['mhbo_nonce']) ? sanitize_key(wp_unslash($_GET['mhbo_nonce'])) : '';
@@ -1293,7 +1296,7 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
      * @param array<string, mixed> $params Booking parameters (room_id, dates, etc.).
      * @return void
      */
-    private function render_booking_form(array $params = []): void
+    public function render_booking_form(array $params = []): void
     {
         global $wpdb;
 
@@ -1330,7 +1333,10 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
             echo '<div class="mhbo-error mhbo-availability-error">' .
                 esc_html(I18n::get_label($available)) .
                 '</div>';
-            $this->render_search_form();
+            // phpcs:ignore WordPress.Security.NonceVerification.Recommended
+            if (!isset($_GET['mhbo_auto_book']) && !isset($params['modal_context'])) {
+                $this->render_search_form();
+            }
             return;
         }
 
@@ -1365,7 +1371,14 @@ $cache_key = 'mhbo_room_details_' . md5((string)$room_id);
         $calc_extras     = isset($params['extras']) ? array_map('sanitize_text_field', (array) $params['extras']) : array();
 
         $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, $calc_guests, $calc_extras, $calc_children, $calc_child_ages);
-        $total = ( false !== $calc ) ? $calc['total'] : Money::fromCents(0, Pricing::get_currency_code());
+        
+        $is_invalid_occupancy = (false === $calc);
+        if ($is_invalid_occupancy) {
+            echo '<div class="mhbo-error">' . esc_html(_x('Over-occupancy: Please check guest limits for this room.', 'error message', 'modern-hotel-booking')) . '</div>';
+            $total = $total_hint;
+        } else {
+            $total = $calc['total'];
+        }
 
         $is_pro_active = false;
 
@@ -1789,20 +1802,39 @@ wp_add_inline_style('mhbo-frontend', '
         $booking_page_id = (int) get_option('mhbo_booking_page');
         $booking_page_url = get_option('mhbo_booking_page_url');
         
-        // Correct truthy check: get_option returns false on failure, string/null otherwise.
+        $url = '';
         if (is_string($booking_page_url) && '' !== $booking_page_url) {
-            return esc_url_raw($booking_page_url);
-        }
-
-        if ($booking_page_id > 0) {
+            $url = $booking_page_url;
+        } elseif ($booking_page_id > 0) {
             $permalink = get_permalink($booking_page_id);
             if (false !== $permalink) {
-                return esc_url_raw($permalink);
+                $url = $permalink;
             }
         }
 
-        // Fallback to home if no specific booking page is configured
-        return esc_url_raw(home_url('/'));
+        if ('' === (string)$url) {
+            $url = home_url('/');
+        }
+
+        // 2026 BP: Playground/Local Domain and Path correction.
+        // If the current site is being accessed via a different host (e.g. 127.0.0.1:9400 vs playground.wordpress.net),
+        // we MUST ensure the checkout URL uses the current host and strip any Playground scope segments to avoid 404 errors.
+        $current_host   = isset($_SERVER['HTTP_HOST']) ? sanitize_text_field(wp_unslash($_SERVER['HTTP_HOST'])) : '';
+        $current_scheme = (isset($_SERVER['HTTPS']) && 'on' === $_SERVER['HTTPS']) ? 'https://' : 'http://';
+        if ('' !== $current_host && (str_contains($url, 'playground.wordpress.net') || str_contains($url, '127.0.0.1'))) {
+            $parsed_url = wp_parse_url($url);
+            if (isset($parsed_url['host']) && $parsed_url['host'] !== $current_host) {
+                $url = str_replace($parsed_url['host'], $current_host, $url);
+            }
+            // Strip Playground scope segment (e.g. /scope:excited-abandoned-ocean/) if present
+            if (str_contains($url, '/scope:')) {
+                $url = (string) preg_replace('/\/scope:[^\/]+\//', '/', $url);
+            }
+            // Force scheme to match current to avoid HTTPS errors on 127.0.0.1
+            $url = str_replace(['https://', 'http://'], $current_scheme, $url);
+        }
+
+        return esc_url_raw((string)$url);
     }
 
     /**

@@ -1,0 +1,31 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "meta": {
+    "title": "Modern Hotel Booking - Azure Bay Showcase",
+    "description": "Experience the full luxury resort setup with pre-seeded rooms and custom layouts",
+    "author": "StartMySuccess"
+  },
+  "preferredVersions": {
+    "php": "8.3",
+    "wp": "latest"
+  },
+  "landingPage": "/",
+  "login": true,
+  "steps": [
+    {
+      "step": "unzip",
+      "zipFile": {
+        "resource": "url",
+        "url": "http://localhost:8000/playground.zip"
+      },
+      "extractToPath": "/wordpress"
+    },
+    {
+      "step": "setSiteOptions",
+      "options": {
+        "blogname": "Azure Bay Resort & Spa",
+        "permalink_structure": "/%postname%/"
+      }
+    }
+  ]
+}

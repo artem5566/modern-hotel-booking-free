@@ -674,10 +674,18 @@ private static function render_email_templates_tab()
         <?php
     }
 
-private static function render_labels_tab()
+private static function render_labels_tab(): void
     {
         $langs = I18n::get_available_languages();
         $label_groups = [
+            'Headers & Sections' => [
+                'label_reservation' => I18n::__('label_desc_reservation'),
+                'label_stay_details' => I18n::__('label_desc_stay_details'),
+                'label_room_details' => I18n::__('label_desc_room_details'),
+                'label_guest_details' => I18n::__('label_desc_guest_details'),
+                'label_payment_details' => I18n::__('label_desc_payment_details'),
+                'label_amenities' => I18n::__('label_desc_amenities'),
+            ],
             'settings_group_search' => [
                 'btn_search_rooms' => I18n::__('label_override_search_rooms'),
                 'label_check_in' => I18n::__('label_override_check_in'),
@@ -707,6 +715,19 @@ private static function render_labels_tab()
                 'label_legend_pending' => I18n::__('label_desc_legend_pending'),
                 'label_legend_available' => I18n::__('label_desc_legend_available'),
                 'label_room_alt_text' => I18n::__('label_desc_room_alt_text'),
+                'label_room_number' => I18n::__('label_desc_label_room_number'),
+                'label_child' => I18n::__('label_desc_child'),
+                'label_guests_count' => I18n::__('label_desc_guests_count'),
+                'label_children_count' => I18n::__('label_desc_children_count'),
+                'label_adults' => I18n::__('label_desc_adults'),
+            ],
+            'Date & Time Details' => [
+                'label_check_in_time' => I18n::__('label_desc_check_in_time'),
+                'label_check_out_time' => I18n::__('label_desc_check_out_time'),
+                'label_checkin_only' => I18n::__('label_desc_checkin_only'),
+                'label_checkout_only' => I18n::__('label_desc_checkout_only'),
+                'label_night' => I18n::__('label_desc_night'),
+                'label_nights' => I18n::__('label_desc_nights'),
             ],
             'settings_group_results' => [
                 'label_available_rooms' => I18n::__('label_desc_available_rooms'),
@@ -718,6 +739,14 @@ private static function render_labels_tab()
                 'label_to' => I18n::__('label_desc_to'),
                 'btn_book_now' => I18n::__('label_desc_book_now'),
                 'btn_processing' => I18n::__('label_desc_processing'),
+                'label_nights_count' => I18n::__('label_desc_label_nights_count'),
+                'label_nights_count_single' => I18n::__('label_desc_label_nights_count_single'),
+                'label_check_in_from' => I18n::__('label_desc_label_check_in_from'),
+                'label_check_out_by' => I18n::__('label_desc_label_check_out_by'),
+                'btn_view_room' => I18n::__('label_desc_btn_view_room'),
+                'btn_select_room' => I18n::__('label_desc_btn_select_room'),
+                'label_back_to_rooms' => I18n::__('label_desc_back_to_rooms'),
+                'label_total_starting_from' => I18n::__('label_desc_total_starting_from'),
             ],
             'settings_group_booking' => [
                 'label_complete_booking' => I18n::__('label_desc_complete_booking'),
@@ -759,6 +788,21 @@ private static function render_labels_tab()
                 'msg_booking_arrival_email' => I18n::__('label_desc_booking_arrival_email'),
                 'msg_payment_failed_detail' => I18n::__('label_desc_payment_failed_detail'),
                 'msg_booking_received_pending' => I18n::__('label_desc_booking_received_pending'),
+                'msg_booking_confirmed_received' => I18n::__('label_desc_msg_booking_confirmed_received'),
+                'msg_pending_sent_to' => I18n::__('label_desc_msg_pending_sent_to'),
+                'msg_confirmation_sent_to' => I18n::__('label_desc_msg_confirmation_sent_to'),
+                'label_booking_id' => I18n::__('label_desc_booking_id'),
+                'label_reference_number' => I18n::__('label_desc_reference_number'),
+                'label_total_with_tax' => I18n::__('label_desc_total_with_tax'),
+                'label_balance_due' => I18n::__('label_desc_balance_due'),
+                'label_deposit_paid' => I18n::__('label_desc_deposit_paid'),
+            ],
+            'Bank & Direct Transfer' => [
+                'label_bank_acc_name' => I18n::__('label_desc_bank_acc_name'),
+                'label_bank_iban' => I18n::__('label_desc_bank_iban'),
+                'label_bank_swift' => I18n::__('label_desc_bank_swift'),
+                'label_revolut_tag' => I18n::__('label_desc_revolut_tag'),
+                'label_reference' => I18n::__('label_desc_reference'),
             ],
             'settings_group_payments' => [
                 'label_payment_method' => I18n::__('label_desc_payment_method'),
@@ -1104,7 +1148,45 @@ switch ($tab) {
                 'shortcode_desc_card',
                 'shortcode_desc_all_methods',
                 'settings_title_gutenberg',
-                'general_search_hotel'
+                'general_search_hotel',
+                'msg_booking_confirmed_received',
+                'msg_pending_sent_to',
+                'msg_confirmation_sent_to',
+                'label_nights_count',
+                'label_nights_count_single',
+                'label_check_in_from',
+                'label_check_out_by',
+                'label_room_number',
+                'label_reservation',
+                'label_stay_details',
+                'label_room_details',
+                'label_guest_details',
+                'label_payment_details',
+                'label_amenities',
+                'label_check_in_time',
+                'label_check_out_time',
+                'label_checkin_only',
+                'label_checkout_only',
+                'label_night',
+                'label_nights',
+                'label_bank_acc_name',
+                'label_bank_iban',
+                'label_bank_swift',
+                'label_revolut_tag',
+                'label_reference',
+                'label_child',
+                'label_guests_count',
+                'label_children_count',
+                'label_adults',
+                'label_balance_due',
+                'label_deposit_paid',
+                'label_total_starting_from',
+                'btn_view_room',
+                'btn_select_room',
+                'label_back_to_rooms',
+                'label_booking_id',
+                'label_reference_number',
+                'label_total_with_tax',
             ];
             $amenities = get_option('mhbo_amenities_list', []);
             $allowed_label_keys = array_merge($allowed_label_keys, array_keys($amenities));

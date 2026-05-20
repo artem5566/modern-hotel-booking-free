@@ -439,135 +439,134 @@ $is_pro = false;
 
                         <div class="mhbo-settings-column">
                             <?php AdminUI::render_card_start( __( 'Primary AI Connection', 'modern-hotel-booking' ) ); ?>
-                                <?php if ( function_exists( 'wp_ai_client' ) ) : ?>
+                                <?php if ( function_exists( 'wp_ai_client_prompt' ) ) : ?>
                                     <div class="mhbo-status-notice mhbo-status-success" style="margin-bottom: 15px;">
-                                        <p>✅ <?php esc_html_e( 'Standard WordPress AI Provider Detected', 'modern-hotel-booking' ); ?></p>
-                                        <p class="description"><?php esc_html_e( 'Using site-wide configuration from Settings → AI Connectors.', 'modern-hotel-booking' ); ?></p>
-                                    </div>
-                                <?php else : ?>
-                                    <div style="background: #fff8e1; border-left: 4px solid #ffb300; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
-                                        <p style="margin: 0; font-size: 13px; color: #856404;">
-                                            <strong>⚠️ <?php esc_html_e( 'Notice: Cost Resilience', 'modern-hotel-booking' ); ?></strong><br>
-                                            <?php esc_html_e( 'To ensure your guests always receive a response, the system may automatically fallback to secondary models if your chosen model is unavailable. This may result in higher than expected billable token costs.', 'modern-hotel-booking' ); ?>
-                                        </p>
-                                    </div>
-                                    <table class="form-table mhbo-compact-table">
-                                        <tr>
-                                            <th><?php esc_html_e( 'Provider', 'modern-hotel-booking' ); ?></th>
-                                            <td>
-                                                <select name="mhbo_ai_provider" id="mhbo_ai_provider" style="width: 100%;">
-                                                    <option value=""><?php esc_html_e( '— Select —', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="gemini"    <?php selected( $provider, 'gemini' ); ?>><?php esc_html_e( 'Google Gemini', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="openai"    <?php selected( $provider, 'openai' ); ?>><?php esc_html_e( 'OpenAI (GPT-5.4)', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="openrouter" <?php selected( $provider, 'openrouter' ); ?>><?php esc_html_e( 'OpenRouter.ai', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="anthropic" <?php selected( $provider, 'anthropic' ); ?>><?php esc_html_e( 'Anthropic (Claude 4.6)', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="ollama"    <?php selected( $provider, 'ollama' ); ?>><?php esc_html_e( 'Ollama (local)', 'modern-hotel-booking' ); ?></option>
-                                                    <option value="custom"    <?php selected( $provider, 'custom' ); ?>><?php esc_html_e( 'Custom (OpenAI-compatible)', 'modern-hotel-booking' ); ?></option>
-                                                </select>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'Real-Time Streaming', 'modern-hotel-booking' ); ?></th>
-                                            <td>
-                                                <label class="mhbo-ai-toggle">
-                                                    <input type="checkbox" name="mhbo_ai_streaming_enabled" value="1" <?php checked( get_option( 'mhbo_ai_streaming_enabled', '1' ), '1' ); ?>>
-                                                    <span class="mhbo-ai-toggle-slider"></span>
-                                                </label>
-                                                <p class="description"><?php esc_html_e( 'Enable SSE to show "typing" and "thinking" in real-time. (April 2026 BP).', 'modern-hotel-booking' ); ?></p>
-                                            </td>
-                                        </tr>
-                                        <tr>
-                                            <th><?php esc_html_e( 'API Key', 'modern-hotel-booking' ); ?></th>
-                                            <td>
-                                                <input type="password" name="mhbo_ai_api_key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" style="width: 100%;" autocomplete="new-password">
-                                            </td>
-                                        </tr>
-                                        <tr class="mhbo-model-row-common">
-                                            <th><?php esc_html_e( 'Model', 'modern-hotel-booking' ); ?></th>
-                                            <td>
-                                                <div id="mhbo_gemini_model_wrapper" class="mhbo-provider-model-wrapper" style="display: <?php echo ( $provider === 'gemini' ) ? 'block' : 'none'; ?>;">
-                                                    <?php
-                                                    $gemini_models = [
-                                                        'gemini-3.1-flash-lite-preview' => \__( 'Gemini 3.1 Flash-Lite Preview ⚡ Recommended', 'modern-hotel-booking' ),
-                                                        'gemini-3.1-flash-preview'      => \__( 'Gemini 3.1 Flash Preview (Balanced)', 'modern-hotel-booking' ),
-                                                        'gemini-3.1-pro-preview'        => \__( 'Gemini 3.1 Pro Preview (Flagship)', 'modern-hotel-booking' ),
-                                                        'gemini-2.5-flash'              => \__( 'Gemini 2.5 Flash — Stable', 'modern-hotel-booking' ),
-                                                        'gemini-2.5-flash-lite'         => \__( 'Gemini 2.5 Flash-Lite — Stable (Lightest)', 'modern-hotel-booking' ),
-                                                        'gemini-2.5-pro'                => \__( 'Gemini 2.5 Pro — Stable (Highest Quality)', 'modern-hotel-booking' ),
-                                                        'custom'                        => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
-                                                    ];
-                                                    // Determine if current model is in presets.
-                                                    $is_gemini_preset = array_key_exists( $model, $gemini_models ) && $model !== 'custom';
-                                                    $gemini_preset_val = $is_gemini_preset ? $model : 'custom';
-                                                    ?>
-                                                    <select id="mhbo_ai_gemini_model_select" class="mhbo-model-preset-select" style="width: 100%; margin-bottom: 8px;">
-                                                        <?php foreach ( $gemini_models as $val => $label ) : ?>
-                                                            <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $gemini_preset_val, $val ); ?>><?php echo esc_html( $label ); ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-
-                                                <div id="mhbo_openai_model_wrapper" class="mhbo-provider-model-wrapper" style="display: <?php echo ( $provider === 'openai' ) ? 'block' : 'none'; ?>;">
-                                                    <?php
-                                                    $openai_models = [
-                                                        'gpt-5.4-mini' => \__( 'GPT-5.4 Mini ⚡ (Fast & Smart)', 'modern-hotel-booking' ),
-                                                        
-                                                        'gpt-4o'       => \__( 'GPT-4o (Legacy Stable)', 'modern-hotel-booking' ),
-                                                        'gpt-4o-mini'  => \__( 'GPT-4o Mini (Legacy Budget)', 'modern-hotel-booking' ),
-                                                        'custom'       => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
-                                                    ];
-                                                    $is_openai_preset = array_key_exists( $model, $openai_models ) && $model !== 'custom';
-                                                    $openai_preset_val = $is_openai_preset ? $model : 'custom';
-                                                    ?>
-                                                    <select id="mhbo_ai_openai_model_select" class="mhbo-model-preset-select" style="width: 100%; margin-bottom: 8px;">
-                                                        <?php foreach ( $openai_models as $val => $label ) : ?>
-                                                            <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $openai_preset_val, $val ); ?>><?php echo esc_html( $label ); ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-
-                                                <div id="mhbo_anthropic_model_wrapper" class="mhbo-provider-model-wrapper" style="display: <?php echo ( $provider === 'anthropic' ) ? 'block' : 'none'; ?>;">
-                                                    <?php
-                                                    $anthropic_models = [
-                                                        'claude-sonnet-4-6' => \__( 'Claude Sonnet 4.6 (Most Balanced)', 'modern-hotel-booking' ),
-                                                        
-                                                        'claude-3-5-sonnet-20240620' => \__( 'Claude 3.5 Sonnet (Legacy)', 'modern-hotel-booking' ),
-                                                        'custom'            => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
-                                                    ];
-                                                    $is_anthropic_preset = array_key_exists( $model, $anthropic_models ) && $model !== 'custom';
-                                                    $anthropic_preset_val = $is_anthropic_preset ? $model : 'custom';
-                                                    ?>
-                                                    <select id="mhbo_ai_anthropic_model_select" class="mhbo-model-preset-select" style="width: 100%; margin-bottom: 8px;">
-                                                        <?php foreach ( $anthropic_models as $val => $label ) : ?>
-                                                            <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $anthropic_preset_val, $val ); ?>><?php echo esc_html( $label ); ?></option>
-                                                        <?php endforeach; ?>
-                                                    </select>
-                                                </div>
-
-                                                <div id="mhbo_manual_model_wrapper" style="display: <?php 
-                                                    $any_preset = ( ($provider === 'gemini' && $is_gemini_preset) || ($provider === 'openai' && $is_openai_preset) || ($provider === 'anthropic' && $is_anthropic_preset) );
-                                                    echo ( ! $any_preset ) ? 'block' : 'none'; 
-                                                ?>;">
-                                                    <input type="text" name="mhbo_ai_model" id="mhbo_ai_model_input" value="<?php echo esc_attr( $model ); ?>" class="regular-text" style="width: 100%;" placeholder="e.g. gpt-5.4-mini">
-                                                    <p class="description" style="margin-top:5px;"><?php esc_html_e( 'Enter a specific model identifier if not listed above.', 'modern-hotel-booking' ); ?></p>
-                                                </div>
-                                            </td>
-                                        </tr>
-                                        
-                                        <tr id="mhbo_custom_url_row" style="display:<?php echo in_array( $provider, ['ollama','custom'], true ) ? 'table-row' : 'none'; ?>">
-                                            <th><?php esc_html_e( 'Endpoint', 'modern-hotel-booking' ); ?></th>
-                                            <td>
-                                                <input type="url" name="mhbo_ai_custom_url" value="<?php echo esc_url( $custom_url ); ?>" class="large-text" style="width: 100%;" placeholder="https://...">
-                                            </td>
-                                        </tr>
-                                    </table>
-                                    <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
-                                        <button type="button" id="mhbo_ai_test_btn" class="button button-secondary">
-                                            <?php esc_html_e( 'Test Connection', 'modern-hotel-booking' ); ?>
-                                        </button>
-                                        <span id="mhbo_ai_test_result" style="font-weight: 500;"></span>
+                                        <p>✅ <?php esc_html_e( 'WordPress 7.0+ AI Client Detected', 'modern-hotel-booking' ); ?></p>
+                                        <p class="description"><?php esc_html_e( 'Using site-wide AI provider from Settings → Connectors. Plugin API key settings below serve as fallback.', 'modern-hotel-booking' ); ?></p>
                                     </div>
                                 <?php endif; ?>
+                                <div style="background: #fff8e1; border-left: 4px solid #ffb300; padding: 12px; border-radius: 4px; margin-bottom: 20px;">
+                                    <p style="margin: 0; font-size: 13px; color: #856404;">
+                                        <strong>⚠️ <?php esc_html_e( 'Notice: Cost Resilience', 'modern-hotel-booking' ); ?></strong><br>
+                                        <?php esc_html_e( 'To ensure your guests always receive a response, the system may automatically fallback to secondary models if your chosen model is unavailable. This may result in higher than expected billable token costs.', 'modern-hotel-booking' ); ?>
+                                    </p>
+                                </div>
+                                <table class="form-table mhbo-compact-table">
+                                    <tr>
+                                        <th><?php esc_html_e( 'Provider', 'modern-hotel-booking' ); ?></th>
+                                        <td>
+                                            <select name="mhbo_ai_provider" id="mhbo_ai_provider" style="width: 100%;">
+                                                <option value=""><?php esc_html_e( '— Select —', 'modern-hotel-booking' ); ?></option>
+                                                <option value="gemini"    <?php selected( $provider, 'gemini' ); ?>><?php esc_html_e( 'Google Gemini', 'modern-hotel-booking' ); ?></option>
+                                                <option value="openai"    <?php selected( $provider, 'openai' ); ?>><?php esc_html_e( 'OpenAI (GPT-5.4)', 'modern-hotel-booking' ); ?></option>
+                                                <option value="openrouter" <?php selected( $provider, 'openrouter' ); ?>><?php esc_html_e( 'OpenRouter.ai', 'modern-hotel-booking' ); ?></option>
+                                                <option value="anthropic" <?php selected( $provider, 'anthropic' ); ?>><?php esc_html_e( 'Anthropic (Claude 4.6)', 'modern-hotel-booking' ); ?></option>
+                                                <option value="ollama"    <?php selected( $provider, 'ollama' ); ?>><?php esc_html_e( 'Ollama (local)', 'modern-hotel-booking' ); ?></option>
+                                                <option value="custom"    <?php selected( $provider, 'custom' ); ?>><?php esc_html_e( 'Custom (OpenAI-compatible)', 'modern-hotel-booking' ); ?></option>
+                                            </select>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><?php esc_html_e( 'Real-Time Streaming', 'modern-hotel-booking' ); ?></th>
+                                        <td>
+                                            <label class="mhbo-ai-toggle">
+                                                <input type="checkbox" name="mhbo_ai_streaming_enabled" value="1" <?php checked( get_option( 'mhbo_ai_streaming_enabled', '1' ), '1' ); ?>>
+                                                <span class="mhbo-ai-toggle-slider"></span>
+                                            </label>
+                                            <p class="description"><?php esc_html_e( 'Enable SSE to show "typing" and "thinking" in real-time. (April 2026 BP).', 'modern-hotel-booking' ); ?></p>
+                                        </td>
+                                    </tr>
+                                    <tr>
+                                        <th><?php esc_html_e( 'API Key', 'modern-hotel-booking' ); ?></th>
+                                        <td>
+                                            <input type="password" name="mhbo_ai_api_key" value="<?php echo esc_attr( $api_key ); ?>" class="regular-text" style="width: 100%;" autocomplete="new-password">
+                                        </td>
+                                    </tr>
+                                    <tr class="mhbo-model-row-common">
+                                        <th><?php esc_html_e( 'Model', 'modern-hotel-booking' ); ?></th>
+                                        <td>
+                                            <div id="mhbo_gemini_model_wrapper" class="mhbo-provider-model-wrapper" style="display: <?php echo ( $provider === 'gemini' ) ? 'block' : 'none'; ?>;">
+                                                <?php
+                                                $gemini_models = [
+                                                    'gemini-3.1-flash-lite-preview' => \__( 'Gemini 3.1 Flash-Lite Preview ⚡ Recommended', 'modern-hotel-booking' ),
+                                                    'gemini-3.1-flash-preview'      => \__( 'Gemini 3.1 Flash Preview (Balanced)', 'modern-hotel-booking' ),
+                                                    'gemini-3.1-pro-preview'        => \__( 'Gemini 3.1 Pro Preview (Flagship)', 'modern-hotel-booking' ),
+                                                    'gemini-2.5-flash'              => \__( 'Gemini 2.5 Flash — Stable', 'modern-hotel-booking' ),
+                                                    'gemini-2.5-flash-lite'         => \__( 'Gemini 2.5 Flash-Lite — Stable (Lightest)', 'modern-hotel-booking' ),
+                                                    'gemini-2.5-pro'                => \__( 'Gemini 2.5 Pro — Stable (Highest Quality)', 'modern-hotel-booking' ),
+                                                    'custom'                        => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
+                                                ];
+                                                // Determine if current model is in presets.
+                                                $is_gemini_preset = array_key_exists( $model, $gemini_models ) && $model !== 'custom';
+                                                $gemini_preset_val = $is_gemini_preset ? $model : 'custom';
+                                                ?>
+                                                <select id="mhbo_ai_gemini_model_select" class="mhbo-model-preset-select" style="width: 100%; margin-bottom: 8px;">
+                                                    <?php foreach ( $gemini_models as $val => $label ) : ?>
+                                                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $gemini_preset_val, $val ); ?>><?php echo esc_html( $label ); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+
+                                            <div id="mhbo_openai_model_wrapper" class="mhbo-provider-model-wrapper" style="display: <?php echo ( $provider === 'openai' ) ? 'block' : 'none'; ?>;">
+                                                <?php
+                                                $openai_models = [
+                                                    'gpt-5.4-mini' => \__( 'GPT-5.4 Mini ⚡ (Fast & Smart)', 'modern-hotel-booking' ),
+                                                    
+                                                    'gpt-4o'       => \__( 'GPT-4o (Legacy Stable)', 'modern-hotel-booking' ),
+                                                    'gpt-4o-mini'  => \__( 'GPT-4o Mini (Legacy Budget)', 'modern-hotel-booking' ),
+                                                    'custom'       => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
+                                                ];
+                                                $is_openai_preset = array_key_exists( $model, $openai_models ) && $model !== 'custom';
+                                                $openai_preset_val = $is_openai_preset ? $model : 'custom';
+                                                ?>
+                                                <select id="mhbo_ai_openai_model_select" class="mhbo-model-preset-select" style="width: 100%; margin-bottom: 8px;">
+                                                    <?php foreach ( $openai_models as $val => $label ) : ?>
+                                                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $openai_preset_val, $val ); ?>><?php echo esc_html( $label ); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+
+                                            <div id="mhbo_anthropic_model_wrapper" class="mhbo-provider-model-wrapper" style="display: <?php echo ( $provider === 'anthropic' ) ? 'block' : 'none'; ?>;">
+                                                <?php
+                                                $anthropic_models = [
+                                                    'claude-sonnet-4-7' => \__( 'Claude Sonnet 4.7 (Most Balanced)', 'modern-hotel-booking' ),
+                                                    
+                                                    'claude-3-5-sonnet-20240620' => \__( 'Claude 3.5 Sonnet (Legacy)', 'modern-hotel-booking' ),
+                                                    'custom'            => \__( '— Manual Override / Custom —', 'modern-hotel-booking' ),
+                                                ];
+                                                $is_anthropic_preset = array_key_exists( $model, $anthropic_models ) && $model !== 'custom';
+                                                $anthropic_preset_val = $is_anthropic_preset ? $model : 'custom';
+                                                ?>
+                                                <select id="mhbo_ai_anthropic_model_select" class="mhbo-model-preset-select" style="width: 100%; margin-bottom: 8px;">
+                                                    <?php foreach ( $anthropic_models as $val => $label ) : ?>
+                                                        <option value="<?php echo esc_attr( $val ); ?>" <?php selected( $anthropic_preset_val, $val ); ?>><?php echo esc_html( $label ); ?></option>
+                                                    <?php endforeach; ?>
+                                                </select>
+                                            </div>
+
+                                            <div id="mhbo_manual_model_wrapper" style="display: <?php 
+                                                $any_preset = ( ($provider === 'gemini' && $is_gemini_preset) || ($provider === 'openai' && $is_openai_preset) || ($provider === 'anthropic' && $is_anthropic_preset) );
+                                                echo ( ! $any_preset ) ? 'block' : 'none'; 
+                                            ?>;">
+                                                <input type="text" name="mhbo_ai_model" id="mhbo_ai_model_input" value="<?php echo esc_attr( $model ); ?>" class="regular-text" style="width: 100%;" placeholder="e.g. gpt-5.4-mini">
+                                                <p class="description" style="margin-top:5px;"><?php esc_html_e( 'Enter a specific model identifier if not listed above.', 'modern-hotel-booking' ); ?></p>
+                                            </div>
+                                        </td>
+                                    </tr>
+                                    
+                                    <tr id="mhbo_custom_url_row" style="display:<?php echo in_array( $provider, ['ollama','custom'], true ) ? 'table-row' : 'none'; ?>">
+                                        <th><?php esc_html_e( 'Endpoint', 'modern-hotel-booking' ); ?></th>
+                                        <td>
+                                            <input type="url" name="mhbo_ai_custom_url" value="<?php echo esc_url( $custom_url ); ?>" class="large-text" style="width: 100%;" placeholder="https://...">
+                                        </td>
+                                    </tr>
+                                </table>
+                                <div style="margin-top: 15px; display: flex; align-items: center; gap: 10px;">
+                                    <button type="button" id="mhbo_ai_test_btn" class="button button-secondary">
+                                        <?php esc_html_e( 'Test Connection', 'modern-hotel-booking' ); ?>
+                                    </button>
+                                    <span id="mhbo_ai_test_result" style="font-weight: 500;"></span>
+                                </div>
                             <?php AdminUI::render_card_end(); ?>
 
                             <?php AdminUI::render_card_start( __( 'Fallback Connection', 'modern-hotel-booking' ) ); ?>

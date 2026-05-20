@@ -950,6 +950,7 @@ $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) 
         }
 
         $coupon_applied            = '';
+        $coupon_discount_value     = 0.0;
         $coupon_discount_formatted = '';
 
 if (!$calc) {
@@ -1020,6 +1021,7 @@ if (!$calc) {
             'tax' => $tax_data,
             'tax_breakdown_html' => get_option('mhbo_tax_display_frontend', false) ? Tax::render_breakdown_html($tax_data, null, false, ['payment_type' => $payment_type], false) : '',
             'coupon_applied'            => $coupon_applied,
+            'coupon_discount'           => $coupon_discount_value,
             'coupon_discount_formatted' => $coupon_discount_formatted,
         ));
 

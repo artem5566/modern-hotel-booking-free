@@ -58,9 +58,14 @@ class Loader {
         }
 
         // Register Composer autoloader (Jetpack Autoloader / MCP Adapter).
+        // On WP 7.0+ the wordpress/php-ai-client SDK is bundled in Core.
+        // Loading our copy again would cause duplicate class definitions.
+        // See: https://make.wordpress.org/core/2026/03/24/introducing-the-ai-client-in-wordpress-7-0/
         $autoload = MHBO_PLUGIN_DIR . 'vendor/autoload.php';
         if ( file_exists( $autoload ) ) {
-            require_once $autoload;
+            if ( ! function_exists( 'wp_get_wp_version' ) || version_compare( wp_get_wp_version(), '7.0', '<' ) ) {
+                require_once $autoload;
+            }
         }
 
         // Hooks that must fire early.
@@ -231,6 +236,7 @@ class Loader {
                 'proactiveTriggerSeconds' => (int) get_option( 'mhbo_ai_proactive_trigger_seconds', 45 ),
                 'bookingUrl'              => KnowledgeBase::get_booking_url(),
                 'modalEnabled'            => (bool) get_option( 'mhbo_modal_enabled', 0 ),
+                'aiNativeAvailable'       => Client::is_native_available(),
             ],
             'strings'  => [
                 'openChat'         => \MHBO\Core\I18n::get_label( 'ai_widget_open' ),

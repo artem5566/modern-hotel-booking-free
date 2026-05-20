@@ -23,6 +23,8 @@
     {
       "step": "setSiteOptions",
       "options": {
+        "blogname": "Azure Bay Resort & Spa",
+        "blogdescription": "Luxury Vacation Rentals & Suites",
         "permalink_structure": "/%postname%/"
       }
     }

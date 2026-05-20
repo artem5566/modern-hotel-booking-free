@@ -1,0 +1,9 @@
+{
+  "$schema": "https://playground.wordpress.net/blueprint-schema.json",
+  "steps": [
+    {
+      "step": "runPHP",
+      "code": "<?php \necho 'Root: ' . implode(', ', scandir('/')) . PHP_EOL;\necho 'Wordpress: ' . (is_dir('/wordpress') ? implode(', ', scandir('/wordpress')) : 'not a dir') . PHP_EOL;\necho 'Wordpress/Wordpress: ' . (is_dir('/wordpress/wordpress') ? implode(', ', scandir('/wordpress/wordpress')) : 'not a dir') . PHP_EOL;\n"
+    }
+  ]
+}
