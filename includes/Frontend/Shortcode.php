@@ -1157,13 +1157,13 @@ $localized_data = [
             $sql .= " AND r.id NOT IN ( 
                         SELECT room_id FROM {$wpdb->prefix}mhbo_bookings 
                         WHERE (check_in <= DATE(%s) AND check_out >= DATE(%s))
-                        AND status != 'cancelled' 
+                        AND status IN ('confirmed', 'completed')' 
                     )";
         } else {
             $sql .= " AND r.id NOT IN ( 
                         SELECT room_id FROM {$wpdb->prefix}mhbo_bookings 
                         WHERE (check_in < DATE(%s) AND check_out > DATE(%s))
-                        AND status != 'cancelled' 
+                        AND status IN ('confirmed', 'completed')'
                     )";
         }
 

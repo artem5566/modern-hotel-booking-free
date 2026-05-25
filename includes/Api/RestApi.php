@@ -553,7 +553,7 @@ if ($check_in >= $check_out) {
             $bookings = $wpdb->get_results($wpdb->prepare(
                 "SELECT check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings 
                  WHERE room_id = %d 
-                 AND status != 'cancelled'",
+                 AND status IN ('confirmed', 'completed')",
                 $room_id
             ));
             Cache::set_query($bookings_cache_key, $bookings, Cache::TABLE_BOOKINGS, 300); // 5 min cache for real-time accuracy
@@ -734,14 +734,14 @@ if ($check_in >= $check_out) {
             if ($prevent_turnover) {
                 $bookings = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status != 'cancelled' AND (check_in <= DATE(%s) AND check_out >= DATE(%s))",
+                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status IN ('confirmed', 'completed') AND (check_in <= DATE(%s) AND check_out >= DATE(%s))",
                         ...$params
                     )
                 );
             } else {
                 $bookings = $wpdb->get_results(
                     $wpdb->prepare(
-                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status != 'cancelled' AND (check_in < DATE(%s) AND check_out > DATE(%s))",
+                        "SELECT room_id, check_in, check_out, status FROM {$wpdb->prefix}mhbo_bookings WHERE room_id IN ($room_placeholders_string) AND status IN ('confirmed', 'completed') AND (check_in < DATE(%s) AND check_out > DATE(%s))",
                         ...$params
                     )
                 );
