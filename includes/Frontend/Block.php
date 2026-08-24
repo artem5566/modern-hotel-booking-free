@@ -106,14 +106,14 @@ class Block
             wp_register_script_module(
                 'mhbo-booking-form-view',
                 MHBO_PLUGIN_URL . 'build/block-booking-form-view.js',
-                ['@wordpress/interactivity'],
+                [ [ 'id' => '@wordpress/interactivity' ] ],
                 MHBO_VERSION
             );
 
             wp_register_script_module(
                 'mhbo-room-calendar-view',
                 MHBO_PLUGIN_URL . 'build/block-room-calendar-view.js',
-                ['@wordpress/interactivity'],
+                [ [ 'id' => '@wordpress/interactivity' ] ],
                 MHBO_VERSION
             );
         }

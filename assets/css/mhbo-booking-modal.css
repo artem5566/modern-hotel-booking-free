@@ -104,6 +104,30 @@
     border-radius: 4px;
 }
 
+/* Modal Payment Options & Coupon Spacing Fix */
+.mhbo-modal-body .mhbo-deposit-options {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    margin: 20px 0 28px;
+}
+
+.mhbo-modal-body .mhbo-payment-card {
+    width: 100%;
+    min-width: 100%;
+    margin-bottom: 0 !important;
+}
+
+.mhbo-modal-body .mhbo-coupon-wrapper {
+    margin-top: 32px !important;
+    padding-top: 24px !important;
+    border-top: 1px dashed #e5e7eb !important;
+}
+
+.mhbo-modal-body .mhbo-coupon-wrapper label {
+    margin-bottom: 10px !important;
+}
+
 /* ── Loading state ───────────────────────────────────────── */
 .mhbo-modal-loading {
     display: flex;
@@ -194,5 +218,92 @@
 
     .mhbo-modal-spinner {
         animation-duration: 1.5s;
+    }
+}
+
+/* Mobile Optimization for Coupon Section */
+@media screen and (max-width: 480px) {
+    /* 1. Force the row wrapper to stack vertically instead of side-by-side */
+    div.mhbo-coupon-input-row {
+        flex-direction: column !important;
+        align-items: stretch !important;
+        gap: 10px !important;
+    }
+
+    /* 2. Make the input field span the full container width */
+    input.mhbo-coupon-code-input {
+        width: 100% !important;
+        min-height: 44px !important; /* Makes it easy to tap on phones */
+        font-size: 16px !important;  /* Prevents iOS from auto-zooming on focus */
+    }
+
+    /* 3. Make both buttons expand fully and sit nicely underneath */
+    button.mhbo-coupon-apply-btn,
+    button.mhbo-coupon-remove-btn {
+        width: 100% !important;
+        min-height: 44px !important;
+        margin: 0 !important;
+        padding: 10px 16px !important;
+        text-align: center !important;
+        justify-content: center !important;
+    }
+}
+
+/* Mobile Optimization for Booking/Tax Breakdown Table */
+@media screen and (max-width: 480px) {
+    /* 1. Eliminate heavy parent margins that push the table out of bounds */
+    div.mhbo-tax-breakdown-container {
+        margin: 15px 0 !important;
+        padding: 10px !important;
+        width: 100% !important;
+        box-sizing: border-box !important;
+    }
+
+    /* 2. Force the table to behave fluidly and consistently */
+    table#mhbo-tax-breakdown-table {
+        width: 100% !important;
+        table-layout: fixed !important; /* Forces strict adherence to defined column widths */
+    }
+
+    /* 3. Divide columns cleanly: 55% for names, 45% for prices */
+    table#mhbo-tax-breakdown-table th:first-child,
+    table#mhbo-tax-breakdown-table td:first-child {
+        width: 55% !important;
+        text-align: left !important;
+        font-size: 13px !important;
+        padding: 8px 4px !important;
+    }
+
+    table#mhbo-tax-breakdown-table th:last-child,
+    table#mhbo-tax-breakdown-table td:last-child {
+        width: 45% !important;
+        text-align: right !important;
+        font-size: 13px !important;
+        padding: 8px 4px !important;
+        /* 4. Stop the currency symbols and digits from breaking line */
+        white-space: nowrap !important; 
+    }
+
+    /* 5. Tweak header text spacing */
+    table#mhbo-tax-breakdown-table th {
+        font-size: 11px !important;
+        text-transform: uppercase !important;
+        letter-spacing: 0.5px !important;
+    }
+    
+    /* 6. Clean up the bottom VAT registration line alignment */
+    p.mhbo-tax-registration {
+        font-size: 11px !important;
+        margin-top: 8px !important;
+        text-align: left !important;
+    }
+}
+
+/* iOS Safari zoom fix for form fields */
+@media screen and (max-width: 768px) {
+    .mhbo-booking-modal input,
+    .mhbo-booking-modal select,
+    .mhbo-booking-modal textarea {
+        font-size: 16px !important;
     }
 }

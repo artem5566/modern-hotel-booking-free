@@ -55,14 +55,11 @@ class BookingProcessor
      * }
      * }
      * @param array<string, mixed> $data
-     * @return array<string, mixed>|\WP_Error Result array on success, WP_Error on failure.
-     */
-    /**
-     * @param array<string, mixed> $data
      * @param bool $bypass_lock When true the caller already holds all advisory locks
      *                          for this room and is responsible for releasing them.
      *                          MUST only be set via this parameter — never via $data —
      *                          to prevent HTTP clients from bypassing concurrency guards.
+     * @return array<string, mixed>|\WP_Error Result array on success, WP_Error on failure.
      */
     public static function process(array $data, bool $bypass_lock = false): array|\WP_Error
     {
@@ -85,6 +82,14 @@ class BookingProcessor
         $parent_token   = sanitize_text_field($data['parent_token'] ?? '');
         $bypass_past    = (bool) ($data['bypass_past'] ?? false);
 
+        // 2026 BP: Early privilege determination for internal/automated sources.
+        // Privileged sources bypass non-essential validation gates (phone,
+        // stay restrictions, GDPR, custom fields) that don't apply to
+        // automated sync imports.  Uses a filter so ICalManager (and any
+        // future OTA integration) can register platforms dynamically.
+        $privileged_sources = apply_filters('mhbo_privileged_booking_sources', array('admin', 'ical'));
+        $is_privileged      = in_array(strtolower($source), $privileged_sources, true);
+
         // Resolve room_id from type_id if it's 0 (category booking)
         if (0 === $room_id && 0 !== $type_id && '' !== $check_in && '' !== $check_out) {
             $resolved_room = Pricing::find_available_room($type_id, $check_in, $check_out, $guests);
@@ -93,7 +98,10 @@ class BookingProcessor
             }
         }
 
-        if (0 === $room_id || '' === $check_in || '' === $check_out || '' === $customer_name || '' === $customer_email || '' === $customer_phone) {
+        // 2026 BP: Privileged sources (iCal/OTA imports) may lack phone/email —
+        // only enforce those fields for public-facing form submissions.
+        $missing_public_fields = ('' === $customer_email || '' === $customer_phone);
+        if (0 === $room_id || '' === $check_in || '' === $check_out || '' === $customer_name || (!$is_privileged && $missing_public_fields)) {
             return new \WP_Error('mhbo_missing_fields', I18n::get_label('label_fill_all_fields'));
         }
 
@@ -154,9 +162,14 @@ class BookingProcessor
 
             $total = $calc['total'];
 
-            // 5a. Determine privilege level here so the price-override guard below can use it.
-            $privileged_sources = ['admin', 'ical', 'airbnb', 'booking_com'];
-            $is_privileged      = in_array($source, $privileged_sources, true);
+            // 5a. $is_privileged was determined early (before validation gates)
+            // to support both the price-override guard and validation bypasses.
+            // See the privileged_sources array defined above line 96.
+
+            // 2026 BP: Ensure public/chatbot bookings cannot be placed for free/0 if no price has been set.
+            if (!$is_privileged && ($calc['room_total']->isZero() || $calc['room_total']->isNegative())) {
+                return new \WP_Error('mhbo_invalid_price', I18n::get_label('label_invalid_price'));
+            }
 
             // Allow manual price override ONLY for privileged/internal sources (admin, iCal, OTA).
             // 2026 BP: Public bookings MUST always use server-recalculated pricing to prevent
@@ -192,7 +205,9 @@ $charge_amount = $total;
 
                     $val = sanitize_textarea_field((string)($post_custom[$field_id] ?? ''));
                     
-                    if ( (bool) ( $defn['required'] ?? false ) && '' === $val ) {
+                    // 2026 BP: Skip required custom field checks for privileged sources
+                    // (iCal/OTA imports) — external feeds never include custom form data.
+                    if ( !$is_privileged && (bool) ( $defn['required'] ?? false ) && '' === $val ) {
                         $label = I18n::decode(I18n::encode($defn['label'] ?? $field_id));
                         return new \WP_Error('mhbo_field_required', sprintf(I18n::get_label('label_field_required'), $label));
                     }

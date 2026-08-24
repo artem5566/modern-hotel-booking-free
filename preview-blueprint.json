@@ -17,7 +17,7 @@
     "WP_DEBUG_DISPLAY": true
   },
   "login": true,
-  "landingPage": "/",
+  "landingPage": "/family-bungalow/",
   "steps": [
     {
       "step": "unzip",

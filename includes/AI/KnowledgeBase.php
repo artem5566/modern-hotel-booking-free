@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Knowledge Base — assembles the AI system prompt and tool definitions.
  *
@@ -9,6 +10,10 @@
 declare(strict_types=1);
 
 namespace MHBO\AI;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 use MHBO\Business\Info;
 use MHBO\Core\I18n;
@@ -40,7 +45,7 @@ class KnowledgeBase {
     // Public API
     // -------------------------------------------------------------------------
 
-    /**
+/**
      * Build and return the complete system prompt for the AI concierge.
      *
      * @param string $lang BCP-47 language tag of the current page (e.g. "ro-RO", "en-US").
@@ -60,7 +65,7 @@ class KnowledgeBase {
         $scarcity_rule = "- SCARCITY URGENCY: If inventory for a requested date is low (less than 3 units), EXPLICITLY highlight this urgency in your response using bold or ALL CAPS (e.g., \"ONLY 2 ROOMS LEFT!\").\n";
         $scarcity_rule .= "- PERSUASION: Use professional, high-hospitality language.\n";
 
-$rules_text   = self::get_instruction_rules();
+        $rules_text = self::get_instruction_rules( false );
 
         return "You are {$persona_name}, the AI concierge for {$hotel_name}.{$custom_block}\n" .
                "\n" .
@@ -80,13 +85,32 @@ $rules_text   = self::get_instruction_rules();
      * 
      * @return string
      */
-    private static function get_instruction_rules(): string {
+    /**
+     * Build the instructions block for the AI concierge.
+     *
+     * @param bool $include_pro Whether to include Pro-only protocol rules in the output.
+     *                          Must be true only when false is already confirmed.
+     * @return string
+     */
+    private static function get_instruction_rules( bool $include_pro = false ): string {
         $today        = \gmdate( 'Y-m-d' );
         $booking_url  = self::get_booking_url();
         $booking_line = $booking_url ? "- BOOKING LINKS: Use the PRE-FILLED booking_url returned by tools (e.g. check_availability). Never provide a naked link like {$booking_url} if a specific tool result is available." : '';
         $deposit_line = self::get_deposit_prompt_line();
 
         $stay_limits_line = '';
+
+// ── Rule 2: Booking Flow — Pro-only protocol appended via PHP logic, not string literals. ──
+        $pro_protocol_block = '';
+
+// ── Rule 3: Atomic multi-room (Pro only). ──
+        $atomic_multiroom_block = '';
+
+// ── Rule 6: Loyalty & Identity Handshake (Pro only). ──
+        $loyalty_block = '';
+
+// ── Rule 9: Pro personalization confirmation. ──
+        $personalization_pro = '';
 
 return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "1. AGENTIC FINALIZATION & PROACTIVE MANDATE: You are a booking agent, not just a link provider. If a guest confirms dates and guest count, immediately call `check_availability` to start the booking flow. IF YOU HAVE ALL REQUIRED PARAMETERS FOR A TOOL (like Name, Email, Phone for a booking), YOU MUST CALL THE TOOL IMMEDIATELY. DO NOT ASK FOR PERMISSION TO EXECUTE A TOOL IF YOU HAVE THE DATA. PROCEED WITHOUT HESITATION.\n" .
@@ -112,10 +136,9 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "   d. Present deposit amount and payment method details from the link response.\n" .
                "   e. If bank transfer or Revolut is available, present payment details with reference info.\n" .
                "   f. For booking changes or cancellations, call `get_business_card` and provide contact information.\n" .
+               $pro_protocol_block .
                "\n" .
-               "   \n" .
-               "\n" .
-               "   \n" .
+               $atomic_multiroom_block .
                "\n" .
                "4. PAYMENT PRESENTATION RULES:\n" .
                "   - When generating a booking link/draft, rely on the summary card logic. DO NOT call `get_business_card` or list manual banking/contact/phone details in your text unless the guest specifically asks for \"manual transfer info\" or \"alternative payment methods\".\n" .
@@ -130,8 +153,7 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "   - Always clarify if tax is inclusive or exclusive in the quoted price.\n" .
                "   - Always present the full price breakdown: base price, deposit, and tax.\n" .
                "   - If extras are available (breakfast, spa, transport), suggest ONE relevant extra naturally.\n" .
-               "\n" .
-               "   \n" .
+               $loyalty_block .
                "\n" .
                "7. SENTIMENT & ESCALATION:\n" .
                "   - Detect frustration, confusion, or reports of technical errors. \n" .
@@ -142,7 +164,7 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
                "\n" .
                "9. PERSONALIZATION:\n" .
                "   - Always address the guest by their first name once they have provided it.\n" .
-               "   \n" .
+               $personalization_pro .
                "\n" .
                "10. FORMATTING, LINKS & TTS:\n" .
                "   - PROHIBITED: Never use markdown asterisks (*) for lists or bolding. Use simple dashes (-) and plain text.\n" .
@@ -167,14 +189,14 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
     public static function get_booking_url(): string {
         $override = I18n::decode( (string) get_option( 'mhbo_booking_page_url', '' ), null, false );
         if ( '' !== $override ) {
-            return esc_url( $override );
+            return esc_url_raw( $override );
         }
 
         $page_id = (int) get_option( 'mhbo_booking_page', 0 );
         if ( $page_id > 0 ) {
             $url = get_permalink( $page_id );
             if ( $url ) {
-                return esc_url( $url );
+                return esc_url_raw( $url );
             }
         }
 
@@ -243,6 +265,8 @@ return "=== CONCIERGE RULEBOOK (2026) ===\n" .
             self::def_get_policies(),
             self::def_get_hotel_info(),
             self::def_get_local_tips(),
+            self::def_get_price_breakdown(),
+            self::def_recommend_rooms(),
             self::def_create_booking_link(),
             self::def_get_business_card(),
         ];
@@ -399,6 +423,60 @@ return $tools;
                         ],
                     ],
                     'required' => [],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_get_price_breakdown(): array {
+        $properties = [
+            'check_in'  => [ 'type' => 'string', 'format' => 'date', 'description' => 'Check-in date (YYYY-MM-DD).' ],
+            'check_out' => [ 'type' => 'string', 'format' => 'date', 'description' => 'Check-out date (YYYY-MM-DD).' ],
+            'room_id'   => [ 'type' => 'integer', 'description' => 'Optional specific room ID.' ],
+            'type_id'   => [ 'type' => 'integer', 'description' => 'Optional room type ID.' ],
+            'adults'    => [ 'type' => 'integer', 'default' => 2, 'minimum' => 1, 'description' => 'Number of adults.' ],
+            'children'  => [ 'type' => 'integer', 'default' => 0, 'minimum' => 0, 'description' => 'Number of children.' ],
+        ];
+
+return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'get_price_breakdown',
+                'description' => 'Get an itemized price breakdown for a stay including base rates, taxes, deposits, and discounts.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => $properties,
+                    'required'   => [ 'check_in', 'check_out' ],
+                ],
+            ],
+        ];
+    }
+
+    /** @return array<mixed> */
+    private static function def_recommend_rooms(): array {
+        $properties = [
+            'check_in'            => [ 'type' => 'string', 'format' => 'date', 'description' => 'Check-in date (YYYY-MM-DD).' ],
+            'check_out'           => [ 'type' => 'string', 'format' => 'date', 'description' => 'Check-out date (YYYY-MM-DD).' ],
+            'adults'              => [ 'type' => 'integer', 'default' => 2, 'minimum' => 1, 'description' => 'Number of adults.' ],
+            'children'            => [ 'type' => 'integer', 'default' => 0, 'minimum' => 0, 'description' => 'Number of children.' ],
+            'max_budget'          => [ 'type' => 'number', 'description' => 'Maximum total stay budget.' ],
+            'preferred_amenities' => [
+                'type'        => 'array',
+                'items'       => [ 'type' => 'string' ],
+                'description' => 'Desired amenities (e.g. WiFi, Sea View, Balcony, AC, Pool, Breakfast).',
+            ],
+        ];
+
+return [
+            'type'     => 'function',
+            'function' => [
+                'name'        => 'recommend_rooms',
+                'description' => 'Recommend and rank available room options based on budget caps, capacity fit, and guest amenity preferences.',
+                'parameters'  => [
+                    'type'       => 'object',
+                    'properties' => $properties,
+                    'required'   => [ 'check_in', 'check_out' ],
                 ],
             ],
         ];

@@ -1,6 +1,22 @@
 <wpml-config>
+    <custom-types>
+        <custom-type translate="1">mhbo_room</custom-type>
+    </custom-types>
+    <taxonomies>
+        <taxonomy translate="1">mhbo_room_type</taxonomy>
+    </taxonomies>
+    <custom-fields>
+        <custom-field translate="1">mhbo_base_price</custom-field>
+        <custom-field translate="1">mhbo_max_guests</custom-field>
+        <custom-field translate="1">mhbo_max_children</custom-field>
+        <custom-field translate="1">mhbo_amenities</custom-field>
+    </custom-fields>
     <admin-texts>
         <key name="mhbo_tax_label" />
+        <key name="mhbo_service_fee_label" />
+        <key name="mhbo_service_fee_amount" />
+        <key name="mhbo_deposit_value" />
+        <key name="mhbo_deposit_refund_deadline_days" />
         <key name="mhbo_onsite_instructions" />
         <key name="mhbo_label_gdpr_checkbox_text" />
         <key name="mhbo_currency_symbol" />
@@ -10,6 +26,10 @@
         <key name="mhbo_checkout_time" />
         <key name="mhbo_notification_email" />
         <key name="mhbo_booking_page_url" />
+        <key name="mhbo_label_override_children" />
+        <key name="mhbo_label_override_child_ages" />
+        <key name="mhbo_label_desc_children_count" />
+        <key name="mhbo_label_desc_max_children_error" />
         
         <!-- Business Information (Nested Arrays) -->
         <key name="mhbo_company_info">
@@ -297,5 +317,15 @@
         <key name="mhbo_email_cancelled_message" />
         <key name="mhbo_email_payment_subject" />
         <key name="mhbo_email_payment_message" />
+        
+        <!-- Additional 2026 Labels -->
+        <key name="mhbo_label_elementor_booking_form" />
+        <key name="mhbo_label_elementor_room_grid" />
+        <key name="mhbo_label_elementor_calendar" />
+        <key name="mhbo_label_elementor_ai_concierge" />
+        <key name="mhbo_label_test_braintree_btn" />
+        <key name="mhbo_label_braintree_creds_valid_env" />
+        <key name="mhbo_label_braintree" />
+        <key name="mhbo_label_desc_braintree" />
     </admin-texts>
 </wpml-config>

@@ -95,6 +95,15 @@ class Security
         $trusted_proxies_raw = (string) get_option('mhbo_trusted_proxies', '');
         $is_trusted = false;
 
+        // 2026 BP: Cloudflare automatic detection. If HTTP_CF_CONNECTING_IP is present and valid,
+        // Cloudflare edge has authenticated the request and forwarded the real visitor IP.
+        if (isset($server['HTTP_CF_CONNECTING_IP']) && '' !== (string) $server['HTTP_CF_CONNECTING_IP']) {
+            $cf_ip = trim((string) $server['HTTP_CF_CONNECTING_IP']);
+            if (false !== filter_var($cf_ip, FILTER_VALIDATE_IP)) {
+                return self::finalize_ip($cf_ip);
+            }
+        }
+
         if ('' !== $trusted_proxies_raw) {
             $trusted_proxies = array_map('trim', explode(',', $trusted_proxies_raw));
             foreach ($trusted_proxies as $proxy) {

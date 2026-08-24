@@ -1,21 +1,19 @@
 <?php declare(strict_types=1);
 /**
- * Plugin Name:       Hotel Booking — Modern Vacation Rental System with AI Concierge & Stripe
- * Plugin URI:        https://github.com/leslieradue-web/modern-hotel-booking-free
+ * Plugin Name:       Modern Hotel Booking — Direct Booking Engine & Availability Calendar
+ * Plugin URI:        https://modernhotelwp.com/
  * Description:       Hotel booking system for vacation rentals, B&Bs and cabins. Includes iCal sync for Airbnb, Stripe payments and a built-in AI Concierge.
- * Version:           2.3.9
+ * Version:           2.4.9.6
  * Requires at least: 6.6
- * Tested up to:      7.0
+ * Tested up to:      7.1
  * Requires PHP:      8.0
  * Author:            StartMySuccess
- * Author URI:        https://startmysuccess.com/modern-hotel-booking-wordpress-plugin/
+ * Author URI:        https://modernhotelwp.com/
  * License:           GPL v2 or later
  * License URI:       https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain:       modern-hotel-booking
  * Domain Path:       /languages
  */
-
-declare(strict_types=1);
 
 // Prevent direct file access.
 if (!defined('ABSPATH')) {
@@ -38,7 +36,7 @@ if (version_compare(PHP_VERSION, '8.0.0', '<')) {
     return;
 }
 
-define('MHBO_VERSION', '2.3.9');
+define('MHBO_VERSION', '2.4.9.6');
 define( 'MHBO_IS_PRO', false );
 define('MHBO_PLUGIN_FILE', __FILE__);
 define('MHBO_PLUGIN_DIR', plugin_dir_path(__FILE__));
@@ -85,6 +83,7 @@ function mhbo_activate(): void
             \MHBO\Core\Activator::activate();
         }
     }
+    do_action('mhbo_activated');
 }
 
 /**
@@ -99,6 +98,7 @@ function mhbo_deactivate(): void
             \MHBO\Core\Deactivator::deactivate();
         }
     }
+    do_action('mhbo_deactivated');
 }
 
 register_activation_hook(__FILE__, 'mhbo_activate');
@@ -171,6 +171,23 @@ add_action('plugins_loaded', static function (): void {
 }, 1);
 
 /**
+ * Boot the Elementor Integration.
+ */
+add_action('elementor/elements/categories_registered', static function ($elements_manager): void {
+    if (class_exists('MHBO\Integrations\Elementor')) {
+        $elementor = new \MHBO\Integrations\Elementor();
+        $elementor->register_categories($elements_manager);
+    }
+});
+
+add_action('elementor/widgets/register', static function ($widgets_manager): void {
+    if (class_exists('MHBO\Integrations\Elementor')) {
+        $elementor = new \MHBO\Integrations\Elementor();
+        $elementor->register_widgets($widgets_manager);
+    }
+});
+
+/**
  * mhbo_is_pro() — global helper for template/shortcode use.
  * Wraps false.
  */
@@ -188,14 +205,12 @@ add_action('mhbo_activated', static function (): void {
     if (mhbo_is_pro() && class_exists('MHBO\AI\ChatSession')) {
         \MHBO\AI\ChatSession::create_table();
     }
-    if (class_exists('MHBO\AI\Loader')) {
-        \MHBO\AI\Loader::maybe_register_ai_guest_role();
-    }
+    
 });
 
 /**
  * On deactivation: remove AI guest role.
  */
 add_action('mhbo_deactivated', static function (): void {
-    remove_role('mhbo_ai_guest');
+    
 });

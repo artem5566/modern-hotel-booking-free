@@ -71,14 +71,14 @@ class Shortcodes {
             'mhbo-business-front',
             MHBO_PLUGIN_URL . 'assets/css/mhbo-business-front.css',
             array(),
-            '2.3.0'
+            MHBO_VERSION
         );
 
         wp_enqueue_script(
             'mhbo-business-front',
             MHBO_PLUGIN_URL . 'assets/js/mhbo-business-front.js',
             array(),
-            '2.3.0',
+            MHBO_VERSION,
             true
         );
     }

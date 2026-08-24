@@ -2,15 +2,15 @@
   "$schema": "https://playground.wordpress.net/blueprint-schema.json",
   "meta": {
     "title": "Modern Hotel Booking - Azure Bay Showcase",
-    "description": "Experience the full luxury resort setup with pre-seeded rooms and custom layouts",
+    "description": "Experience the full luxury resort setup with pre-seeded rooms and custom layouts.",
     "author": "StartMySuccess"
   },
   "preferredVersions": {
     "php": "8.3",
     "wp": "latest"
   },
-  "landingPage": "/",
   "login": true,
+  "landingPage": "/royal-ocean-suite/",
   "steps": [
     {
       "step": "unzip",
@@ -21,12 +21,15 @@
       "extractToPath": "/wordpress"
     },
     {
-      "step": "setSiteOptions",
+      "step": "installPlugin",
+      "pluginData": {
+        "resource": "wordpress.org/plugins",
+        "slug": "modern-hotel-booking"
+      },
       "options": {
-        "blogname": "Azure Bay Resort & Spa",
-        "blogdescription": "Luxury Vacation Rentals & Suites",
-        "permalink_structure": "/%postname%/"
+        "activate": true
       }
     }
-  ]
+  ],
+  "features": {}
 }

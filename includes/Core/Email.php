@@ -704,11 +704,11 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
             }
             $tz = new \DateTimeZone($tz_string);
             
-            $start_dt = new \DateTime($check_in_date . ' ' . get_option('mhbo_check_in_time', '14:00'), $tz);
+            $start_dt = new \DateTime($check_in_date . ' ' . get_option('mhbo_checkin_time', '14:00'), $tz);
             $start_dt->setTimezone(new \DateTimeZone('UTC'));
             $dtstart = "DTSTART:" . $start_dt->format('Ymd\THis\Z');
 
-            $end_dt = new \DateTime($check_out_date . ' ' . get_option('mhbo_check_out_time', '11:00'), $tz);
+            $end_dt = new \DateTime($check_out_date . ' ' . get_option('mhbo_checkout_time', '11:00'), $tz);
             $end_dt->setTimezone(new \DateTimeZone('UTC'));
             $dtend = "DTEND:" . $end_dt->format('Ymd\THis\Z');
         } catch (\Exception $e) {
@@ -792,8 +792,8 @@ $admin_email = get_option('mhbo_notification_email', get_option('admin_email'));
             // Stay Information
             '{check_in}'                => $check_in > 0 ? date_i18n(get_option('date_format'), $check_in) : '--',
             '{check_out}'               => $check_out > 0 ? date_i18n(get_option('date_format'), $check_out) : '--',
-            '{check_in_time}'           => esc_html(get_option('mhbo_check_in_time', '14:00')),
-            '{check_out_time}'           => esc_html(get_option('mhbo_check_out_time', '11:00')),
+            '{check_in_time}'           => esc_html(get_option('mhbo_checkin_time', '14:00')),
+            '{check_out_time}'           => esc_html(get_option('mhbo_checkout_time', '11:00')),
             '{nights}'                  => $nights,
             '{guests}'                  => (int) ($booking->guests ?? 1),
             '{children}'                => (int) ($booking->children ?? 0),

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Ability: Check Room Availability
  *
@@ -12,6 +13,10 @@
 declare(strict_types=1);
 
 namespace MHBO\AI\Abilities;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 use MHBO\AI\KnowledgeBase;
 use MHBO\Core\Pricing;
@@ -67,8 +72,9 @@ class CheckAvailability {
      */
     public static function get_definition(): array {
         return [
-            'name'        => \__( 'Check Room Availability', 'modern-hotel-booking' ),
+            'label'       => \__( 'Check Room Availability', 'modern-hotel-booking' ),
             'description' => \__( 'Check real-time room availability for specific dates and guest count. Returns available room types with pricing.', 'modern-hotel-booking' ),
+            'category'    => 'booking-management',
             'input_schema' => [
                 'type'       => 'object',
                 'properties' => [
@@ -109,7 +115,10 @@ class CheckAvailability {
             ],
             'permission_callback' => '__return_true',
             'execute_callback'    => [ self::class, 'execute' ],
-            'meta'                => [ 'mcp' => [ 'public' => true ] ],
+            'meta'                => [
+                'mcp'          => [ 'public' => true ],
+                'show_in_rest' => true,
+            ],
         ];
     }
 
@@ -209,7 +218,8 @@ $child_ages = [];
         foreach ( $type_inventory as $type_id => $data ) {
             $room       = $data['room'];
             $count      = (int) $data['count'];
-            $room_id    = (int) $room->room_id;
+            $avail_ids  = (array) $data['available_room_ids'];
+            $room_id    = [] !== $avail_ids ? (int) $avail_ids[0]['id'] : (int) $room->room_id;
             $max_a      = (int) $room->max_adults;
             $max_c      = (int) $room->max_children;
             $max_guests = $max_a + $max_c;
@@ -344,8 +354,8 @@ $child_ages = [];
                 'max_children'    => (int) $room->max_children,
                 'max_guests'      => $max_guests,
                 'amenities'       => $room_amenities,
-                'thumbnail_url'   => \esc_url( (string) ( $room->image_url ?? '' ) ),
-                'booking_url'     => \esc_url( (string) $room_booking_url ),
+                'thumbnail_url'   => \esc_url_raw( (string) ( $room->image_url ?? '' ) ),
+                'booking_url'     => \esc_url_raw( (string) $room_booking_url ),
             ];
         }
 
@@ -454,6 +464,6 @@ $child_ages = [];
         if ( ! \function_exists( 'wp_register_ability' ) ) {
             return;
         }
-        \wp_register_ability( 'mhbo/check-availability', self::get_definition() );
+        call_user_func( 'wp_register_ability', 'mhbo/check-availability', self::get_definition() );
     }
 }

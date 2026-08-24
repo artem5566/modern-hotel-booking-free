@@ -136,7 +136,18 @@ public function add_dashboard_widgets(): void
         wp_enqueue_script('mhbo-admin-js', MHBO_PLUGIN_URL . 'assets/js/mhbo-admin.js', array('jquery'), MHBO_VERSION, true);
 
 if (false !== strpos($hook, 'mhbo-bookings')) {
-            wp_enqueue_script('fullcalendar', MHBO_PLUGIN_URL . 'assets/js/vendor/fullcalendar.global.min.js', array(), '6.1.20', true);
+            // FullCalendar V7: CSS must be loaded separately (skeleton + classic theme + palette).
+            wp_enqueue_style('fullcalendar-skeleton', MHBO_PLUGIN_URL . 'assets/css/vendor/fullcalendar-skeleton.min.css', [], '7.0.2');
+            wp_enqueue_style('fullcalendar-classic-theme-css', MHBO_PLUGIN_URL . 'assets/css/vendor/fullcalendar-classic-theme.min.css', ['fullcalendar-skeleton'], '7.0.2');
+            wp_enqueue_style('fullcalendar-classic-palette', MHBO_PLUGIN_URL . 'assets/css/vendor/fullcalendar-classic-palette.min.css', ['fullcalendar-classic-theme-css'], '7.0.2');
+            
+            // Deregister mhbo-admin-css and re-enqueue AFTER fullcalendar vendor styles to ensure proper override
+            wp_deregister_style('mhbo-admin-css');
+            wp_enqueue_style('mhbo-admin-css', MHBO_PLUGIN_URL . 'assets/css/mhbo-admin.css', ['fullcalendar-classic-palette'], MHBO_VERSION);
+
+            // FullCalendar V7: main bundle + classic theme plugin.
+            wp_enqueue_script('fullcalendar', MHBO_PLUGIN_URL . 'assets/js/vendor/fullcalendar.global.min.js', array(), '7.0.2', true);
+            wp_enqueue_script('fullcalendar-classic-theme', MHBO_PLUGIN_URL . 'assets/js/vendor/fullcalendar-classic-theme.global.min.js', array('fullcalendar'), '7.0.2', true);
 
             // Enqueue admin bookings script
             wp_enqueue_script(
@@ -451,7 +462,7 @@ $is_pro_active = false;
                             <a href="<?php echo esc_url('https://github.com/leslieradue-web/modern-hotel-booking-free/issues'); ?>"
                                 target="_blank" class="button button-link"
                                 style="padding:0; text-align: left;"><?php echo esc_html(I18n::get_label('pro_report_issues')); ?></a>
-                            <a href="<?php echo esc_url('https://startmysuccess.com/shop/wordpress-plugins/hotel-booking-wordpress-plugin/'); ?>"
+                            <a href="<?php echo esc_url('https://modernhotelwp.com/'); ?>"
                                 target="_blank" class="button button-link"
                                 style="padding:0; text-align: left; color:#c5a059; font-weight:bold;"><?php echo esc_html(I18n::get_label('pro_get_version')); ?></a>
                         </div>
@@ -784,17 +795,65 @@ $edit_mode = false;
         }
 
         $events = array();
+        $occupancy = array();
+        $distinct_rooms = array();
+        $prevent_turnover = (int) get_option('mhbo_prevent_same_day_turnover', 0) === 1;
+
+        if (is_array($all_rooms)) {
+            foreach ($all_rooms as $r) {
+                if (isset($r->room_number) && $r->room_number !== '') {
+                    $distinct_rooms[$r->room_number] = true;
+                }
+            }
+        }
+        
         foreach ($bookings as $b) {
             if ('cancelled' === $b->status)
                 continue;
+                
+            if (isset($b->room_number) && $b->room_number !== '') {
+                $distinct_rooms[$b->room_number] = true;
+            }
+
+            $current_time = strtotime($b->check_in);
+            // If prevent_turnover is enabled, include check_out date as blocked for same-day turnover
+            $end_time = $prevent_turnover ? strtotime($b->check_out . ' +1 day') : strtotime($b->check_out);
+
+            while ($current_time < $end_time) {
+                $date_str = gmdate('Y-m-d', $current_time);
+                if (!isset($occupancy[$date_str])) {
+                    $occupancy[$date_str] = array();
+                }
+                $occupancy[$date_str][$b->room_number] = true;
+                $current_time = strtotime('+1 day', $current_time);
+            }
+            
             $events[] = array(
-                'title' => 'Room ' . $b->room_number . ' - ' . $b->customer_name,
-                'start' => $b->check_in,
-                'end' => gmdate('Y-m-d', strtotime($b->check_out . ' +1 day')),
-                'color' => 'confirmed' === $b->status ? '#28a745' : '#ffc107',
-                'url' => html_entity_decode(wp_nonce_url(admin_url('admin.php?page=mhbo-bookings&action=edit&id=' . $b->id), 'mhbo_edit_booking_' . $b->id)),
+                'title'     => 'Room ' . $b->room_number . ' - ' . $b->customer_name,
+                'start'     => $b->check_in,
+                'end'       => gmdate('Y-m-d', strtotime($b->check_out . ' +1 day')),
+                'color'     => 'confirmed' === $b->status ? '#059669' : '#d97706',
+                'className' => 'mhbo-status-' . $b->status,
+                'url'       => html_entity_decode(wp_nonce_url(admin_url('admin.php?page=mhbo-bookings&action=edit&id=' . $b->id), 'mhbo_edit_booking_' . $b->id)),
             );
         }
+        
+        $total_rooms = count($distinct_rooms);
+        $full_days = array();
+        if ($total_rooms > 0) {
+            foreach ($occupancy as $date => $rooms) {
+                if (count($rooms) >= $total_rooms) {
+                    $full_days[] = $date;
+                }
+            }
+        }
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Self-healing normalization for legacy deposit bookings.
+        $wpdb->query(
+            "UPDATE {$wpdb->prefix}mhbo_bookings 
+             SET deposit_received = 1, payment_received = 0, payment_status = 'deposit_paid', balance_status = 'pending' 
+             WHERE payment_type = 'deposit' AND (deposit_received = 0 OR deposit_received IS NULL) AND remaining_balance > 0 AND (payment_amount > 0 OR payment_status = 'completed' OR payment_status = 'deposit_paid')"
+        );
         ?>
         <div class="wrap mhbo-admin-wrap">
             <?php 
@@ -1255,6 +1314,9 @@ if ($ex['control_type'] === 'quantity') {
                                             <option value="paypal" <?php selected($edit_data->payment_method ?? '', 'paypal'); ?>>
                                                 <?php echo esc_html(I18n::get_label('gateway_paypal')); ?>
                                             </option>
+                                            <option value="braintree" <?php selected($edit_data->payment_method ?? '', 'braintree'); ?>>
+                                                <?php echo esc_html(I18n::get_label('label_braintree')); ?>
+                                            </option>
                                         <?php endif; ?>
                                     </select>
                                 </td>
@@ -1389,13 +1451,24 @@ if ($ex['control_type'] === 'quantity') {
                     </form>
                 <?php AdminUI::render_card_end(); ?>
             <?php endif; ?>
-
-            <div id="mhbo-calendar" class="mhbo-calendar-card"></div>
+            <div class="mhbo-calendar-card">
+                <div id="mhbo-calendar"></div>
+                <div class="mhbo-calendar-legend">
+                    <span class="mhbo-legend-item"><span class="mhbo-legend-dot mhbo-legend-green-dot"></span> Check-in</span>
+                    <span class="mhbo-legend-item"><span class="mhbo-legend-dot mhbo-legend-red-dot"></span> Check-out</span>
+                    <span class="mhbo-legend-item"><span class="mhbo-legend-badge mhbo-legend-today"></span> Today</span>
+                    <span class="mhbo-legend-item"><span class="mhbo-legend-badge mhbo-legend-full"></span> 100% Fully Booked</span>
+                    <span class="mhbo-legend-item"><span class="mhbo-legend-pill mhbo-legend-confirmed"></span> Confirmed</span>
+                    <span class="mhbo-legend-item"><span class="mhbo-legend-pill mhbo-legend-pending"></span> Pending</span>
+                </div>
+            </div>
             <?php
             // Note: Price calculation and child ages JavaScript logic has been moved to assets/js/mhbo-admin-bookings.js
             // Pass calendar events for FullCalendar initialization
             $calendar_config = array(
-                'events' => $events,
+                'events'          => $events,
+                'fullDays'        => $full_days,
+                'preventTurnover' => (int) get_option('mhbo_prevent_same_day_turnover', 0) === 1,
             );
             wp_add_inline_script('mhbo-admin-bookings', 'window.mhboCalendarConfig = ' . wp_json_encode($calendar_config) . ';', 'before');
             ?>
@@ -2421,7 +2494,7 @@ public function display_extras_page()
     public function fix_hidden_page_titles(string $admin_title, string $title): string
     {
         // phpcs:ignore WordPress.Security.NonceVerification.Recommended
-        $page = isset($_GET['page']) ? sanitize_key($_GET['page']) : '';
+        $page = isset($_GET['page']) ? sanitize_key(wp_unslash($_GET['page'])) : '';
         if (str_starts_with($page, 'mhbo-pro-')) {
             $slug = str_replace('mhbo-pro-', '', $page);
             $titles = array(

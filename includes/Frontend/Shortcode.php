@@ -41,6 +41,9 @@ class Shortcode
         add_shortcode('mhbo_booking_form', [$this, 'render_shortcode']);
         // Backward compatibility
         add_shortcode('modern_hotel_booking', [$this, 'render_shortcode']);
+        
+        // Elementor Room Grid shortcode
+        add_shortcode('mhbo_rooms', [$this, 'render_rooms_grid_shortcode']);
 
         add_action('wp_enqueue_scripts', [$this, 'enqueue_assets']);
         
@@ -313,46 +316,61 @@ class Shortcode
         }
 
 // Add localization data (only once)
-        if (!wp_script_is('mhbo-frontend', 'done')) {
-            $localized_data = array(
-                'pay_confirm' => I18n::get_label('btn_pay_confirm'),
-                'confirm' => I18n::get_label('btn_confirm_booking'),
-                'processing' => I18n::get_label('btn_processing'),
-                'loading' => I18n::get_label('label_loading'),
-                'to' => I18n::get_label('label_to'),
-                'ajax_url' => admin_url('admin-ajax.php'),
-                'rest_url' => get_rest_url(null, 'mhbo/v1'),
-                'nonce' => wp_create_nonce('wp_rest'),
-                'label_child_n_age' => I18n::get_label('label_child_n_age'),
-                'currency_symbol' => get_option('mhbo_currency_symbol', '$'),
-                'currency_pos' => get_option('mhbo_currency_position', 'before'),
-                'msg_gdpr_required' => I18n::get_label('msg_gdpr_required'),
-                'msg_paypal_required' => I18n::get_label('msg_paypal_required'),
-                'tax_enabled' => Tax::is_enabled(),
-                'tax_mode' => Tax::get_mode(),
-                'tax_label' => Tax::get_label(),
-                'tax_rate_accommodation' => Tax::get_accommodation_rate(),
-                'tax_rate_extras' => Tax::get_extras_rate(),
-                'checkin_time' => get_option('mhbo_checkin_time', '14:00'),
-                'checkout_time' => get_option('mhbo_checkout_time', '11:00'),
-                'auto_nonce' => wp_create_nonce('mhbo_auto_action'),
-                'label_setup_failed' => I18n::get_label('label_setup_failed'),
-                'label_payment_already_confirmed' => I18n::get_label('label_payment_already_confirmed'),
-                'label_finalizing' => I18n::get_label('label_finalizing'),
-                'label_gateway_not_ready' => I18n::get_label('label_gateway_not_ready'),
-                'label_payment_success_form_fail' => I18n::get_label('label_payment_success_form_fail'),
-                'label_payment_cancelled' => I18n::get_label('label_payment_cancelled'),
-                'label_redirecting' => I18n::get_label('label_redirecting'),
-                'label_loading_payment' => I18n::get_label('label_loading_payment'),
-                'label_payment_capture_failed' => I18n::get_label('label_payment_capture_failed'),
-                'label_generic_error' => I18n::get_label('api_err_generic'),
-                'label_network_error' => I18n::get_label('api_err_network'),
-                'inline_modal'        => (int) get_option('mhbo_modal_enabled', 1) === 1,
-            );
+        self::localize_frontend_assets();
+    }
 
-            $localized_data = apply_filters('mhbo_frontend_localized_data', $localized_data);
-            wp_add_inline_script('mhbo-frontend', 'var mhbo_vars = ' . wp_json_encode($localized_data) . ';');
+    /**
+     * Localize frontend script with required variables (shared by shortcode and block/modal paths).
+     * 
+     * @return void
+     */
+    public static function localize_frontend_assets(): void
+    {
+        if (wp_script_is('mhbo-frontend', 'done')) {
+            return;
         }
+
+        $localized_data = array(
+            'pay_confirm' => I18n::get_label('btn_pay_confirm'),
+            'confirm' => I18n::get_label('btn_confirm_booking'),
+            'processing' => I18n::get_label('btn_processing'),
+            'loading' => I18n::get_label('label_loading'),
+            'to' => I18n::get_label('label_to'),
+            'ajax_url' => admin_url('admin-ajax.php'),
+            'rest_url' => get_rest_url(null, 'mhbo/v1'),
+            'nonce' => wp_create_nonce('wp_rest'),
+            'prevent_turnover' => (int) get_option('mhbo_prevent_same_day_turnover', 0) === 1,
+            'label_child_n_age' => I18n::get_label('label_child_n_age'),
+            'currency_symbol' => get_option('mhbo_currency_symbol', '$'),
+            'currency_pos' => get_option('mhbo_currency_position', 'before'),
+            'msg_gdpr_required' => I18n::get_label('msg_gdpr_required'),
+            'msg_paypal_required' => I18n::get_label('msg_paypal_required'),
+            'tax_enabled' => Tax::is_enabled(),
+            'tax_mode' => Tax::get_mode(),
+            'tax_label' => Tax::get_label(),
+            'tax_rate_accommodation' => Tax::get_accommodation_rate(),
+            'tax_rate_extras' => Tax::get_extras_rate(),
+            'checkin_time' => get_option('mhbo_checkin_time', '14:00'),
+            'checkout_time' => get_option('mhbo_checkout_time', '11:00'),
+            'auto_nonce' => wp_create_nonce('mhbo_auto_action'),
+            'nonce_confirm' => wp_create_nonce('mhbo_confirm_action'),
+            'label_setup_failed' => I18n::get_label('label_setup_failed'),
+            'label_payment_already_confirmed' => I18n::get_label('label_payment_already_confirmed'),
+            'label_finalizing' => I18n::get_label('label_finalizing'),
+            'label_gateway_not_ready' => I18n::get_label('label_gateway_not_ready'),
+            'label_payment_success_form_fail' => I18n::get_label('label_payment_success_form_fail'),
+            'label_payment_cancelled' => I18n::get_label('label_payment_cancelled'),
+            'label_redirecting' => I18n::get_label('label_redirecting'),
+            'label_loading_payment' => I18n::get_label('label_loading_payment'),
+            'label_payment_capture_failed' => I18n::get_label('label_payment_capture_failed'),
+            'label_generic_error' => I18n::get_label('api_err_generic'),
+            'label_network_error' => I18n::get_label('api_err_network'),
+            'inline_modal'        => (int) get_option('mhbo_modal_enabled', 1) === 1,
+            'locale'              => get_locale(),
+        );
+
+        $localized_data = apply_filters('mhbo_frontend_localized_data', $localized_data);
+        wp_add_inline_script('mhbo-frontend', 'var mhbo_vars = ' . wp_json_encode($localized_data) . ';');
     }
 
     /**
@@ -369,7 +387,7 @@ class Shortcode
             has_shortcode($post->post_content, 'modern_hotel_booking')
         );
         $has_block = is_a($post, 'WP_Post') && has_block('modern-hotel-booking/booking-form', $post->post_content);
-        $is_booking_page = is_a($post, 'WP_Post') && ((int) get_option('mhbo_booking_page') === $post->ID);
+        $is_booking_page = is_a($post, 'WP_Post') && self::is_mhbo_booking_page($post->ID);
 
         // If not on booking page, no shortcode, and no block, don't enqueue
         if (!$has_shortcode && !$has_block && !$is_booking_page) {
@@ -397,11 +415,7 @@ class Shortcode
         // Enqueue frontend script (depends on both jQuery and flatpickr)
         wp_enqueue_script('mhbo-frontend', MHBO_PLUGIN_URL . 'assets/js/mhbo-frontend.js', ['jquery', 'mhbo-flatpickr-js'], MHBO_VERSION, true);
 
-        // Enqueue calendar assets for the new search form
-        wp_enqueue_style('mhbo-calendar-style', MHBO_PLUGIN_URL . 'assets/css/mhbo-calendar.css', [], (string) time());
-        wp_enqueue_script('mhbo-calendar-js', MHBO_PLUGIN_URL . 'assets/js/mhbo-calendar.js', ['jquery', 'mhbo-flatpickr-js'], MHBO_VERSION, true);
-
-        // Ensure calendar script is localized if enqueued here
+        // Enqueue calendar assets via centralized handler (with proper dependency chains)
         if (class_exists('MHBO\Frontend\Calendar')) {
             Calendar::enqueue_assets();
         }
@@ -413,48 +427,7 @@ class Shortcode
         wp_enqueue_script('mhbo-booking-form', MHBO_PLUGIN_URL . 'assets/js/mhbo-booking-form.js', ['jquery', 'mhbo-frontend'], MHBO_VERSION, true);
 
 // Localize script for JS strings
-        $localized_data = array(
-            'pay_confirm' => I18n::get_label('btn_pay_confirm'),
-            'confirm' => I18n::get_label('btn_confirm_booking'),
-            'processing' => I18n::get_label('btn_processing'),
-            'loading' => I18n::get_label('label_loading'),
-            'to' => I18n::get_label('label_to'),
-            'ajax_url' => admin_url('admin-ajax.php'),
-            'rest_url' => get_rest_url(null, 'mhbo/v1'),
-            'nonce' => wp_create_nonce('wp_rest'),
-            'prevent_turnover' => (int) get_option('mhbo_prevent_same_day_turnover', 0) === 1,
-            'label_child_n_age' => I18n::get_label('label_child_n_age'),
-            'currency_symbol' => get_option('mhbo_currency_symbol', '$'),
-            'currency_pos' => get_option('mhbo_currency_position', 'before'),
-            'msg_gdpr_required' => I18n::get_label('msg_gdpr_required'),
-            'msg_paypal_required' => I18n::get_label('msg_paypal_required'),
-            // Tax settings for frontend
-            'tax_enabled' => Tax::is_enabled(),
-            'tax_mode' => Tax::get_mode(),
-            'tax_label' => Tax::get_label(),
-            'tax_rate_accommodation' => Tax::get_accommodation_rate(),
-            'tax_rate_extras' => Tax::get_extras_rate(),
-            'checkin_time' => get_option('mhbo_checkin_time', '14:00'),
-            'checkout_time' => get_option('mhbo_checkout_time', '11:00'),
-            'auto_nonce' => wp_create_nonce('mhbo_auto_action'),
-            'nonce_confirm' => wp_create_nonce('mhbo_confirm_action'),
-            'label_setup_failed' => I18n::get_label('label_setup_failed'),
-            'label_payment_already_confirmed' => I18n::get_label('label_payment_already_confirmed'),
-            'label_finalizing' => I18n::get_label('label_finalizing'),
-            'label_gateway_not_ready' => I18n::get_label('label_gateway_not_ready'),
-            'label_payment_success_form_fail' => I18n::get_label('label_payment_success_form_fail'),
-            'label_payment_cancelled' => I18n::get_label('label_payment_cancelled'),
-            'label_redirecting' => I18n::get_label('label_redirecting'),
-            'label_loading_payment' => I18n::get_label('label_loading_payment'),
-            'label_payment_capture_failed' => I18n::get_label('label_payment_capture_failed'),
-            'label_generic_error' => I18n::get_label('api_err_generic'),
-            'label_network_error' => I18n::get_label('api_err_network'),
-        );
-
-        $localized_data = apply_filters('mhbo_frontend_localized_data', $localized_data);
-
-        // SECURITY: Use wp_json_encode for proper escaping and WordPress consistency
-        wp_add_inline_script('mhbo-frontend', 'var mhbo_vars = ' . wp_json_encode($localized_data) . ';');
+        self::localize_frontend_assets();
     }
 
     /**
@@ -492,6 +465,7 @@ class Shortcode
             MHBO_VERSION,
             true
         );
+        self::localize_frontend_assets();
         wp_enqueue_script(
             'mhbo-booking-form',
             MHBO_PLUGIN_URL . 'assets/js/mhbo-booking-form.js',
@@ -500,46 +474,7 @@ class Shortcode
             true
         );
 
-$localized_data = [
-            'pay_confirm'                        => I18n::get_label('btn_pay_confirm'),
-            'confirm'                            => I18n::get_label('btn_confirm_booking'),
-            'processing'                         => I18n::get_label('btn_processing'),
-            'loading'                            => I18n::get_label('label_loading'),
-            'to'                                 => I18n::get_label('label_to'),
-            'ajax_url'                           => admin_url('admin-ajax.php'),
-            'rest_url'                           => get_rest_url(null, 'mhbo/v1'),
-            'nonce'                              => wp_create_nonce('wp_rest'),
-            'prevent_turnover'                   => (int) get_option('mhbo_prevent_same_day_turnover', 0) === 1,
-            'label_child_n_age'                  => I18n::get_label('label_child_n_age'),
-            'currency_symbol'                    => get_option('mhbo_currency_symbol', '$'),
-            'currency_pos'                       => get_option('mhbo_currency_position', 'before'),
-            'msg_gdpr_required'                  => I18n::get_label('msg_gdpr_required'),
-            'msg_paypal_required'                => I18n::get_label('msg_paypal_required'),
-            'tax_enabled'                        => Tax::is_enabled(),
-            'tax_mode'                           => Tax::get_mode(),
-            'tax_label'                          => Tax::get_label(),
-            'tax_rate_accommodation'             => Tax::get_accommodation_rate(),
-            'tax_rate_extras'                    => Tax::get_extras_rate(),
-            'checkin_time'                       => get_option('mhbo_checkin_time', '14:00'),
-            'checkout_time'                      => get_option('mhbo_checkout_time', '11:00'),
-            'auto_nonce'                         => wp_create_nonce('mhbo_auto_action'),
-            'nonce_confirm'                      => wp_create_nonce('mhbo_confirm_action'),
-            'label_setup_failed'                 => I18n::get_label('label_setup_failed'),
-            'label_payment_already_confirmed'    => I18n::get_label('label_payment_already_confirmed'),
-            'label_finalizing'                   => I18n::get_label('label_finalizing'),
-            'label_gateway_not_ready'            => I18n::get_label('label_gateway_not_ready'),
-            'label_payment_success_form_fail'    => I18n::get_label('label_payment_success_form_fail'),
-            'label_payment_cancelled'            => I18n::get_label('label_payment_cancelled'),
-            'label_redirecting'                  => I18n::get_label('label_redirecting'),
-            'label_loading_payment'              => I18n::get_label('label_loading_payment'),
-            'label_payment_capture_failed'       => I18n::get_label('label_payment_capture_failed'),
-            'label_generic_error'                => I18n::get_label('api_err_generic'),
-            'label_network_error'                => I18n::get_label('api_err_network'),
-        ];
-
-        $localized_data = apply_filters('mhbo_frontend_localized_data', $localized_data);
-        wp_add_inline_script('mhbo-frontend', 'var mhbo_vars = ' . wp_json_encode($localized_data) . ';');
-    }
+}
 
     /**
      * Render the booking form HTML as a string for the inline modal.
@@ -671,7 +606,7 @@ $localized_data = [
                 </div>
             </div>
 
-            <?php if ('completed' === $booking->payment_status) : ?>
+            <?php if (in_array($booking->payment_status, ['completed', 'deposit_paid'], true)) : ?>
                 <div class="mhbo-transaction-details">
                     <p><strong><?php echo esc_html(I18n::get_label('label_payment_status')); ?>:</strong> <?php echo esc_html(I18n::get_label('label_paid')); ?></p>
                     <?php if ((float) ($booking->payment_amount ?? 0) > 0) : ?>
@@ -734,13 +669,34 @@ $localized_data = [
         echo '<div class="mhbo-wrapper mhbo-booking-form-wrapper" data-instance-id="' . esc_attr((string) self::$instance_count) . '">';
         
         // Show success message if redirected (nonce-secured)
-        $nonce_val = filter_input(INPUT_GET, 'mhbo_success_nonce');
-        $success_nonce = $nonce_val ? sanitize_key(wp_unslash($nonce_val)) : '';
+        $nonce_val = isset($_GET['mhbo_success_nonce']) ? sanitize_key(wp_unslash($_GET['mhbo_success_nonce'])) : '';
+        $success_nonce = $nonce_val;
 
         $is_success = isset($_GET['mhbo_success']);
         $nonce_valid = false;
         if ($is_success) {
             $nonce_valid = wp_verify_nonce($success_nonce, 'mhbo_success_display');
+            
+            // Secure fallback: If nonce verification fails (e.g. due to session/login sync differences 
+            // between AJAX and redirect), check if we have a valid unguessable 32-character booking token.
+            if (!$nonce_valid && isset($_GET['reference']) && '' !== $_GET['reference']) {
+                $ref = sanitize_text_field(wp_unslash($_GET['reference']));
+                if (strlen($ref) >= 32 && preg_match('/^[a-zA-Z0-9]{32,64}$/', $ref)) {
+                    global $wpdb;
+                    $cache_key = 'mhbo_booking_ref_' . md5($ref);
+                    $booking = wp_cache_get($cache_key, 'mhbo_bookings');
+                    if (false === $booking) {
+                        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching
+                        $booking = $wpdb->get_row($wpdb->prepare("SELECT * FROM {$wpdb->prefix}mhbo_bookings WHERE booking_token = %s", $ref));
+                        if ($booking) {
+                            wp_cache_set($cache_key, $booking, 'mhbo_bookings', 300);
+                        }
+                    }
+                    if ($booking) {
+                        $nonce_valid = true;
+                    }
+                }
+            }
         }
 
         if ($show_calendar && (int)$atts['room_id'] > 0 && !$is_success) {
@@ -861,7 +817,7 @@ $localized_data = [
                     echo '</div>'; // .mhbo-stay-details
 
                     // Show payment summary
-                    if ('completed' === $booking->payment_status) {
+                    if (in_array($booking->payment_status, ['completed', 'deposit_paid'], true)) {
                         echo '<div class="mhbo-transaction-details">';
                         echo '<p><strong>' . esc_html(I18n::get_label('label_payment_status')) . ':</strong> ' . esc_html(I18n::get_label('label_paid')) . '</p>';
                         if ((float) ($booking->payment_amount ?? 0) > 0) {
@@ -903,7 +859,7 @@ $localized_data = [
         } else {
             // Show any errors captured during handle_form_submissions redirect
             $user_id = get_current_user_id();
-        $client_ip = Security::get_client_ip();
+            $client_ip = Security::get_client_ip();
             $key = 'mhbo_err_' . ($user_id ? $user_id : md5((string)$client_ip));
             $error = get_transient($key);
             if ('' !== $error) {
@@ -932,15 +888,6 @@ $localized_data = [
      */
     private function handle_booking_process(array $atts = []): void
     {
-        // 0. Show error from transient if exists (redirected from handle_form_submissions)
-        $user_id = get_current_user_id();
-        $client_ip = Security::get_client_ip();
-        $key = 'mhbo_err_' . ($user_id ? $user_id : md5((string)$client_ip));
-        $error_msg = get_transient($key);
-        if ('' !== $error_msg) {
-            delete_transient($key);
-            echo wp_kses_post((string)$error_msg);
-        }
 
         $room_id_attr = isset($atts['room_id']) ? absint($atts['room_id']) : 0;
 
@@ -1001,6 +948,18 @@ $localized_data = [
         }
 
         // 3. Check for Automatic Booking/Search (GET)
+        // phpcs:disable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash -- Reading QUERY_STRING to unescape entity-encoded ampersands before individual parameter sanitization below.
+        if ( isset( $_SERVER['QUERY_STRING'] ) ) {
+            $raw_qs = function_exists( 'wp_unslash' ) ? wp_unslash( $_SERVER['QUERY_STRING'] ) : $_SERVER['QUERY_STRING'];
+            if ( is_string( $raw_qs ) && ( str_contains( $raw_qs, '&#038;' ) || str_contains( $raw_qs, '&amp;' ) ) ) {
+                $clean_query = str_replace( [ '&#038;', '&amp;' ], '&', $raw_qs );
+                parse_str( $clean_query, $parsed_get );
+                if ( is_array( $parsed_get ) ) {
+                    $_GET = array_merge( $_GET, $parsed_get );
+                }
+            }
+        }
+        // phpcs:enable WordPress.Security.ValidatedSanitizedInput.InputNotSanitized, WordPress.Security.ValidatedSanitizedInput.MissingUnslash
         // phpcs:disable WordPress.Security.NonceVerification.Recommended -- Search parameters do not require nonce verification.
         $is_auto_book = isset($_GET['mhbo_auto_book']);
         $is_auto_search = isset($_GET['mhbo_auto_search']) || (isset($_GET['check_in']) && isset($_GET['check_out']));
@@ -1180,36 +1139,39 @@ $localized_data = [
 
         // Implement manual caching for search results
         $cache_key = 'mhbo_available_rooms_v3_' . md5($sql . wp_json_encode($query_args));
-        $available_rooms = wp_cache_get($cache_key, 'mhbo_bookings');
+        $all_rooms = wp_cache_get($cache_key, 'mhbo_bookings');
 
-        if (false === $available_rooms) {
+        if (false === $all_rooms) {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.NotPrepared, PluginCheck.Security.DirectDB.UnescapedDBParameter -- 2026 BP: High-performance room availability search across custom relational tables. Query is safely assembled using $wpdb->prepare placeholders for all variables.
             $all_rooms = $wpdb->get_results($wpdb->prepare($sql, ...$query_args));
-            
-            $available_rooms = [];
-            $seen_types = [];
-            if ( is_array($all_rooms) && [] !== $all_rooms ) {
-                foreach ($all_rooms as $room) {
-                    if (!isset($seen_types[$room->type_id])) {
-                        $available_rooms[] = $room;
-                        $seen_types[$room->type_id] = true;
-                    }
-                }
+            if (!is_array($all_rooms)) {
+                $all_rooms = [];
             }
-            
-            wp_cache_set($cache_key, $available_rooms, 'mhbo_bookings', 300); // Cache for 5 minutes
+            wp_cache_set($cache_key, $all_rooms, 'mhbo_bookings', 300); // Cache for 5 minutes
         }
 
-echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_in, $check_out)) . '</h3>';
-        if ([] === $available_rooms) {
+// Deduplicate by room type ID. We only need to show one result per room type.
+        // Doing this AFTER Pro filtering ensures that if Room A is blocked but Room B (same type) is free, the type still shows.
+        $available_rooms = [];
+        $seen_types = [];
+        if ( is_array($all_rooms) && [] !== $all_rooms ) {
+            foreach ($all_rooms as $room) {
+                if (!isset($seen_types[$room->type_id])) {
+                    $available_rooms[] = $room;
+                    $seen_types[$room->type_id] = true;
+                }
+            }
+        }
+
+        echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_in, $check_out)) . '</h3>';
+        if (!is_array($available_rooms) || [] === $available_rooms) {
             echo '<p>' . esc_html(I18n::get_label('label_no_rooms')) . '</p>';
             $this->render_search_form();
             return;
         }
 
         echo '<div class="mhbo-rooms-grid">';
-        if (is_array($available_rooms) && [] !== $available_rooms) {
-            foreach ($available_rooms as $room) {
+        foreach ($available_rooms as $room) {
             $start_date = new \DateTime($check_in);
             $end_date = new \DateTime($check_out);
             $interval = new \DateInterval('P1D');
@@ -1291,7 +1253,6 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
             echo '<button type="submit" class="mhbo-btn">' . esc_html(I18n::get_label('btn_book_now')) . '</button>';
             echo '</form></div></div>';
         }
-        }
         echo '</div>';
     }
 
@@ -1320,16 +1281,19 @@ echo '<h3>' . esc_html(sprintf(I18n::get_label('label_available_rooms'), $check_
         $customer_phone = isset($params['customer_phone']) ? sanitize_text_field($params['customer_phone']) : '';
         $admin_notes    = isset($params['admin_notes']) ? sanitize_textarea_field($params['admin_notes']) : '';
 
-        // Resolve room_id from type_id if it's 0 (category booking)
-        if (0 === $room_id && 0 !== $type_id) {
-            $resolved_room = Pricing::find_available_room($type_id, $check_in, $check_out, $guests);
-            if (0 !== $resolved_room) {
-                $room_id = $resolved_room;
-            }
-        }
-
         $exclude_id = isset($params['exclude_id']) ? intval($params['exclude_id']) : 0;
         $update_id  = isset($params['mhbo_update_id']) ? intval($params['mhbo_update_id']) : 0;
+
+        // Resolve room_id from type_id if room_id is 0 or if the specified room_id is not available for these dates
+        if ($type_id > 0) {
+            $is_specified_avail = ($room_id > 0) ? Pricing::is_room_available((int) $room_id, $check_in, $check_out, $exclude_id) : false;
+            if (true !== $is_specified_avail) {
+                $resolved_room = Pricing::find_available_room($type_id, $check_in, $check_out, $guests);
+                if (false !== $resolved_room && 0 !== $resolved_room) {
+                    $room_id = (int) $resolved_room;
+                }
+            }
+        }
 
         // Check availability before rendering booking form.
         $available = Pricing::is_room_available((int) $room_id, $check_in, $check_out, $exclude_id);
@@ -1437,8 +1401,8 @@ $deposit_data = null;
                     $ci_date  = $ci_date_for_calc;
                     $co_date  = $co_date_for_calc;
                     $nights   = $nights_for_calc;
-                    $ci_time  = get_option('mhbo_check_in_time', '14:00');
-                    $co_time  = get_option('mhbo_check_out_time', '11:00');
+                    $ci_time  = get_option('mhbo_checkin_time', '14:00');
+                    $co_time  = get_option('mhbo_checkout_time', '11:00');
                     ?>
                     
                     <div class="mhbo-booking-dates" style="border:1px solid var(--mhbo-border); border-radius:12px; padding:16px; display:flex; justify-content:space-between; margin-bottom:32px; background:var(--mhbo-bg, #fff);">
@@ -1730,7 +1694,7 @@ echo wp_kses_post(Tax::render_breakdown_html($tax_data, null, false, array(), fa
         $result = \MHBO\Core\BookingProcessor::process($data);
 
         if (is_wp_error($result)) {
-            $this->booking_fail('<div class="mhbo-error">' . $result->get_error_message() . '</div>');
+            $this->booking_fail('<div class="mhbo-error">' . esc_html($result->get_error_message()) . '</div>');
             return;
         }
 
@@ -1872,7 +1836,15 @@ wp_add_inline_style('mhbo-frontend', '
     {
         $booking_page_id = (int) get_option('mhbo_booking_page');
         $booking_page_url = get_option('mhbo_booking_page_url');
-        
+
+        // 2026 BP: Resolve the translated page ID for Polylang/WPML when no
+        // manual URL override is set.  This is the single fix that ensures
+        // every PHP redirect, form action, and JS config value points to the
+        // language-correct booking page throughout the entire booking flow.
+        if (('' === (string) $booking_page_url || false === $booking_page_url) && $booking_page_id > 0) {
+            $booking_page_id = I18n::get_translated_page_id($booking_page_id);
+        }
+
         $url = '';
         if (is_string($booking_page_url) && '' !== $booking_page_url) {
             $url = $booking_page_url;
@@ -1909,6 +1881,33 @@ wp_add_inline_style('mhbo-frontend', '
     }
 
     /**
+     * Check if a given page ID is the booking page or a translation of it.
+     *
+     * Supports Polylang and WPML where translated pages have different IDs.
+     * Uses I18n::get_translated_page_id() to resolve language-specific pages.
+     *
+     * @since 2.4.4.2
+     * @param int $page_id The page ID to check.
+     * @return bool
+     */
+    public static function is_mhbo_booking_page(int $page_id): bool
+    {
+        $booking_page_id = (int) get_option('mhbo_booking_page');
+        if ($booking_page_id <= 0) {
+            return false;
+        }
+        // Direct match (default language or no translation plugin).
+        if ($booking_page_id === $page_id) {
+            return true;
+        }
+        // 2026 BP: Check if this page is a translation of the booking page.
+        // I18n::get_translated_page_id() handles Polylang (pll_get_post),
+        // WPML (wpml_object_id), and per-language overrides (mhbo_booking_page_{lang}).
+        $translated_id = I18n::get_translated_page_id($booking_page_id);
+        return $translated_id === $page_id;
+    }
+
+    /**
      * Render hidden inputs for all query parameters in a URL.
      * This is essential for GET forms in WordPress where the action URL's
      * own query string is stripped by the browser.
@@ -1932,5 +1931,84 @@ wp_add_inline_style('mhbo-frontend', '
                 }
             }
         }
+    }
+
+    /**
+     * Render the mhbo_rooms grid shortcode.
+     *
+     * @param array<string, mixed>|string|false $atts Shortcode attributes.
+     * @return string The rendered HTML.
+     */
+    public function render_rooms_grid_shortcode(array|string|false $atts): string
+    {
+        // Enqueue styles
+        $this->ensure_assets_loaded();
+
+        $atts = shortcode_atts(array(
+            'columns' => 3,
+            'limit'   => 6,
+        ), $atts, 'mhbo_rooms');
+
+        $columns = absint(is_array($atts) && isset($atts['columns']) ? $atts['columns'] : 3);
+        $limit   = absint(is_array($atts) && isset($atts['limit']) ? $atts['limit'] : 6);
+
+        global $wpdb;
+        // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching, WordPress.DB.PreparedSQL.InterpolatedNotPrepared -- Safe interpolations for table names. Limit is safely cast to integer.
+        $room_types = $wpdb->get_results($wpdb->prepare("SELECT id, name, description, image_url, base_price, max_adults, amenities FROM {$wpdb->prefix}mhbo_room_types WHERE 1=1 ORDER BY id DESC LIMIT %d", $limit));
+
+        ob_start();
+        echo '<div class="mhbo-wrapper mhbo-room-grid-shortcode" data-columns="' . esc_attr((string)$columns) . '">';
+        
+        if (is_array($room_types) && [] !== $room_types) {
+            echo '<div class="mhbo-rooms-grid" style="grid-template-columns: repeat(' . esc_attr((string)$columns) . ', 1fr);">';
+            foreach ($room_types as $type) {
+                $img_style = '';
+                if (isset($type->image_url) && '' !== (string) $type->image_url) {
+                    $img_style = 'background:url(' . esc_url($type->image_url) . ') center/cover;';
+                } else {
+                    $img_style = 'background: linear-gradient(135deg, var(--mhbo-primary) 0%, var(--mhbo-accent) 100%); opacity: 0.8;';
+                }
+
+                echo '<div class="mhbo-room-card">';
+                echo '<div class="mhbo-room-image" style="height:200px; ' . esc_attr((string)$img_style) . '"></div>';
+                echo '<div class="mhbo-room-content">';
+                echo '<h4 class="mhbo-room-title">' . esc_html(I18n::decode($type->name)) . '</h4>';
+
+                $desc = I18n::decode($type->description);
+                if ('' !== $desc) {
+                    echo '<p class="mhbo-room-description" style="font-size:0.9rem; color:#666; margin-bottom:15px;">' . esc_html(wp_trim_words((string)$desc, 20)) . '</p>';
+                }
+
+                echo '<div class="mhbo-room-price">' . esc_html(I18n::format_currency((float)$type->base_price)) . ' <span>' . esc_html(I18n::get_label('label_per_night')) . '</span></div>';
+
+                $amenities = $type->amenities ? json_decode((string)$type->amenities) : [];
+                if (is_array($amenities) && [] !== $amenities) {
+                    echo '<div class="mhbo-amenities" style="margin-bottom:10px; font-size:0.85rem; color:#666;">';
+                    foreach ($amenities as $am) {
+                        echo '<span style="display:inline-block; background:#eee; padding:2px 8px; border-radius:12px; margin-right:5px; margin-bottom:5px;">' . esc_html(ucfirst((string)I18n::decode($am))) . '</span>';
+                    }
+                    echo '</div>';
+                }
+
+                echo '<div class="mhbo-room-details">';
+                echo '<p>' . esc_html(sprintf(I18n::get_label('label_max_guests'), $type->max_adults)) . '</p>';
+                echo '</div>';
+
+                $checkout_url = $this->get_booking_page_url();
+                $clean_checkout_url = $this->remove_mhbo_query_args($checkout_url);
+                
+                echo '<form method="get" action="' . esc_url($clean_checkout_url) . '">';
+                self::render_url_hidden_inputs($clean_checkout_url);
+                echo '<input type="hidden" name="type_id" value="' . esc_attr((string)$type->id) . '">';
+                echo '<button type="submit" class="mhbo-btn">' . esc_html(I18n::get_label('btn_view_room')) . '</button>';
+                echo '</form></div></div>';
+            }
+            echo '</div>';
+        } else {
+            echo '<p>' . esc_html(I18n::get_label('label_no_rooms')) . '</p>';
+        }
+
+        echo '</div>';
+        return ob_get_clean();
     }
 }

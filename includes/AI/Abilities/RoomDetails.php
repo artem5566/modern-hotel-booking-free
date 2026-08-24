@@ -31,8 +31,9 @@ class RoomDetails {
      */
     public static function get_definition(): array {
         return [
-            'name'        => __( 'Get Room Details', 'modern-hotel-booking' ),
+            'label'       => __( 'Get Room Details', 'modern-hotel-booking' ),
             'description' => __( 'Get detailed information about a room type including amenities, capacity, and pricing.', 'modern-hotel-booking' ),
+            'category'    => 'hotel-information',
             'input_schema' => [
                 'type'       => 'object',
                 'properties' => [
@@ -45,7 +46,10 @@ class RoomDetails {
             ],
             'permission_callback' => '__return_true',
             'execute_callback'    => [ self::class, 'execute' ],
-            'meta'                => [ 'mcp' => [ 'public' => true ] ],
+            'meta'                => [
+                'mcp'          => [ 'public' => true ],
+                'show_in_rest' => true,
+            ],
         ];
     }
 
@@ -134,7 +138,7 @@ class RoomDetails {
             'currency'         => $currency,
             'price_formatted'  => $price_money->format(),
             'amenities'        => $amenities,
-            'thumbnail_url'    => esc_url( (string) ( $type->image_url ?? '' ) ),
+            'thumbnail_url'    => esc_url_raw( (string) ( $type->image_url ?? '' ) ),
             'booking_url'      => KnowledgeBase::get_booking_url(),
             'total_rooms'      => (int) ( $type->total_rooms ?? 0 ),
         ];
@@ -147,6 +151,6 @@ class RoomDetails {
         if ( ! function_exists( 'wp_register_ability' ) ) {
             return;
         }
-        wp_register_ability( 'mhbo/get-room-details', self::get_definition() );
+        call_user_func( 'wp_register_ability', 'mhbo/get-room-details', self::get_definition() );
     }
 }

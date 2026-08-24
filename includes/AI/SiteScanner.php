@@ -82,7 +82,7 @@ class SiteScanner {
         // ── WhatsApp / direct contact ─────────────────────────────────────────
         $sections[] = self::build_contact_section();
 
-        // ── WordPress pages, posts ────────────────────────────────────────────
+// ── WordPress pages, posts ────────────────────────────────────────────
         $sections[] = self::build_pages_section();
 
         return implode( "\n\n", array_filter( $sections, fn( $s ) => '' !== $s ) );
@@ -188,7 +188,8 @@ class SiteScanner {
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery
             $room_types = $wpdb->get_results(
                 "SELECT t.id, t.name, t.description, t.base_price, t.max_adults, t.max_children, t.amenities, t.image_url,
-                        COUNT(r.id) AS total_rooms
+                        COUNT(r.id) AS total_rooms,
+                        GROUP_CONCAT(r.room_number) AS room_numbers
                  FROM {$wpdb->prefix}mhbo_room_types t
                  LEFT JOIN {$wpdb->prefix}mhbo_rooms r ON r.type_id = t.id
                  GROUP BY t.id
@@ -227,7 +228,10 @@ class SiteScanner {
                 $block[] = 'Description: ' . wp_strip_all_tags( (string) $description );
             }
             if ( [] !== (array) $amenities ) {
+                
+                /* BUILD_FREE_START
                 $block[] = 'Room Amenities: ' . implode( ', ', array_map( 'sanitize_text_field', (array) $amenities ) );
+                BUILD_FREE_END */
             }
 
             $output[] = implode( "\n", $block );
@@ -236,7 +240,7 @@ class SiteScanner {
         return implode( "\n\n", $output );
     }
 
-    /**
+/**
      * Build the extras/add-ons section from Pro settings.
      *
      * Reads `mhbo_pro_extras` — the same option used by the booking form.
@@ -427,7 +431,7 @@ class SiteScanner {
         return implode( "\n", $lines );
     }
 
-    /**
+/**
      * Build the pages/posts section from WP content.
      *
      * @return string

@@ -225,9 +225,7 @@
     }
 
     /* Keep widget at its anchor position; panel goes full-screen via fixed */
-    .mhbo-chat-widget--open {
-        /* Do NOT stretch the container full-screen — FAB stays anchored */
-    }
+    /* Do NOT stretch the container full-screen — FAB stays anchored */
 
     .mhbo-chat-panel {
         position: fixed !important;
@@ -1222,4 +1220,13 @@
     font-size: 12px;
     padding: 8px;
     border-radius: 100px;
+}
+
+/* iOS Safari zoom fix for form fields */
+@media screen and (max-width: 768px) {
+    .mhbo-chat-widget input,
+    .mhbo-chat-widget select,
+    .mhbo-chat-widget textarea {
+        font-size: 16px !important;
+    }
 }

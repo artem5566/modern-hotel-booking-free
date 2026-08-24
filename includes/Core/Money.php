@@ -397,6 +397,28 @@ class Money implements \JsonSerializable
     }
 
     /**
+     * Check if this amount is strictly greater than another.
+     *
+     * @param Money $other
+     * @return bool
+     */
+    public function greaterThan(self $other): bool
+    {
+        return $this->compare($other) > 0;
+    }
+
+    /**
+     * Check if this amount is strictly less than another.
+     *
+     * @param Money $other
+     * @return bool
+     */
+    public function lessThan(self $other): bool
+    {
+        return $this->compare($other) < 0;
+    }
+
+    /**
      * Get the decimal precision for a currency.
      * 
      * @param string $currency ISO-4217 code.

@@ -102,7 +102,17 @@
 .mhbo-calendar-wrapper .flatpickr-weekdays {
     background: transparent !important;
     margin-bottom: 5px !important;
-    padding: 10px 0 !important;
+    padding: 10px 5px !important; /* Match horizontal padding of .flatpickr-days */
+    display: flex !important;
+    width: 100% !important;
+    overflow: visible !important; /* CRITICAL: Prevent headers from clipping when overflowing on tight screens */
+}
+
+.mhbo-calendar-wrapper .flatpickr-weekdaycontainer {
+    display: flex !important;
+    width: 100% !important;
+    justify-content: center !important;
+    overflow: visible !important;
 }
 
 .mhbo-calendar-wrapper span.flatpickr-weekday {
@@ -110,6 +120,13 @@
     font-weight: 800 !important;
     font-size: 0.9rem !important;
     text-transform: uppercase;
+    /* Exactly match day cells to ensure perfect alignment */
+    flex-grow: 0 !important; /* CRITICAL: Override flatpickr's default flex: 1 which causes spreading */
+    flex-basis: calc(14.28% - 6px) !important;
+    max-width: calc(14.28% - 6px) !important;
+    margin: 0 3px !important;
+    display: block !important;
+    text-align: center !important;
 }
 
 /* --- Day Cells --- */
@@ -120,13 +137,14 @@
     overflow: visible !important;
     display: flex !important;
     flex-wrap: wrap !important;
+    justify-content: center !important;
 }
 
 .mhbo-calendar-wrapper .dayContainer {
     width: 100% !important;
     max-width: 100% !important;
     min-width: 100% !important;
-    justify-content: space-between !important;
+    justify-content: center !important;
     overflow: visible !important;
 }
 
@@ -607,6 +625,16 @@
         flex-basis: calc(14.28% - 2px) !important;
         max-width: calc(14.28% - 2px) !important;
         border-radius: 10px !important;
+    }
+
+    .mhbo-calendar-wrapper .flatpickr-weekdays {
+        padding: 10px 1px !important; /* Match horizontal padding of .flatpickr-days */
+    }
+
+    .mhbo-calendar-wrapper span.flatpickr-weekday {
+        margin: 0 1px !important;
+        flex-basis: calc(14.28% - 2px) !important;
+        max-width: calc(14.28% - 2px) !important;
     }
 
     /* Keep inRange stripe continuous with the new 1px margin */

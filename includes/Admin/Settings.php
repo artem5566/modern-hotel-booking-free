@@ -90,7 +90,6 @@ class Settings
         register_setting('mhbo_settings_group', 'mhbo_additional_notification_email', array('default' => '', 'sanitize_callback' => 'sanitize_email'));
         register_setting('mhbo_settings_group', 'mhbo_modal_enabled', array('default' => 1, 'sanitize_callback' => 'absint'));
         register_setting('mhbo_settings_group', 'mhbo_prevent_same_day_turnover', array('default' => 0, 'sanitize_callback' => 'absint'));
-        register_setting('mhbo_settings_group', 'mhbo_children_enabled', array('default' => 0, 'sanitize_callback' => 'absint'));
 
 // Currency Settings
         register_setting('mhbo_settings_group', 'mhbo_currency_code', array('default' => 'USD', 'sanitize_callback' => 'sanitize_text_field'));
@@ -110,7 +109,10 @@ class Settings
         register_setting('mhbo_settings_group', 'mhbo_booking_page', array('type' => 'integer', 'sanitize_callback' => 'absint', 'default' => 0));
         register_setting('mhbo_settings_group', 'mhbo_booking_page_url', array('type' => 'string', 'sanitize_callback' => 'esc_url_raw', 'default' => ''));
 
-// Uninstall Settings
+register_setting('mhbo_settings_group', 'mhbo_orphan_gap_autocorrection', array('default' => 0, 'sanitize_callback' => 'absint'));
+        register_setting('mhbo_settings_group', 'mhbo_orphan_gap_min_stay', array('default' => 1, 'sanitize_callback' => 'absint'));
+
+        // Uninstall Settings
         register_setting('mhbo_settings_group', 'mhbo_save_data_on_uninstall', array('default' => 1, 'sanitize_callback' => 'absint'));
         
         // Security Settings
@@ -143,12 +145,8 @@ class Settings
             'label_for'   => 'mhbo_prevent_same_day_turnover',
             'description' => I18n::get_label('settings_desc_turnover')
         ));
-        add_settings_field('mhbo_children_enabled', I18n::get_label('settings_label_children'), array($this, 'render_checkbox_field'), 'mhbo-settings', 'mhbo_general_section', array(
-            'label_for'   => 'mhbo_children_enabled',
-            'description' => I18n::get_label('settings_desc_children')
-        ));
-        
-        add_settings_field('mhbo_custom_fields', I18n::get_label('settings_label_custom_fields'), array($this, 'render_custom_fields_repeater'), 'mhbo-settings', 'mhbo_general_section', array('label_for' => 'mhbo_custom_fields'));
+
+add_settings_field('mhbo_custom_fields', I18n::get_label('settings_label_custom_fields'), array($this, 'render_custom_fields_repeater'), 'mhbo-settings', 'mhbo_general_section', array('label_for' => 'mhbo_custom_fields'));
         add_settings_field('mhbo_save_data_on_uninstall', I18n::get_label('settings_label_uninstall'), array($this, 'render_checkbox_field'), 'mhbo-settings', 'mhbo_general_section', array(
             'label_for'   => 'mhbo_save_data_on_uninstall',
             'description' => I18n::get_label('settings_desc_uninstall'),
@@ -276,6 +274,33 @@ class Settings
         $option = get_option($args['label_for']);
         $value = I18n::decode($option);
         echo '<input type="text" id="' . esc_attr($args['label_for']) . '" name="' . esc_attr($args['label_for']) . '" value="' . esc_attr($value) . '" class="regular-text">';
+    }
+
+    /**
+     * Render a standard number input field.
+     *
+     * @param array{label_for: string, min?: int, max?: int, step?: int} $args Field arguments.
+     * @return void
+     */
+    public function render_number_field( array $args ): void
+    {
+        $option = get_option($args['label_for']);
+        
+        echo '<input type="number" id="' . esc_attr($args['label_for']) . '" name="' . esc_attr($args['label_for']) . '" value="' . esc_attr((string) $option) . '" class="regular-text"';
+        if (isset($args['min'])) {
+            echo ' min="' . esc_attr((string) $args['min']) . '"';
+        }
+        if (isset($args['max'])) {
+            echo ' max="' . esc_attr((string) $args['max']) . '"';
+        }
+        if (isset($args['step'])) {
+            echo ' step="' . esc_attr((string) $args['step']) . '"';
+        }
+        echo '>';
+        
+        if (isset($args['description'])) {
+            echo '<p class="description">' . esc_html($args['description']) . '</p>';
+        }
     }
 
     /**
@@ -809,6 +834,7 @@ private static function render_labels_tab(): void
                 'label_pay_arrival' => I18n::__('label_desc_pay_arrival'),
                 'label_credit_card' => I18n::__('label_desc_credit_card'),
                 'label_paypal' => I18n::__('label_desc_paypal'),
+                'label_braintree' => I18n::__('label_desc_braintree'),
                 'label_payment_status' => I18n::__('label_desc_payment_status'),
                 'label_paid' => I18n::__('label_desc_paid'),
                 'label_amount_paid' => I18n::__('label_desc_amount_paid'),
@@ -1235,6 +1261,9 @@ switch ($tab) {
         if (isset($data['mhbo_booking_page'])) {
             update_option('mhbo_booking_page', absint(wp_unslash($data['mhbo_booking_page'])));
         }
+        if (isset($data['mhbo_orphan_gap_min_stay'])) {
+            update_option('mhbo_orphan_gap_min_stay', absint(wp_unslash($data['mhbo_orphan_gap_min_stay'])));
+        }
         if (isset($data['mhbo_notification_email'])) {
             // 2026 BP: Rule 11 - Individual extraction then sanitization.
             $raw_email = wp_unslash($data['mhbo_notification_email']);
@@ -1260,17 +1289,20 @@ switch ($tab) {
         $bool_fields = [
             'mhbo_modal_enabled',
             'mhbo_prevent_same_day_turnover',
-            'mhbo_children_enabled',
             'mhbo_calendar_show_decimals',
             'mhbo_powered_by_link',
-            'mhbo_save_data_on_uninstall'
+            'mhbo_save_data_on_uninstall',
+            'mhbo_orphan_gap_autocorrection'
         ];
 
-        foreach ($bool_fields as $field) {
+foreach ($bool_fields as $field) {
             $raw_val = isset($data[$field]) ? (string) wp_unslash($data[$field]) : '0';
             $val = ('1' === $raw_val) ? 1 : 0;
             update_option($field, $val);
         }
+
+        // Invalidate settings cache so API payload version hash changes immediately
+        Cache::bump(Cache::TABLE_SETTINGS);
 
         // 2026 BP: Rule 11 - Individual extraction then sanitization.
         if (isset($data['mhbo_custom_fields']) && is_array($data['mhbo_custom_fields'])) {
@@ -1337,7 +1369,7 @@ public static function render_pro_page(): void
                     <?php I18n::esc_html_e('pro_upsell_full_desc'); ?>
                 </p>
                 <div style="display: flex; gap: 10px; justify-content: center; flex-wrap: wrap;">
-                    <a href="<?php echo esc_url('https://startmysuccess.com/shop/wordpress-plugins/hotel-booking-wordpress-plugin/'); ?>"
+                    <a href="<?php echo esc_url('https://modernhotelwp.com/'); ?>"
                         target="_blank" rel="noopener noreferrer"
                         class="button button-primary button-large"><?php I18n::esc_html_e('pro_upsell_upgrade'); ?></a>                </div>
                 <div style="margin-top: 25px; padding-top: 20px; border-top: 1px solid #dee2e6;">

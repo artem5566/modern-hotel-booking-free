@@ -1,0 +1,23 @@
+{
+	"apiVersion": 3,
+	"name": "modern-hotel-booking/ai-chat-widget",
+	"version": "1.0.0",
+	"title": "AI Chat Widget",
+	"category": "mhbo-blocks",
+	"icon": "format-chat",
+	"description": "Add an AI Concierge Chat Widget to your site.",
+	"keywords": [ "chat", "ai", "concierge" ],
+	"textdomain": "modern-hotel-booking",
+	"editorScript": "file:./index.js",
+	"editorStyle": "file:./index.css",
+	"style": "file:./style-index.css",
+	"viewScript": "file:./view.js",
+	"supports": {
+		"html": false,
+		"align": true,
+		"spacing": {
+			"margin": true,
+			"padding": true
+		}
+	}
+}

@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Chat REST Endpoint
  *
@@ -16,12 +17,18 @@ declare(strict_types=1);
 
 namespace MHBO\AI;
 
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
+
 use MHBO\AI\Abilities\CheckAvailability;
 use MHBO\AI\Abilities\CreateBookingLink;
 use MHBO\AI\Abilities\GetBusinessCard;
 use MHBO\AI\Abilities\GetKnowledgeBase;
+use MHBO\AI\Abilities\GetPriceBreakdown;
 use MHBO\AI\Abilities\HotelInfo;
 use MHBO\AI\Abilities\Policies;
+use MHBO\AI\Abilities\RecommendRooms;
 use MHBO\AI\Abilities\RoomDetails;
 use MHBO\Core\HotelTime;
 use MHBO\Core\I18n;
@@ -128,7 +135,7 @@ class ChatRest {
         // 0. Ensure PHP has enough time for slow AI models (2026 BP).
         if ( \function_exists( 'set_time_limit' ) ) {
             // phpcs:ignore Squiz.PHP.DiscouragedFunctions.Discouraged
-            @\set_time_limit( 120 );
+            @\set_time_limit( 180 ); // 2026.6 BP: Increased from 120s to accommodate longer cascade budget (40s) + cross-provider fallback.
         }
         // 1. Nonce verification.
         $nonce = (string) ( $request->get_param( 'nonce' ) ?? $request->get_header( 'X-WP-Nonce' ) ?? '' );
@@ -201,7 +208,10 @@ class ChatRest {
 
         // 6. System prompt + tools.
         $lang          = (string) ( $request->get_param( 'lang' ) ?? '' );
+        
+        /* BUILD_FREE_START
         $system_prompt = KnowledgeBase::get_system_prompt( $lang );
+        BUILD_FREE_END */
         $tools         = KnowledgeBase::get_tool_definitions( false );
 
         // 7. Dynamic Session Context (2026 BP).
@@ -211,6 +221,30 @@ class ChatRest {
         $guest_name    = ChatSession::get_guest_name( $session_id );
         $guest_email   = ChatSession::get_guest_email( $session_id );
         $guest_phone   = ChatSession::get_guest_phone( $session_id );
+
+        // WP 7.1: Token-efficient user context via fields projection.
+        // Uses the 'fields' parameter on core/get-user-info ability to fetch
+        // only display_name, first_name, and locale instead of the full user object.
+        $wp_user_context = '';
+        if ( is_user_logged_in() && function_exists( 'wp_get_ability' ) ) {
+            $user_ability = call_user_func( 'wp_get_ability', 'core/get-user-info' );
+            if ( $user_ability && method_exists( $user_ability, 'execute' ) ) {
+                $user_info = $user_ability->execute( [
+                    'fields' => [ 'display_name', 'first_name', 'locale' ],
+                ] );
+                if ( is_array( $user_info ) ) {
+                    $wp_display = (string) ( $user_info['display_name'] ?? '' );
+                    $wp_locale  = (string) ( $user_info['locale'] ?? '' );
+                    if ( '' !== $wp_display ) {
+                        $wp_user_context = "\nLogged-in WP user: {$wp_display}";
+                        if ( '' !== $wp_locale ) {
+                            $wp_user_context .= " (locale: {$wp_locale})";
+                        }
+                        $wp_user_context .= ".\n";
+                    }
+                }
+            }
+        }
 
         $lang_block    = $lang ? \sprintf( I18n::get_label( 'ai_prompt_lang_rule' ), $lang ) : '';
         
@@ -229,7 +263,7 @@ class ChatRest {
             false ? '`create_booking_link` (or `create_booking_draft` if is_pro)' : '`create_booking_link`'
         );
         
-        $system_prompt .= "\n" . $lang_block . "\n" . $context_name . " " . $context_email . " " . $context_phone . "\n" . $date_context . "\n" . $scarcity_rule . $decisive_rule;
+        $system_prompt .= "\n" . $lang_block . "\n" . $context_name . " " . $context_email . " " . $context_phone . "\n" . $date_context . "\n" . $scarcity_rule . $decisive_rule . $wp_user_context;
 
         // 7b. Multi-Room Sequential Context (2026 BP).
         //     If a multi-room plan is active, inject the current progress so the AI
@@ -359,7 +393,14 @@ class ChatRest {
                     ], 200 );
                 }
 
-                return new WP_Error( 'mhbo_ai_error', (string) $ai_response['error'], [ 'status' => 502 ] );
+                // 2026.6 BP: Never expose raw AI errors to guests. Always return a friendly
+                // cooling message. The original 502 WP_Error leaked internal API error details
+                // (e.g. "cURL error 28: Operation timed out") into the chat widget.
+                return new WP_REST_Response( [
+                    'response'    => I18n::get_label( 'ai_status_cooling_down' ),
+                    'session_id'  => $session_id,
+                    'suggestions' => [],
+                ], 200 );
             }
 
             $tool_calls = $ai_response['tool_calls'] ?? [];
@@ -513,7 +554,7 @@ class ChatRest {
         foreach ( $tool_calls_log as $tc_entry ) {
             if (
                 \in_array( $tc_entry['tool'], $card_tools, true ) &&
-                isset( $tc_entry['result'] ) &&
+                \is_array( $tc_entry['result'] ) &&
                 ! isset( $tc_entry['result']['error'] )
             ) {
                 $card_created = true;
@@ -593,10 +634,15 @@ class ChatRest {
      * Whether an AI error string represents a transient (retryable) failure.
      */
     private static function is_transient_error( string $error ): bool {
+        // 2026.6 BP: Added 'curl error', 'timed out', 'timeout', 'connection reset', '502', '429'.
+        // Without these, cURL error 28 ("Operation timed out") was misclassified as permanent,
+        // causing a raw 502 WP_Error to be surfaced to guests in the chat widget.
         $phrases = [
             'cooling', 'quota', '503', '504', 'demand', 'overloaded',
             'capacity', 'retry', 'limit', 'busy', 'unavailable',
             'no models', 'available', 'high demand',
+            'curl error', 'timed out', 'timeout', 'connection reset',
+            '502', '429',
         ];
         $lower = \strtolower( $error );
         foreach ( $phrases as $p ) {
@@ -627,6 +673,8 @@ class ChatRest {
             'get_knowledge_base'  => GetKnowledgeBase::execute( $args ),
             'get_local_tips'      => Abilities\LocalTips::execute( $args ),
             'get_business_card'   => GetBusinessCard::execute( $args ),
+            'get_price_breakdown' => GetPriceBreakdown::execute( $args ),
+            'recommend_rooms'     => RecommendRooms::execute( $args ),
             'create_booking_link' => CreateBookingLink::execute( $args ),
             
             default => [ 'error' => "Unknown tool: {$name}" ],
@@ -1001,7 +1049,7 @@ class ChatRest {
         global $wpdb;
 
         // Collect room_ids already in the distribution.
-        $used_ids = \array_filter( \array_map( fn( $s ) => (int) ( $s['room_id'] ?? 0 ), $distribution ) );
+        $used_ids = \array_filter( \array_map( fn( $s ) => (int) ( $s['room_id'] ?? 0 ), $distribution ), fn( $id ) => 0 !== $id );
 
         // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery, WordPress.DB.DirectDatabaseQuery.NoCaching -- Rationale: Real-time availability swap for multi-room flow; must be live.
         $candidates = $wpdb->get_col(

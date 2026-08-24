@@ -1,4 +1,5 @@
 <?php
+
 /**
  * Chat Session — stores conversation history per visitor session.
  *
@@ -12,6 +13,10 @@
 declare(strict_types=1);
 
 namespace MHBO\AI;
+
+if ( ! defined( 'ABSPATH' ) ) {
+    exit;
+}
 
 use MHBO\Core\License;
 

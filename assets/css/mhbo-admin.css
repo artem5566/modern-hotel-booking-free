@@ -2325,3 +2325,468 @@
 .wp-admin .mhbo-admin-wrap .wp-list-table th:last-child {
     width: 180px !important;
 }
+
+/* Modern Hotel Booking - Calendar Backend UI Premium 2026 Styling */
+
+/* Modern Hotel Booking - 2026 Luxury Calendar Architecture */
+
+/* Calendar Card Container */
+.mhbo-calendar-card {
+    background: #ffffff !important;
+    border-radius: 16px !important;
+    box-shadow: 0 10px 30px -5px rgba(15, 23, 42, 0.05), 0 1px 3px rgba(15, 23, 42, 0.03) !important;
+    padding: 28px !important;
+    border: 1px solid #e2e8f0 !important;
+    margin-bottom: 24px !important;
+}
+
+/* Header Toolbar & Title */
+.fc .fc-toolbar {
+    margin-bottom: 24px !important;
+    padding: 4px 4px 8px 4px !important;
+}
+
+.fc .fc-toolbar-title {
+    font-family: 'Outfit', -apple-system, BlinkMacSystemFont, sans-serif !important;
+    font-size: 1.65rem !important;
+    font-weight: 800 !important;
+    letter-spacing: -0.025em !important;
+    color: #0f172a !important;
+}
+
+/* Toolbar Buttons & View Switcher Segmented Control */
+.fc .fc-button-primary {
+    background: linear-gradient(180deg, #1e293b 0%, #0f172a 100%) !important;
+    border: 1px solid #334155 !important;
+    color: #f8fafc !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    border-radius: 10px !important;
+    padding: 8px 16px !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.1), 0 2px 4px rgba(15, 23, 42, 0.1) !important;
+    transition: all 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+}
+
+.fc .fc-button-primary:hover {
+    background: linear-gradient(180deg, #334155 0%, #1e293b 100%) !important;
+    border-color: #475569 !important;
+    transform: translateY(-1px) !important;
+    box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.15), 0 4px 8px rgba(15, 23, 42, 0.15) !important;
+}
+
+.fc .fc-button-primary.fc-button-active,
+.fc .fc-button-primary:active {
+    background: linear-gradient(180deg, #4f46e5 0%, #4338ca 100%) !important;
+    border-color: #4338ca !important;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.2) !important;
+}
+
+.fc .fc-button-primary:disabled {
+    background: #94a3b8 !important;
+    border-color: #94a3b8 !important;
+    opacity: 0.6 !important;
+}
+
+.fc .fc-button-group {
+    background: #f1f5f9 !important;
+    padding: 3px !important;
+    border-radius: 12px !important;
+    border: 1px solid #e2e8f0 !important;
+}
+
+.fc .fc-button-group > .fc-button {
+    border: none !important;
+    background: transparent !important;
+    color: #475569 !important;
+    box-shadow: none !important;
+    border-radius: 8px !important;
+}
+
+.fc .fc-button-group > .fc-button.fc-button-active {
+    background: #ffffff !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1) !important;
+}
+
+/* Day Column Headers (Sun, Mon, Tue...) */
+.fc .fc-col-header-cell {
+    background: #f8fafc !important;
+    padding: 12px 0 !important;
+    border-color: #e2e8f0 !important;
+}
+
+.fc .fc-col-header-cell-cushion {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 700 !important;
+    font-size: 0.75rem !important;
+    text-transform: uppercase !important;
+    letter-spacing: 0.08em !important;
+    color: #64748b !important;
+    text-decoration: none !important;
+}
+
+/* Grid Lines & Cell Styling */
+.fc td, .fc th {
+    border-color: #e2e8f0 !important;
+}
+
+.fc-daygrid-day-number {
+    font-family: 'Outfit', sans-serif !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    color: #475569 !important;
+    padding: 6px 10px !important;
+    text-decoration: none !important;
+}
+
+.fc-day-other {
+    background-color: #fafafa !important;
+}
+.fc-day-other .fc-daygrid-day-number {
+    opacity: 0.4 !important;
+}
+
+/* Today Highlight: Gold Inset Border on background layer (underneath events) */
+.mhbo-day-today-highlight,
+.fc-day-today,
+td.fc-day-today,
+.fc-daygrid-day.fc-day-today {
+    box-shadow: inset 0 0 0 3px #f59e0b !important;
+    background-color: rgba(254, 240, 138, 0.25) !important;
+}
+
+/* If Today is ALSO a Full Day (100% Occupancy) */
+.mhbo-day-today-highlight.mhbo-day-full,
+.fc-day-today.mhbo-day-full,
+td.fc-day-today.mhbo-day-full {
+    background-color: #fee2e2 !important;
+}
+
+.fc-day-today .fc-daygrid-day-number {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+    color: #ffffff !important;
+    font-weight: 800 !important;
+    border-radius: 50% !important;
+    width: 26px !important;
+    height: 26px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+    box-shadow: 0 2px 6px rgba(245, 158, 11, 0.4) !important;
+}
+
+/* Full Days (100% Occupancy): Solid Red Background Square */
+.mhbo-day-full,
+td.mhbo-day-full,
+.fc-daygrid-day.mhbo-day-full,
+.mhbo-day-full .fc-daygrid-day-frame {
+    background: #fee2e2 !important;
+    background-color: #fee2e2 !important;
+}
+
+/* Event Bars Refinement - 2026 Pill Capsules & Rich Gradients */
+.fc-event,
+.fc-daygrid-event,
+.fc .fc-daygrid-event {
+    font-family: 'Outfit', -apple-system, sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    border-radius: 8px !important;
+    margin-top: 3px !important;
+    margin-bottom: 3px !important;
+    padding: 4px 8px !important;
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.25) !important;
+    transition: transform 0.15s cubic-bezier(0.4, 0, 0.2, 1), box-shadow 0.15s cubic-bezier(0.4, 0, 0.2, 1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.25) !important;
+}
+
+.mhbo-status-confirmed,
+.fc-event[style*="28a745"],
+.fc-event[style*="059669"],
+.fc-event[style*="rgb(40, 167, 69)"],
+.fc-event[style*="rgb(5, 150, 105)"] {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+    background-color: #059669 !important;
+    color: #ffffff !important;
+}
+
+.mhbo-status-pending,
+.fc-event[style*="ffc107"],
+.fc-event[style*="d97706"],
+.fc-event[style*="rgb(255, 193, 7)"],
+.fc-event[style*="rgb(217, 119, 6)"] {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+    background-color: #d97706 !important;
+    color: #ffffff !important;
+}
+
+.fc-event:hover,
+.fc-daygrid-event:hover {
+    transform: translateY(-2px) scale(1.005) !important;
+    box-shadow: 0 6px 16px rgba(15, 23, 42, 0.18), inset 0 1px 0 rgba(255, 255, 255, 0.3) !important;
+    z-index: 10 !important;
+}
+
+/* Modern Hotel Booking - Airbnb Style Half-Day Split Cells (FullCalendar v7) */
+
+/* 1. Establish Container Query context on FullCalendar root & wrappers */
+#mhbo-calendar,
+.mhbo-calendar-card,
+.fc,
+.fc-view,
+.fc-daygrid,
+.fc-daygrid-body {
+    container-type: inline-size !important;
+}
+
+/* 2. Clip-path & Padding for Check-in events (80% coverage on check-in day: clips left 20% of day column) */
+.mhbo-event-checkin,
+[class*="mhbo-event-checkin"] {
+    clip-path: inset(0 0 0 calc(100cqw * 2 / 70)) !important;
+    padding-left: calc(100cqw * 2 / 70) !important;
+    box-sizing: border-box !important;
+}
+
+/* 3. Clip-path & Padding for Check-out events (20% coverage on check-out day: clips right 80% of day column) */
+.mhbo-event-checkout,
+[class*="mhbo-event-checkout"] {
+    clip-path: inset(0 calc(100cqw * 8 / 70) 0 0) !important;
+    padding-right: calc(100cqw * 8 / 70) !important;
+    box-sizing: border-box !important;
+}
+
+/* 4. Clip-path & Padding for events that are both Check-in and Check-out */
+.mhbo-event-checkin.mhbo-event-checkout,
+[class*="mhbo-event-checkin"][class*="mhbo-event-checkout"] {
+    clip-path: inset(0 calc(100cqw * 8 / 70) 0 calc(100cqw * 2 / 70)) !important;
+    padding-left: calc(100cqw * 2 / 70) !important;
+    padding-right: calc(100cqw * 8 / 70) !important;
+    box-sizing: border-box !important;
+}
+
+/* Check-in & Check-out HTML Dot Badges */
+.mhbo-event-inner {
+    display: inline-flex !important;
+    align-items: center !important;
+    width: 100% !important;
+    overflow: hidden !important;
+    white-space: nowrap !important;
+}
+
+.mhbo-event-inner .fc-event-title {
+    overflow: hidden !important;
+    text-overflow: ellipsis !important;
+    white-space: nowrap !important;
+    flex: 1 !important;
+}
+
+.mhbo-dot-checkin {
+    display: inline-block !important;
+    width: 8px !important;
+    height: 8px !important;
+    min-width: 8px !important;
+    min-height: 8px !important;
+    background-color: #22c55e !important;
+    border: 1.5px solid #ffffff !important;
+    border-radius: 50% !important;
+    margin-right: 6px !important;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.9) !important;
+    flex-shrink: 0 !important;
+}
+
+.mhbo-dot-checkout {
+    display: inline-block !important;
+    width: 8px !important;
+    height: 8px !important;
+    min-width: 8px !important;
+    min-height: 8px !important;
+    background-color: #ef4444 !important;
+    border: 1.5px solid #ffffff !important;
+    border-radius: 50% !important;
+    margin-left: 6px !important;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.9) !important;
+    flex-shrink: 0 !important;
+}
+
+/* 5. List View Modern Styling (Restores high contrast & eliminates clipping in List view) */
+.fc-list-event,
+.fc-list-event * {
+    clip-path: none !important;
+}
+.fc-list-event {
+    background: transparent !important;
+}
+
+.fc-list-event:hover td {
+    background-color: #f8fafc !important;
+}
+
+.fc-list-event-title,
+.fc-list-event-title a,
+.fc-list-day-text,
+.fc-list-day-side-text {
+    font-family: 'Outfit', sans-serif !important;
+    color: #0f172a !important;
+    font-weight: 600 !important;
+    text-decoration: none !important;
+}
+
+.fc-list-day-header th,
+.fc-list-day-header td,
+.fc .fc-list-day-cushion {
+    background-color: #f1f5f9 !important;
+    color: #0f172a !important;
+    font-weight: 700 !important;
+    padding: 10px 14px !important;
+}
+
+.fc-list-event-time {
+    color: #64748b !important;
+    font-weight: 500 !important;
+}
+
+/* Calendar Legend Bar */
+.mhbo-calendar-legend {
+    display: flex !important;
+    flex-wrap: wrap !important;
+    align-items: center !important;
+    justify-content: center !important;
+    gap: 18px !important;
+    margin-top: 24px !important;
+    padding-top: 18px !important;
+    border-top: 1px solid #e2e8f0 !important;
+    font-family: 'Outfit', sans-serif !important;
+    font-size: 0.8rem !important;
+    font-weight: 600 !important;
+    color: #475569 !important;
+}
+
+.mhbo-legend-item {
+    display: inline-flex !important;
+    align-items: center !important;
+    gap: 6px !important;
+}
+
+.mhbo-legend-dot {
+    width: 8px !important;
+    height: 8px !important;
+    border-radius: 50% !important;
+    border: 1.5px solid #ffffff !important;
+    display: inline-block !important;
+}
+
+.mhbo-legend-green-dot {
+    background-color: #22c55e !important;
+    box-shadow: 0 0 6px rgba(34, 197, 94, 0.9) !important;
+}
+
+.mhbo-legend-red-dot {
+    background-color: #ef4444 !important;
+    box-shadow: 0 0 6px rgba(239, 68, 68, 0.9) !important;
+}
+
+.mhbo-legend-badge {
+    width: 14px !important;
+    height: 14px !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+}
+
+.mhbo-legend-today {
+    border: 2px solid #f59e0b !important;
+    background-color: rgba(254, 240, 138, 0.4) !important;
+}
+
+.mhbo-legend-full {
+    background-color: #fee2e2 !important;
+    border: 1px solid #fca5a5 !important;
+}
+
+.mhbo-legend-pill {
+    width: 14px !important;
+    height: 10px !important;
+    border-radius: 4px !important;
+    display: inline-block !important;
+}
+
+.mhbo-legend-confirmed {
+    background: linear-gradient(135deg, #059669 0%, #10b981 100%) !important;
+}
+
+.mhbo-legend-pending {
+    background: linear-gradient(135deg, #d97706 0%, #f59e0b 100%) !important;
+}
+
+/* 6. Mobile Responsiveness (Screen sizes <= 768px and <= 480px) */
+@media screen and (max-width: 768px) {
+    .mhbo-calendar-card {
+        padding: 12px !important;
+        border-radius: 12px !important;
+        margin-bottom: 16px !important;
+    }
+
+    .fc .fc-toolbar {
+        flex-direction: column !important;
+        gap: 12px !important;
+        align-items: center !important;
+        text-align: center !important;
+        margin-bottom: 16px !important;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.3rem !important;
+    }
+
+    .fc .fc-button-group {
+        width: 100% !important;
+        display: flex !important;
+        justify-content: center !important;
+    }
+
+    .fc .fc-button-primary {
+        padding: 6px 12px !important;
+        font-size: 0.8rem !important;
+        min-height: 36px !important;
+    }
+
+    .fc .fc-col-header-cell-cushion {
+        font-size: 0.68rem !important;
+        letter-spacing: 0.02em !important;
+        padding: 4px 2px !important;
+    }
+
+    .fc-daygrid-day-number {
+        font-size: 0.75rem !important;
+        padding: 3px 5px !important;
+    }
+
+    .fc-day-today .fc-daygrid-day-number {
+        width: 20px !important;
+        height: 20px !important;
+        font-size: 0.7rem !important;
+    }
+
+    .fc-event,
+    .fc-daygrid-event {
+        font-size: 0.72rem !important;
+        padding: 2px 4px !important;
+        border-radius: 5px !important;
+    }
+}
+
+@media screen and (max-width: 480px) {
+    .mhbo-calendar-card {
+        padding: 8px !important;
+    }
+
+    .fc .fc-toolbar-title {
+        font-size: 1.15rem !important;
+    }
+
+    .fc .fc-button-primary {
+        padding: 5px 8px !important;
+        font-size: 0.75rem !important;
+    }
+}

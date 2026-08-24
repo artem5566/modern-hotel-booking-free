@@ -303,6 +303,66 @@ class Pricing
     // -------------------------------------------------------------------------
 
     /**
+     * Resolve effective minimum stay for a room and check-in date, considering Orphan Gap Auto-Correction.
+     *
+     * @param int    $room_id   Room ID.
+     * @param string $check_in  Check-in date (Y-m-d).
+     * @return int|null Effective minimum stay in nights.
+     */
+    public static function get_effective_min_stay(int $room_id, string $check_in): ?int
+    {
+        $min_stay = null;
+        if (class_exists('ProRemoved')) {
+            $min_stay = ProRemoved::resolve_min_stay($room_id, $check_in);
+        } else {
+            $min_stay = (int) get_option('mhbo_global_min_stay', 0);
+            if ($min_stay <= 0) {
+                $min_stay = null;
+            }
+        }
+
+        if ($min_stay === null) {
+            return null;
+        }
+
+        $gap_autocorrect = (int) get_option('mhbo_orphan_gap_autocorrection', 0);
+        if ($gap_autocorrect !== 1) {
+            return $min_stay;
+        }
+
+        $gap_min = (int) get_option('mhbo_orphan_gap_min_stay', 1);
+
+        // Count contiguous available nights starting at $check_in
+        $dt = new \DateTime($check_in);
+        $remaining_in_gap = 0;
+        $max_lookahead = 60;
+        $today = wp_date('Y-m-d');
+
+        for ($k = 0; $k < $max_lookahead; $k++) {
+            $curr_date = $dt->format('Y-m-d');
+            $next_date = (clone $dt)->modify('+1 day')->format('Y-m-d');
+
+            if ($curr_date < $today) {
+                break;
+            }
+
+            $avail = self::is_room_available($room_id, $curr_date, $next_date);
+            if (true !== $avail) {
+                break;
+            }
+
+            $remaining_in_gap++;
+            $dt->modify('+1 day');
+        }
+
+        if ($min_stay > $remaining_in_gap && $remaining_in_gap >= $gap_min && $remaining_in_gap > 0) {
+            return $remaining_in_gap;
+        }
+
+        return $min_stay;
+    }
+
+    /**
      * Check if a room is available for a date range.
      * Must bypass object cache — live read only (prevents double-booking).
      *
@@ -349,7 +409,11 @@ class Pricing
             }
         }
 
-        return $conflict ? 'label_room_not_available' : true;
+        if ($conflict) {
+            return 'label_room_not_available';
+        }
+
+return true;
     }
 
     /**
@@ -729,7 +793,7 @@ class Pricing
         $allow_choice    = get_option('mhbo_deposit_allow_guest_choice', 1);
 
         // Hide wrapper until JS populates amounts from the REST price response.
-        $wrapper_style = $has_total ? 'margin-bottom: 30px;' : 'margin-bottom: 30px; display: none;';
+        $wrapper_style = $has_total ? 'margin-bottom: 32px;' : 'margin-bottom: 32px; display: none;';
         ?>
         <div class="mhbo-deposit-options-wrapper" style="<?php echo esc_attr($wrapper_style); ?>">
             <h4 style="margin-top:25px; margin-bottom:15px;"><?php echo esc_html(I18n::get_label('label_payment_options')); ?></h4>

@@ -1747,7 +1747,18 @@
     min-height: 48px !important;
     font-size: 0.9rem !important;
 }
-/* Payment Card Premium Selection */
+/* Deposit Options & Payment Card Selection */
+.mhbo-deposit-options-wrapper {
+    margin-bottom: 32px !important;
+}
+
+.mhbo-deposit-options {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 20px;
+    margin: 20px 0 28px;
+}
+
 .mhbo-payment-card {
     position: relative;
     padding: 24px;
@@ -1759,8 +1770,9 @@
     display: flex;
     flex-direction: column;
     gap: 12px;
-    flex: 1;
-    min-width: 280px;
+    flex: 1 1 260px;
+    min-width: 260px;
+    margin-bottom: 0 !important;
     box-shadow: var(--mhbo-shadow-sm);
     overflow: hidden;
     backdrop-filter: blur(8px);
@@ -1952,4 +1964,20 @@
     .mhbo-stay-details {
         padding: 20px;
     }
+}
+
+/* Coupon Wrapper Spacing & Layout */
+.mhbo-coupon-wrapper {
+    margin-top: 32px !important;
+    padding-top: 24px !important;
+    border-top: 1px dashed var(--mhbo-border, #e5e7eb) !important;
+    clear: both;
+}
+
+.mhbo-coupon-wrapper label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 10px !important;
+    font-size: 14px;
+    color: var(--mhbo-primary, #111827);
 }

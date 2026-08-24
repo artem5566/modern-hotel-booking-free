@@ -77,7 +77,7 @@ class PricingController
                 $amount_to_save = (string) floatval($price_modifier_input);
             }
 
-            $type_id = isset($_POST['type_id']) ? absint($_POST['type_id']) : 0;
+            $type_id = isset($_POST['type_id']) ? absint(wp_unslash($_POST['type_id'])) : 0;
 
             // phpcs:ignore WordPress.DB.DirectDatabaseQuery.DirectQuery -- Custom table
             $wpdb->insert($table, array(
@@ -97,7 +97,7 @@ class PricingController
         // 2. DELETE RULE
         if (isset($_GET['action'])) {
             if ('delete' === $_GET['action']) { // phpcs:ignore WordPress.Security.NonceVerification.Recommended -- wp_verify_nonce() called immediately inside
-                $id = isset($_GET['id']) ? absint($_GET['id']) : 0;
+                $id = isset($_GET['id']) ? absint(wp_unslash($_GET['id'])) : 0;
                 if (0 === $id) {
                     return;
                 }

@@ -32,8 +32,9 @@ class GetBusinessCard {
      */
     public static function get_definition(): array {
         return [
-            'name'         => __( 'Get Business Card', 'modern-hotel-booking' ),
+            'label'        => __( 'Get Business Card', 'modern-hotel-booking' ),
             'description'  => __( 'Get hotel contact details, payment methods, banking info, Revolut, WhatsApp, and deposit policy. Use when guests ask about paying, contacting the hotel, or need business details.', 'modern-hotel-booking' ),
+            'category'     => 'hotel-information',
             'input_schema' => [
                 'type'       => 'object',
                 'properties' => [
@@ -45,6 +46,12 @@ class GetBusinessCard {
                     ],
                 ],
                 'required'   => [],
+            ],
+            'permission_callback' => '__return_true',
+            'execute_callback'    => [ self::class, 'execute' ],
+            'meta'                => [
+                'mcp'          => [ 'public' => true ],
+                'show_in_rest' => true,
             ],
         ];
     }
@@ -170,8 +177,8 @@ class GetBusinessCard {
 
         // ── Meta ────────────────────────────────────────────────────
         $result['currency'] = Pricing::get_currency_code();
-        $result['check_in_time']  = (string) get_option( 'mhbo_check_in_time', '14:00' );
-        $result['check_out_time'] = (string) get_option( 'mhbo_check_out_time', '11:00' );
+        $result['check_in_time']  = (string) get_option( 'mhbo_checkin_time', '14:00' );
+        $result['check_out_time'] = (string) get_option( 'mhbo_checkout_time', '11:00' );
 
         return $result;
     }
@@ -201,6 +208,6 @@ class GetBusinessCard {
         if ( ! function_exists( 'wp_register_ability' ) ) {
             return;
         }
-        wp_register_ability( 'mhbo/get-business-card', self::get_definition() );
+        call_user_func( 'wp_register_ability', 'mhbo/get-business-card', self::get_definition() );
     }
 }

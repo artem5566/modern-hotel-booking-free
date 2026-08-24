@@ -58,6 +58,8 @@ class Plugin
         $block = new Block();
         $block->init();
 
+        /* ---- Elementor Integration is handled early in modern-hotel-booking.php ---- */
+
 if (is_admin()) {
             $this->load_admin();
         }

@@ -128,7 +128,9 @@ class Client {
 
                 // @phpstan-ignore function.notFound (WP 7.0 Core function; guarded by function_exists above)
                 $builder = \wp_ai_client_prompt( $prompt_text )
-                    ->using_system_instruction( $system_prompt );
+                    ->using_system_instruction( $system_prompt )
+                    ->using_max_tokens( 2048 )
+                    ->using_temperature( 0.7 );
 
                 // Attach conversation history for multi-turn context.
                 if ( [] !== $history_slice ) {
@@ -247,10 +249,12 @@ class Client {
         }
 
         return match ( $provider ) {
-            self::PROVIDER_GEMINI    => self::http_gemini( $api_key, $model ?: 'gemini-3.1-flash-lite-preview', $messages, $system_prompt, $tools ),
+            self::PROVIDER_GEMINI    => self::http_gemini( $api_key, $model ?: 'gemini-3.7-flash', $messages, $system_prompt, $tools ),
+            // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Direct integration used as Path 3 fallback when wp_ai_client_prompt() does not support function calling or on pre-WP 7.0.
             self::PROVIDER_OPENAI    => self::http_openai( $api_key, $model ?: 'gpt-5.4-mini', $messages, $system_prompt, $tools, ( str_contains( $model, 'gpt-5' ) ) ? 'https://api.openai.com/v1/responses' : 'https://api.openai.com/v1/chat/completions' ),
+            // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Direct integration used as Path 3 fallback when wp_ai_client_prompt() does not support function calling or on pre-WP 7.0.
             self::PROVIDER_OPENROUTER => self::http_openai( $api_key, $model, $messages, $system_prompt, $tools, 'https://openrouter.ai/api/v1/chat/completions' ),
-            self::PROVIDER_ANTHROPIC => self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-7', $messages, $system_prompt, $tools ),
+            self::PROVIDER_ANTHROPIC => self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-6', $messages, $system_prompt, $tools ),
             self::PROVIDER_OLLAMA    => self::http_openai( '', $model ?: 'llama3', $messages, $system_prompt, $tools, (string) get_option( self::OPT_PREFIX . 'fallback_custom_url', 'http://localhost:11434/v1/chat/completions' ) ),
             self::PROVIDER_CUSTOM    => self::http_openai( $api_key, $model, $messages, $system_prompt, $tools, (string) get_option( self::OPT_PREFIX . 'fallback_custom_url', '' ) ),
             default                  => [ 'content' => '', 'tool_calls' => [], 'finish_reason' => 'error', 'error' => \MHBO\Core\I18n::get_label( 'ai_error_unknown_fallback' ) ],
@@ -261,32 +265,7 @@ class Client {
     // Private Helpers
     // -------------------------------------------------------------------------
 
-    /**
-     * Build a payload for the standalone wordpress/ai-client SDK (Path 2).
-     *
-     * @param array<mixed> $messages
-     * @param string       $system_prompt
-     * @param array<mixed> $tools
-     * @return array<mixed>
-     */
-    private static function build_native_payload( array $messages, string $system_prompt, array $tools ): array {
-        $payload = [
-            'messages' => array_merge(
-                [ [ 'role' => 'system', 'content' => $system_prompt ] ],
-                $messages
-            ),
-        ];
-        if ( [] !== $tools ) {
-            $payload['tools'] = $tools;
-        }
-        $model = (string) get_option( self::OPT_PREFIX . 'model', '' );
-        if ( $model ) {
-            $payload['model'] = $model;
-        }
-        return $payload;
-    }
-
-    /**
+/**
      * Parse a plain text response from the WP 7.0 native prompt builder
      * into our standard response array.
      *
@@ -365,17 +344,19 @@ class Client {
  
         switch ( $provider ) {
             case self::PROVIDER_GEMINI:
-                return self::http_gemini( $api_key, $model ?: 'gemini-3.1-flash-lite-preview', $messages, $system_prompt, $tools );
+                return self::http_gemini( $api_key, $model ?: 'gemini-3.7-flash', $messages, $system_prompt, $tools );
  
             case self::PROVIDER_OPENAI:
+                // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Direct integration used as Path 3 fallback when wp_ai_client_prompt() does not support function calling or on pre-WP 7.0.
                 $endpoint = ( str_contains( $model, 'gpt-5' ) ) ? 'https://api.openai.com/v1/responses' : 'https://api.openai.com/v1/chat/completions';
                 return self::http_openai( $api_key, $model ?: 'gpt-5.4-mini', $messages, $system_prompt, $tools, $endpoint );
  
             case self::PROVIDER_OPENROUTER:
+                // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Direct integration used as Path 3 fallback when wp_ai_client_prompt() does not support function calling or on pre-WP 7.0.
                 return self::http_openai( $api_key, $model, $messages, $system_prompt, $tools, 'https://openrouter.ai/api/v1/chat/completions' );
  
             case self::PROVIDER_ANTHROPIC:
-                return self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-7', $messages, $system_prompt, $tools );
+                return self::http_anthropic( $api_key, $model ?: 'claude-sonnet-4-6', $messages, $system_prompt, $tools );
  
             case self::PROVIDER_OLLAMA:
                 // Ollama is local-only by design; localhost is intentional.
@@ -415,13 +396,14 @@ class Client {
      * Reason: v1beta is the ONLY endpoint that supports system_instruction,
      * tools/function_declarations, and all Gemini 3.x preview models. Google's
      * stable v1 endpoint lags behind and does not expose these agentic features.
-     * v1beta itself is NOT deprecated (April 2026 verified).
+     * v1beta itself is NOT deprecated (verified August 2026).
      *
-     * Verified Fallback Chain (April 2026):
-     *   gemini-3.1-flash-lite-preview → gemini-3.1-flash-preview → gemini-2.5-flash
-     *   → gemini-2.5-pro → gemini-3.1-pro-preview (last resort, most expensive)
+     * Verified Fallback Chain (August 2026):
+     *   gemini-3.7-flash → gemini-3.6-flash → gemini-3.5-flash → gemini-3.5-flash-lite
+     *   → gemini-3.1-flash-lite → gemini-3-flash-preview → gemini-3.1-pro-preview
      *
-     * EOL models removed: gemini-2.5-flash-lite-preview (shut down 2026-03-31),
+     * EOL models removed: gemini-3.1-flash-lite-preview (shut down 2026-05-25),
+     *                      gemini-2.5-flash-lite-preview (shut down 2026-03-31),
      *                      gemini-1.5-flash (shut down 2026-03-31).
      *
      * @param string       $api_key
@@ -433,25 +415,27 @@ class Client {
      */
     private static function http_gemini( string $api_key, string $model, array $messages, string $system_prompt, array $tools ): array {
         // Normalize retired model names to stable 2026 equivalents.
-        // Retired as of March 31, 2026: gemini-1.5-*, gemini-2.0-*, gemini-2.5-flash-lite-preview.
-        $model = str_replace( '-latest', '', $model ?: 'gemini-2.5-flash' );
+        // Retired: gemini-1.5-*, gemini-2.0-*, gemini-2.5-flash-lite-preview, gemini-3.1-flash-lite-preview.
+        $model = str_replace( '-latest', '', $model ?: 'gemini-3.7-flash' );
 
         $retired_prefixes = [
             'gemini-1.5',
             'gemini-2.0',
         ];
         $retired_exact = [
+            'gemini-3.1-flash-lite-preview', // EOL: 2026-05-25
             'gemini-2.5-flash-lite-preview', // EOL: 2026-03-31
             'gemini-1.5-flash',              // EOL: 2026-03-31
             'gemini-1.5-pro',                // EOL: 2026-03-31
+            'gemini-3-pro-preview',          // EOL: 2026-03-09
         ];
 
         if ( in_array( $model, $retired_exact, true ) ) {
-            self::log_error( "Model {$model} is EOL. Auto-migrating to gemini-2.5-flash." );
-            $model = 'gemini-2.5-flash';
+            self::log_error( "Model {$model} is EOL. Auto-migrating to gemini-3.7-flash." );
+            $model = 'gemini-3.7-flash';
         } elseif ( [] !== array_filter( $retired_prefixes, fn( $p ) => str_starts_with( $model, $p ) ) ) {
-            self::log_error( "Model {$model} uses a retired prefix. Auto-migrating to gemini-2.5-flash." );
-            $model = 'gemini-2.5-flash';
+            self::log_error( "Model {$model} uses a retired prefix. Auto-migrating to gemini-3.7-flash." );
+            $model = 'gemini-3.7-flash';
         }
 
         // Build the Gemini-format contents array (OpenAI → Gemini conversion).
@@ -464,7 +448,23 @@ class Client {
         ];
 
         if ( [] !== $tools ) {
-            $body['tools'] = [ [ 'function_declarations' => array_map( fn( $t ) => $t['function'] ?? $t, $tools ) ] ];
+            // WP 7.1: Sanitize tool schemas to Draft-4 for strict AI clients.
+            $sanitized_tools = $tools;
+            if ( \function_exists( 'wp_prepare_json_schema_for_client' ) ) {
+                $sanitized_tools = array_map( function ( $t ) {
+                    $fn = $t['function'] ?? $t;
+                    if ( isset( $fn['parameters'] ) ) {
+                        $fn['parameters'] = \call_user_func( 'wp_prepare_json_schema_for_client', $fn['parameters'], 'draft-04' );
+                    }
+                    if ( isset( $t['function'] ) ) {
+                        $t['function'] = $fn;
+                    } else {
+                        $t = $fn;
+                    }
+                    return $t;
+                }, $sanitized_tools );
+            }
+            $body['tools'] = [ [ 'function_declarations' => array_map( fn( $t ) => $t['function'] ?? $t, $sanitized_tools ) ] ];
         }
 
         // 2026.4 BP: Cascade: primary model first, then cheaper/resilient fallbacks.
@@ -472,7 +472,7 @@ class Client {
         $fallback_chain  = self::get_dynamic_fallback_chain( $model );
         $last_result     = [ 'content' => '', 'tool_calls' => [], 'finish_reason' => 'error', 'error' => 'No models available.' ];
         $cascade_start   = \microtime( true );
-        $cascade_budget  = 26.0; // Hard wall: entire cascade must finish within 26 s to stay under typical 30 s proxy timeouts.
+        $cascade_budget  = 40.0; // 2026.6 BP: Increased from 26s. Per-model timeout is now 12s, so 3-4 models fit within budget. PHP set_time_limit(180) covers this.
 
         foreach ( $fallback_chain as $idx => $try_model ) {
             // Abort if we are already close to the proxy timeout wall.
@@ -490,6 +490,7 @@ class Client {
             // Always use v1beta — it supports system_instruction, tools/function_declarations,
             // and generationConfig across all model generations. The v1 stable endpoint uses
             // a stricter camelCase-only JSON schema that breaks these fields.
+            // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Direct integration used as Path 3 fallback when wp_ai_client_prompt() does not support function calling or on pre-WP 7.0.
             $url         = "https://generativelanguage.googleapis.com/v1beta/models/{$try_model}:generateContent?key=" . rawurlencode( $api_key );
             $last_result = self::http_gemini_request( $url, $body, $try_model );
 
@@ -510,10 +511,10 @@ class Client {
                 return $last_result; 
             }
 
-            // Exponential backoff with Jitter for transient errors (capped at 3s total per step for sync safety).
-            // 2026 BP: Randomizing the sleep (jitter) prevents 'Thundering Herd' synchronized retries.
-            $base_backoff = (int) \min( 2, \pow( 2, $idx ) );
-            $jitter_ms    = \wp_rand( 0, 500 * 1000 ); // Up to 0.5s jitter
+            // 2026.6 BP: Reduced backoff (max 1s + 0.25s jitter) to maximize models tried within cascade budget.
+            // Previous 2s + 0.5s ate too much time, preventing fallback models from being reached.
+            $base_backoff = (int) \min( 1, \pow( 2, $idx ) );
+            $jitter_ms    = \wp_rand( 0, 250 * 1000 ); // Up to 0.25s jitter
             self::log_error( "Gemini model {$try_model} error (transient) — marking as busy and moving to next in chain (" . ( $base_backoff + ( $jitter_ms / 1000000 ) ) . "s)." );
             
             if ( $base_backoff > 0 ) {
@@ -529,16 +530,17 @@ class Client {
     /**
      * Return the model fallback chain starting from the requested model.
      *
-     * 2026.4 BP: Dynamic chain – models that failed in the last 5 minutes are deprioritized.
+     * 2026.5 BP: Dynamic chain – models that failed in the last 5 minutes are deprioritized.
      * Note: This cascade prioritizes "Service Continuity" (ensuring the guest gets a response)
      * over "Absolute Minimum Cost". If the cheapest model is busy, the system will try
      * more available tiers in the ecosystem.
      *
-     * April 2026 Verified Active Models (v1beta endpoint):
-     *   PREVIEW  : gemini-3.1-flash-lite-preview ($0.25/M), gemini-3-flash-preview ($0.50/M), gemini-3.1-pro-preview ($2-4/M)
-     *   STABLE GA: gemini-2.5-flash-lite ($0.10/M) — cheapest stable fallback
-     *              gemini-2.5-flash ($0.30/M) — balanced stable fallback
-     * EOL (DO NOT USE): gemini-3.1-flash-preview (404), gemini-2.5-flash-lite-preview (retired), gemini-1.5-*, gemini-3-pro-preview (v1)
+     * August 2026 Verified Active Models:
+     *   GA       : gemini-3.7-flash — best value, newest frontier
+     *              gemini-3.6-flash — high performance workhorse
+     *              gemini-3.5-flash-lite — cheapest stable
+     *   PREVIEW  : gemini-3-flash-preview — Computer Use support
+     *              gemini-3.1-pro-preview — flagship preview
      *
      * @param string $primary
      * @return list<string>
@@ -546,9 +548,9 @@ class Client {
     private static function get_dynamic_fallback_chain( string $primary ): array {
         // Alias map: allow shorthand admin selections to resolve to real model IDs.
         $blanket_map = [
-            'gemini-stable-primary' => 'gemini-3-flash-preview',
+            'gemini-stable-primary' => 'gemini-3.7-flash',
             'gemini-stable-high'    => 'gemini-3.1-pro-preview',
-            'gemini-flash-latest'   => 'gemini-3.1-flash-lite-preview',
+            'gemini-flash-latest'   => 'gemini-3.7-flash',
             'gemini-pro-latest'     => 'gemini-3.1-pro-preview',
         ];
 
@@ -556,16 +558,18 @@ class Client {
             $primary = $blanket_map[ $primary ];
         }
 
-        // April 2026 Economic Cascade — ordered by cost (cheapest first), all verified active.
-        // Source: https://ai.google.dev/gemini-api/docs/pricing (April 2026)
-        // Preview models tried first (better capability); stable GA models are the safety net
-        // when all previews are simultaneously at capacity (503).
+        // August 2026 Economic Cascade — ordered by cost & capability.
+        // GA models tried first (most reliable); preview models are the capability safety net.
         $default_models = [
-            'gemini-3.1-flash-lite-preview', // Preview : $0.25–0.50/M input  — cheapest preview
-            'gemini-3-flash-preview',        // Preview : $0.50/M input        — balanced preview
-            'gemini-3.1-pro-preview',        // Preview : $2–4/M input         — most capable preview
-            'gemini-2.5-flash-lite',         // GA/Stable: $0.10–0.30/M input — stable safety net
-            'gemini-2.5-flash',              // GA/Stable: $0.30–1.00/M input — stable last resort
+            'gemini-3.7-flash',              // GA      : August 2026 frontier flagship
+            'gemini-3.6-flash',              // GA      : July 2026 workhorse
+            'gemini-3.5-flash',              // GA      : High performance legacy
+            'gemini-3.5-flash-lite',         // GA      : Ultralight budget
+            'gemini-3.1-flash-lite',         // GA      : Stable
+            'gemini-3-flash-preview',        // Preview : Computer Use support
+            'gemini-3.1-pro-preview',        // Preview : Capability preview
+            'gemini-2.5-flash-lite',         // GA      : Safety net (Deprecated)
+            'gemini-2.5-flash',              // GA      : Last resort (Deprecated)
         ];
 
         // Separation: Reliable vs Unreliable (recently failed in last 5 min)
@@ -633,8 +637,8 @@ class Client {
         $new_lock = \time() + $duration;
         \set_transient( 'mhbo_ai_quota_lock', $new_lock, $duration + 60 );
 
-        if ( defined( 'WP_DEBUG' ) && WP_DEBUG ) {
-            \error_log( "[MHBO AI] Resilience: Circuit Breaker score expanded to {$score}. Cooling down for {$duration}s." ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional debug telemetry, guarded by WP_DEBUG
+        if ( defined( 'WP_DEBUG_LOG' ) && WP_DEBUG_LOG ) {
+            \error_log( "[MHBO AI] Resilience: Circuit Breaker score expanded to {$score}. Cooling down for {$duration}s." ); // phpcs:ignore WordPress.PHP.DevelopmentFunctions.error_log_error_log -- intentional debug telemetry, guarded by WP_DEBUG_LOG
         }
     }
 
@@ -659,6 +663,9 @@ class Client {
      * @return bool
      */
     private static function is_transient_gemini_error( string $error_message ): bool {
+        // 2026.6 BP: Added cURL timeout/network phrases. Without these, cURL error 28
+        // ("Operation timed out") was classified as permanent, aborting the cascade
+        // immediately instead of trying fallback models.
         $transient_phrases = [
             'high demand',
             'temporarily unavailable',
@@ -672,6 +679,13 @@ class Client {
             '503',
             '504',
             '429',
+            'curl error',
+            'timed out',
+            'timeout',
+            'operation timed out',
+            'connection reset',
+            'could not resolve',
+            'name resolution',
         ];
         $lower = \strtolower( $error_message );
         foreach ( $transient_phrases as $phrase ) {
@@ -692,8 +706,8 @@ class Client {
      */
     private static function http_gemini_request( string $url, array $body, string $model ): array {
         $response = wp_remote_post( $url, [
-            'timeout'        => 22, // Must stay under server proxy timeout (typically 30s).
-            'connecttimeout' => 8,
+            'timeout'        => 12, // 2026.6 BP: Reduced from 22s. Flash models respond in 2-5s; 12s is generous. Allows 3-4 models within cascade budget.
+            'connecttimeout' => 5,  // 2026.6 BP: Reduced from 8s. If TCP connect takes >5s, the endpoint is unreachable.
             'sslverify'      => true,
             'headers'        => [ 'Content-Type' => 'application/json' ],
             'body'           => wp_json_encode( $body ),
@@ -961,8 +975,8 @@ class Client {
         }
 
         $args = [
-            'timeout'        => 22, // Must stay under server proxy timeout (typically 30s).
-            'connecttimeout' => 8,
+            'timeout'        => 12, // 2026.6 BP: Reduced from 22s for consistency with Gemini cascade timing.
+            'connecttimeout' => 5,  // 2026.6 BP: Reduced from 8s.
             'sslverify'      => true,
             'headers'        => $headers,
             'body'           => wp_json_encode( $body ),
@@ -1080,6 +1094,17 @@ class Client {
      * @return array{content:string,tool_calls:array<mixed>,finish_reason:string,error:string|null}
      */
     private static function http_anthropic( string $api_key, string $model, array $messages, string $system_prompt, array $tools ): array {
+        $model = $model ?: 'claude-sonnet-4-6';
+        if ( 'claude-3-5-sonnet-20240620' === $model ) {
+            self::log_error( "Model claude-3-5-sonnet-20240620 is EOL. Auto-migrating to claude-sonnet-4-6." );
+            $model = 'claude-sonnet-4-6';
+        }
+        // 2026.6 BP: Anthropic deprecated claude-opus-4-7 on June 15, 2026. Current flagship is 4.8.
+        if ( 'claude-opus-4-7' === $model ) {
+            self::log_error( "Model claude-opus-4-7 is deprecated (June 2026). Auto-migrating to claude-opus-4-8." );
+            $model = 'claude-opus-4-8';
+        }
+
         $body = [
             'model'      => $model,
             'max_tokens' => 4096, // 2026 BP: increased for reasoning models
@@ -1099,18 +1124,27 @@ class Client {
 
 if ( [] !== $tools ) {
             $body['tools'] = array_map( function ( $t ) {
+                $schema = $t['function']['parameters'] ?? $t['parameters'] ?? [ 'type' => 'object', 'properties' => [] ];
+
+                // WP 7.1: Sanitize schema to Draft-4 for strict AI clients.
+                if ( \function_exists( 'wp_prepare_json_schema_for_client' ) ) {
+                    $schema = \call_user_func( 'wp_prepare_json_schema_for_client', $schema, 'draft-04' );
+                }
+
                 return [
                     'name'         => $t['function']['name'] ?? $t['name'] ?? '',
                     'description'  => $t['function']['description'] ?? $t['description'] ?? '',
-                    'input_schema' => $t['function']['parameters'] ?? $t['parameters'] ?? [ 'type' => 'object', 'properties' => [] ],
+                    'input_schema' => $schema,
                 ];
             }, $tools );
         }
 
+        // phpcs:ignore PluginCheck.CodeAnalysis.AIProvider.DirectIntegration -- Direct integration used as Path 3 fallback when wp_ai_client_prompt() does not support function calling or on pre-WP 7.0.
         $response = wp_remote_post( 'https://api.anthropic.com/v1/messages', [
-            'timeout'   => 22, // Must stay under server proxy timeout (typically 30s).
-            'sslverify' => true,
-            'headers'   => [
+            'timeout'        => 12, // 2026.6 BP: Reduced from 22s for consistency with cascade timing.
+            'connecttimeout' => 5,  // 2026.6 BP: Fast-fail on unreachable endpoint.
+            'sslverify'      => true,
+            'headers'        => [
                 'x-api-key'         => $api_key,
                 'anthropic-version' => '2023-06-01',
                 'Content-Type'      => 'application/json',
