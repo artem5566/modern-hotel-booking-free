@@ -451,6 +451,11 @@ class Pricing
 
         $nights = (int) round(($ts_out - $ts_in) / 86400);
 
+        // Reset surcharge tracking at the start of every calculation so it's
+        // self-contained — callers no longer need to remember to call
+        // reset_surcharge_tracking() themselves before invoking this method.
+        self::reset_surcharge_tracking();
+
         // --- Per-night room pricing ---
         $room_total_money = Money::fromCents(0, $currency);
         $daily_prices     = [];
@@ -473,12 +478,47 @@ class Pricing
         // --- Children pricing (Pro) ---
         $children_total_money = Money::fromCents(0, $currency);
 
-// --- Extras pricing (Pro) ---
+// --- Children discount: flat amount per child under the configured age
+        // limit, per night stayed. ---
+        // Free-tier feature — not gated behind MHBO_IS_PRO, since it's a simple flat
+        // per-child rule rather than the more complex Pro children-pricing engine.
+        $child_discount_age_limit = (int) get_option('mhbo_child_discount_age_limit', 10);
+        $child_discount_per_child_night = Money::fromDecimal(
+            (string) get_option('mhbo_child_discount_amount', '500'),
+            $currency
+        );
+
+        $discount_eligible_count = 0;
+        foreach ($child_ages as $age) {
+            if ((int) $age < $child_discount_age_limit) {
+                $discount_eligible_count++;
+            }
+        }
+
+        $child_discount_money = ($discount_eligible_count > 0)
+            ? $child_discount_per_child_night->multiply((string) ($discount_eligible_count * $nights))
+            : Money::fromCents(0, $currency);
+
+        // --- Extras pricing (Pro) ---
         $extras_total_money = Money::fromCents(0, $currency);
         $extras_breakdown   = [];
 
-// --- Pre-fee subtotal (room + children + extras, pre-tax) ---
+        // --- Pre-fee subtotal (room + children + extras, pre-tax) ---
         $pre_fee_subtotal_money = $room_total_money->add($children_total_money)->add($extras_total_money);
+
+        // Clamp discount so it can never exceed what's being discounted
+        if ($child_discount_money->compare($pre_fee_subtotal_money) > 0) {
+            $child_discount_money = $pre_fee_subtotal_money;
+        }
+        $pre_fee_subtotal_money = $pre_fee_subtotal_money->subtract($child_discount_money);
+
+        // Apply the same discount to the room-total figure fed into the tax engine,
+        // so total_gross (which downstream code treats as the authoritative total)
+        // reflects the discount even when tax is enabled.
+        $room_total_for_tax = $room_total_money->subtract($child_discount_money);
+        if ($room_total_for_tax->compare(Money::fromCents(0, $currency)) < 0) {
+            $room_total_for_tax = Money::fromCents(0, $currency);
+        }
 
         // --- Service Fee (Pro) ---
         $service_fee_money = Money::fromCents(0, $currency);
@@ -500,13 +540,56 @@ class Pricing
 
         // --- Tax ---
         $tax_data = Tax::calculate_booking_tax([
-            'room_total'        => $room_total_money->toDecimal(),
+            'room_total'        => $room_total_for_tax->toDecimal(),
             'children_total'    => $children_total_money->toDecimal(),
             'extras_total'      => $extras_total_money->toDecimal(),
             'extras'            => $extras_for_tax,
             'service_fee'       => $service_fee_money->toDecimal(),
             'service_fee_label' => $service_fee_label,
         ]);
+
+        // The room breakdown line currently includes the peak-season surcharge
+        // (baked in by calculate_daily_price_money()'s multiplier), since it must
+        // for total_gross to be correct. But now that the surcharge is shown as
+        // its own line item below, strip it back out of the displayed room amount
+        // so "Room" + "Surcharge" + "Discount" visually sum to the grand total
+        // instead of double-counting the surcharge.
+        if (self::$surcharge_total instanceof Money && self::$surcharge_total->isPositive()
+            && isset($tax_data['breakdown']['room']) && is_array($tax_data['breakdown']['room'])) {
+            $surcharge_decimal = self::$surcharge_total->toDecimal();
+            foreach (['gross', 'gross_amount', 'net'] as $field) {
+                if (isset($tax_data['breakdown']['room'][$field])) {
+                    $tax_data['breakdown']['room'][$field] = function_exists('bcsub')
+                        ? bcsub((string) $tax_data['breakdown']['room'][$field], $surcharge_decimal, 2)
+                        : number_format((float) $tax_data['breakdown']['room'][$field] - (float) $surcharge_decimal, 2, '.', '');
+                }
+            }
+        }
+
+        // Inject Free-tier line items (peak surcharge, child discount) into the
+        // breakdown structure so Tax::format_tax_breakdown()/render_breakdown_html()
+        // can render them as ordinary line items, same as room/children/extras.
+        if (self::$surcharge_total instanceof Money && self::$surcharge_total->isPositive()) {
+            $tax_data['breakdown']['peak_surcharge'] = [
+                'label' => sprintf(
+                    I18n::get_label('label_peak_season_surcharge'),
+                    get_option( 'mhbo_peak_season_short_stay_threshold', 3)
+                ),
+                'gross' => self::$surcharge_total->toDecimal(),
+            ];
+        }
+
+        if ($child_discount_money->isPositive()) {
+            $tax_data['breakdown']['child_discount'] = [
+                'label' => sprintf(
+                    I18n::get_label('label_child_discount'),
+                    $discount_eligible_count,
+                    $nights,
+                    $child_discount_age_limit
+                ),
+                'gross' => $child_discount_money->toDecimal(),
+            ];
+        }
 
         // Final total: gross when Sales Tax is active; gross equals subtotal under VAT/disabled
         $total_money = ($tax_data['totals']['total_gross'] instanceof Money)
@@ -525,6 +608,8 @@ class Pricing
             'nights'           => $nights,
             'extras_breakdown' => $extras_breakdown,
             'tax'              => $tax_data,
+            'child_discount'       => $child_discount_money,
+            'child_discount_count' => $discount_eligible_count,            
             'is_pro'           => [] !== $extras_breakdown || $children_total_money->isPositive() || $service_fee_money->isPositive(),
         ];
     }
@@ -709,4 +794,77 @@ class Pricing
     {
         return (bool) get_option('mhbo_deposit_non_refundable', 0);
     }
+
+    /**
+     * Register pricing filters.
+     * Called once from Plugin::init() — keeps all pricing logic in one place.
+     */
+    public static function register_hooks(): void
+    {
+        add_filter(
+            'mhbo_calculate_stay_price_money',
+            [ self::class, 'apply_short_stay_peak_surcharge' ],
+            10,
+            3
+        );
+    }
+
+    /** @var Money|null Accumulated peak-season short-stay surcharge for the current calculation. */
+    private static ?Money $surcharge_total = null;
+
+    /** @var int Number of nights the surcharge was applied to, for the current calculation. */
+    private static int $surcharge_nights = 0;
+
+    /**
+     * Reset surcharge tracking. Call once before running calculate_booking_money()
+     * for a fresh booking calculation (e.g. at the top of render_booking_form()).
+     */
+    public static function reset_surcharge_tracking(): void
+    {
+        self::$surcharge_total  = null;
+        self::$surcharge_nights = 0;
+    }
+
+    /**
+     * Returns info about any peak-season short-stay surcharge applied since the
+     * last reset_surcharge_tracking() call.
+     *
+     * @return array{nights:int, total:?Money}
+     */
+    public static function get_surcharge_info(): array
+    {
+        return [
+            'nights' => self::$surcharge_nights,
+            'total'  => self::$surcharge_total,
+        ];
+    }
+
+    public static function apply_short_stay_peak_surcharge( Money $price, int $room_id, string $date ): Money
+    {
+        $nights = (int) ( $GLOBALS['mhbo_current_stay_nights'] ?? 0 );
+
+        if ( $nights === 0 || $nights >= get_option( 'mhbo_peak_season_short_stay_threshold', 3) ) {
+            return $price;
+        }
+
+        $day          = new \DateTime( $date );
+        $year         = (int) $day->format( 'Y' );
+        $season_start = new \DateTime( "{$year}-07-01" );
+        $season_end   = new \DateTime( "{$year}-09-01" );
+
+        if ( $day < $season_start || $day >= $season_end ) {
+            return $price;
+        }
+
+        // Peak season short stay — apply 10% surcharge
+        $surcharged = $price->multiply( '1.10' );
+
+        // Track the extra amount so the UI can show a line item without
+        // re-deriving the season/night rules elsewhere.
+        $extra = $surcharged->subtract( $price );
+        self::$surcharge_total  = self::$surcharge_total ? self::$surcharge_total->add( $extra ) : $extra;
+        self::$surcharge_nights++;
+
+        return $surcharged;
+    }    
 }

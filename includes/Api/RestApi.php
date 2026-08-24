@@ -923,8 +923,19 @@ $data = [];
             $payment_method = 'arrival';
         }
 
-$calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) $guests, $extras, (int) $children, $child_ages);
+        // Compute nights and expose it globally so calculate_daily_price_money's
+        // short-stay surcharge filter can see the stay length — same requirement
+        // as render_booking_form(). Must be set before calculate_booking_money()
+        // runs, since it calls the filter once per night internally.
+        $ci_date_api = \DateTime::createFromFormat('Y-m-d', $check_in);
+        $co_date_api = \DateTime::createFromFormat('Y-m-d', $check_out);
+        $GLOBALS['mhbo_current_stay_nights'] = ($ci_date_api && $co_date_api)
+            ? max(1, $ci_date_api->diff($co_date_api)->days)
+            : 0;
 
+Pricing::reset_surcharge_tracking();
+$calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, (int) $guests, $extras, (int) $children, $child_ages);
+$surcharge_info = Pricing::get_surcharge_info();
         if ($calc && get_option('mhbo_deposits_enabled', 0) && (isset($calc['nights']) ? (int) $calc['nights'] : 0) > 1) {
             // 2026 BP: For 'first_night' deposit type, use room-rate-only calc (no extras, no children)
             // to match the industry standard meaning of "first night's rate" (accommodation only).
@@ -989,6 +1000,8 @@ if (!$calc) {
         }
 
         $children_money = $calc['children_total'] ?? Money::fromCents(0, Pricing::get_currency_code());
+        $child_discount_money = $calc['child_discount'] ?? Money::fromCents(0, Pricing::get_currency_code());
+        $peak_surcharge_money = $surcharge_info['total'] ?? Money::fromCents(0, Pricing::get_currency_code());        
         $response = rest_ensure_response(array(
             'success' => true,
             'total' => (float) $calc['total']->toDecimal(),
@@ -998,6 +1011,13 @@ if (!$calc) {
             'room_total' => (float) $calc['room_total']->toDecimal(),
             'children_total' => (float) $children_money->toDecimal(),
             'children_total_formatted' => $children_money->isPositive() ? $children_money->format() : '',
+            'child_discount' => (float) $child_discount_money->toDecimal(),
+            'child_discount_formatted' => $child_discount_money->isPositive() ? $child_discount_money->format() : '',
+            'child_discount_count' => (int) ($calc['child_discount_count'] ?? 0),
+            'nights' => (int) ($calc['nights'] ?? 0),
+            'peak_surcharge' => (float) $peak_surcharge_money->toDecimal(),
+            'peak_surcharge_formatted' => $peak_surcharge_money->isPositive() ? $peak_surcharge_money->format() : '',
+            'peak_surcharge_nights' => (int) ($surcharge_info['nights'] ?? 0),            
             'extras_total' => (float) $calc['extras_total']->toDecimal(),
             'deposit_amount' => (float) (null !== $deposit_money_obj ? $deposit_money_obj->toDecimal() : 0),
             'deposit_amount_formatted' => null !== $deposit_money_obj ? $deposit_money_obj->format() : '',

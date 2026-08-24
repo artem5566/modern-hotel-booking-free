@@ -685,6 +685,42 @@ class Tax
             }
         }
 
+        // Peak season surcharge (Free tier)
+        if (isset($breakdown['breakdown']['peak_surcharge']) && [] !== $breakdown['breakdown']['peak_surcharge']) {
+            $ps = $breakdown['breakdown']['peak_surcharge'];
+            if (($ps['gross'] ?? 0) > 0) {
+                $formatted['items'][] = [
+                    'type' => 'peak_surcharge',
+                    'label' => $ps['label'] ?? __('Peak season surcharge', 'modern-hotel-booking'),
+                    'net' => $ps['gross'] ?? 0,
+                    'tax_rate' => 0,
+                    'tax' => 0,
+                    'gross' => $ps['gross'] ?? 0,
+                    'net_formatted' => I18n::format_currency($ps['gross'] ?? 0),
+                    'tax_formatted' => I18n::format_currency(0),
+                    'gross_formatted' => I18n::format_currency($ps['gross'] ?? 0),
+                ];
+            }
+        }
+
+        // Child discount (Free tier)
+        if (isset($breakdown['breakdown']['child_discount']) && [] !== $breakdown['breakdown']['child_discount']) {
+            $cd = $breakdown['breakdown']['child_discount'];
+            if (($cd['gross'] ?? 0) > 0) {
+                $formatted['items'][] = [
+                    'type' => 'child_discount',
+                    'label' => $cd['label'] ?? __('Child discount', 'modern-hotel-booking'),
+                    'net' => $cd['gross'] ?? 0,
+                    'tax_rate' => 0,
+                    'tax' => 0,
+                    'gross' => $cd['gross'] ?? 0,
+                    'net_formatted' => I18n::format_currency($cd['gross'] ?? 0),
+                    'tax_formatted' => I18n::format_currency(0),
+                    'gross_formatted' => I18n::format_currency($cd['gross'] ?? 0),
+                ];
+            }
+        }
+
         // Service Fee (Pro) — shown as its own line after extras, before subtotal
         if (isset($breakdown['breakdown']['service_fee']) && [] !== $breakdown['breakdown']['service_fee']) {
             $sf = $breakdown['breakdown']['service_fee'];
@@ -817,12 +853,30 @@ class Tax
                                     <strong><?php echo esc_html($item['gross_formatted']); ?></strong>
                                 </td>
                             </tr>
-                        <?php else: ?>
-                            <tr data-item-type="<?php echo esc_attr($item['type'] ?? 'item'); ?>">
-                                <td style="<?php echo esc_attr($styles['td']); ?>">
+                        <?php elseif ('child_discount' === ($item['type'] ?? '')): ?>
+                            <tr class="mhbo-child-discount-row" data-item-type="child_discount">
+                                <td class="<?php echo esc_attr($styles['td']); ?>" style="color:#16a34a;">
                                     <?php echo esc_html($item['label']); ?>
                                 </td>
-                                <td style="<?php echo esc_attr($styles['td_right']); ?>" class="mhbo-item-amount">
+                                <td style="color:#16a34a;" class="mhbo-item-amount <?php echo esc_attr($styles['td_right']); ?>">
+                                    -<?php echo esc_html($item['gross_formatted']); ?>
+                                </td>
+                            </tr>
+                        <?php elseif ('peak_surcharge' === ($item['type'] ?? '')): ?>
+                            <tr class="mhbo-peak-surcharge-row" data-item-type="peak_surcharge">
+                                <td class="<?php echo esc_attr($styles['td']); ?>">
+                                    <?php echo esc_html($item['label']); ?>
+                                </td>
+                                <td class="mhbo-item-amount <?php echo esc_attr($styles['td_right']); ?>">
+                                    +<?php echo esc_html($item['gross_formatted']); ?>
+                                </td>
+                            </tr>
+                        <?php else: ?>
+                            <tr data-item-type="<?php echo esc_attr($item['type'] ?? 'item'); ?>">
+                                <td class="<?php echo esc_attr($styles['td']); ?>">
+                                    <?php echo esc_html($item['label']); ?>
+                                </td>
+                                <td class="<?php echo esc_attr($styles['td_right']); ?>" class="mhbo-item-amount">
                                     <?php echo esc_html($item['gross_formatted']); ?>
                                 </td>
                             </tr>

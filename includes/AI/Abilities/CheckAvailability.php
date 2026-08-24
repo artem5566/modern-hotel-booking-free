@@ -236,6 +236,11 @@ $child_ages = [];
                     $avail_rooms_for_type = (array) $data['available_room_ids'];
 
                     if ( $count >= $min_rooms ) {
+                        $ci_date = \DateTime::createFromFormat('Y-m-d', $check_in);
+                        $co_date = \DateTime::createFromFormat('Y-m-d', $check_out);
+                        $GLOBALS['mhbo_current_stay_nights'] = ($ci_date && $co_date)
+                            ? max(1, $ci_date->diff($co_date)->days)
+                            : 0;
                         $single_calc = Pricing::calculate_booking_money( $room_id, $check_in, $check_out, \min( $adults, $max_a ), [], \min( $children, $max_c ), [] );
                         $est_total   = null;
                         $est_fmt     = null;
@@ -285,6 +290,11 @@ $child_ages = [];
             }
 
             // --- Single Room Logic ---
+            $ci_date = \DateTime::createFromFormat('Y-m-d', $check_in);
+            $co_date = \DateTime::createFromFormat('Y-m-d', $check_out);
+            $GLOBALS['mhbo_current_stay_nights'] = ($ci_date && $co_date)
+                ? max(1, $ci_date->diff($co_date)->days)
+                : 0;
             $calc = Pricing::calculate_booking_money( $room_id, $check_in, $check_out, $adults, [], $children, $child_ages );
             if ( ! isset( $calc['total'] ) || ! ( $calc['total'] instanceof Money ) ) {
                 continue;

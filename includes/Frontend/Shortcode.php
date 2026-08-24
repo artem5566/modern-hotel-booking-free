@@ -1052,6 +1052,11 @@ $localized_data = [
                             }
                         }
 
+                        $ci_date = \DateTime::createFromFormat('Y-m-d', $check_in);
+                        $co_date = \DateTime::createFromFormat('Y-m-d', $check_out);
+                        $GLOBALS['mhbo_current_stay_nights'] = ($ci_date && $co_date)
+                            ? max(1, $ci_date->diff($co_date)->days)
+                            : 0;
                         $calc_preview = Pricing::calculate_booking_money( $room_id, $check_in, $check_out, max( 1, $guests ), [], $children, $recovered_child_ages );
                         $total = ( is_array( $calc_preview ) && isset( $calc_preview['total'] ) ) ? $calc_preview['total'] : Money::fromCents( 0, Pricing::get_currency_code() );
                         
@@ -1370,8 +1375,20 @@ $cache_key = 'mhbo_room_details_' . md5((string)$room_id);
         $calc_child_ages = isset($params['child_ages']) ? array_map('absint', (array) $params['child_ages']) : array();
         $calc_extras     = isset($params['extras']) ? array_map('sanitize_text_field', (array) $params['extras']) : array();
 
+        // Compute nights and expose it globally so calculate_daily_price_money's
+        // short-stay surcharge filter can see the stay length. This must be set
+        // before calculate_booking_money() runs, since it calls the filter per-night.
+        $ci_date_for_calc = \DateTime::createFromFormat('Y-m-d', $check_in);
+        $co_date_for_calc = \DateTime::createFromFormat('Y-m-d', $check_out);
+        $nights_for_calc  = ($ci_date_for_calc && $co_date_for_calc)
+            ? max(1, $ci_date_for_calc->diff($co_date_for_calc)->days)
+            : 1;
+        $GLOBALS['mhbo_current_stay_nights'] = $nights_for_calc;
+
+        Pricing::reset_surcharge_tracking();
         $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, $calc_guests, $calc_extras, $calc_children, $calc_child_ages);
-        
+        $surcharge_info = Pricing::get_surcharge_info();
+
         $is_invalid_occupancy = (false === $calc);
         if ($is_invalid_occupancy) {
             echo '<div class="mhbo-error">' . esc_html(_x('Over-occupancy: Please check guest limits for this room.', 'error message', 'modern-hotel-booking')) . '</div>';
@@ -1417,9 +1434,9 @@ $deposit_data = null;
                     </div>
 
                     <?php
-                    $ci_date  = \DateTime::createFromFormat('Y-m-d', $check_in);
-                    $co_date  = \DateTime::createFromFormat('Y-m-d', $check_out);
-                    $nights   = ($ci_date && $co_date) ? max(1, $ci_date->diff($co_date)->days) : 1;
+                    $ci_date  = $ci_date_for_calc;
+                    $co_date  = $co_date_for_calc;
+                    $nights   = $nights_for_calc;
                     $ci_time  = get_option('mhbo_check_in_time', '14:00');
                     $co_time  = get_option('mhbo_check_out_time', '11:00');
                     ?>
@@ -1448,11 +1465,18 @@ $deposit_data = null;
                             <span><?php echo esc_html(__('Amount', 'modern-hotel-booking')); ?></span>
                         </div>
                         
+                        <?php
+                        $peak_surcharge       = $surcharge_info['total'] ?? Money::fromCents(0, $currency_code);
+                        $child_discount       = $calc['child_discount'] ?? Money::fromCents(0, $currency_code);
+                        $child_discount_count = $calc['child_discount_count'] ?? 0;
+
+                        $room_row_total = $total->add($child_discount)->subtract($peak_surcharge);
+                        ?>
                         <div class="mhbo-summary-row">
                             <span><?php echo esc_html(_x('Room', 'accommodation unit', 'modern-hotel-booking')); ?></span>
-                            <span><?php echo esc_html(I18n::format_currency($total)); ?></span>
+                            <span><?php echo esc_html(I18n::format_currency($room_row_total)); ?></span>
                         </div>
-                        
+
                         <?php
                         $children_total_init = $calc ? $calc['children_total'] : Money::fromCents(0, Pricing::get_currency_code());
                         ?>
@@ -1460,7 +1484,29 @@ $deposit_data = null;
                             <span><?php echo esc_html(I18n::get_label('label_children')); ?></span>
                             <span class="mhbo-children-total-display"><?php echo esc_html($children_total_init->isPositive() ? $children_total_init->format() : ''); ?></span>
                         </div>
-                        
+
+                        <div class="mhbo-summary-row mhbo-peak-surcharge-row" style="<?php echo esc_attr($peak_surcharge->isPositive() ? '' : 'display:none;'); ?>">
+                            <span class="mhbo-peak-surcharge-label"><?php                        
+                                echo esc_html(sprintf(
+                                I18n::get_label('label_peak_season_surcharge'),
+                                get_option( 'mhbo_peak_season_short_stay_threshold', 3)
+                            ));
+                            ?></span>
+                            <span class="mhbo-peak-surcharge-total-display"><?php echo $peak_surcharge->isPositive() ? '+' . esc_html(I18n::format_currency($peak_surcharge)) : ''; ?></span>
+                        </div>
+
+                        <div class="mhbo-summary-row mhbo-child-discount-row" style="<?php echo esc_attr($child_discount->isPositive() ? '' : 'display:none;'); ?>">
+                            <span class="mhbo-child-discount-label"><?php
+                                esc_html(sprintf(
+                                    I18n::get_label('label_child_discount'),
+                                        $child_discount_count,
+                                        $nights,
+                                        (int) get_option('mhbo_child_discount_age_limit', 10)
+                                    ));
+                            ?></span>
+                            <span class="mhbo-child-discount-total-display"><?php echo $child_discount->isPositive() ? '-' . esc_html(I18n::format_currency($child_discount)) : ''; ?></span>
+                        </div>
+
                         <div class="mhbo-summary-divider"></div>
                         
                         <div class="mhbo-summary-total">
@@ -1520,6 +1566,31 @@ $deposit_data = null;
                     </select>
                 </div>
 
+                <div class="mhbo-form-group">   
+                    <label><?php echo esc_html(I18n::get_label('label_children')); ?></label>
+                    <select name="children" class="mhbo-booking-children">
+                        <?php
+                        $max_children_capacity = isset($room->max_children) ? intval($room->max_children) : 0;
+                        $selected_children = min($calc_children, $max_children_capacity);
+                        for ($i = 0; $i <= $max_children_capacity; $i++) {
+                            echo '<option value="' . esc_attr((string) $i) . '" ' . selected($selected_children, $i, false) . '>' . esc_html((string) $i) . '</option>';
+                        }
+                        ?>
+                    </select>
+                </div>
+
+                <div class="mhbo-child-ages-container" style="<?php echo esc_attr($calc_children > 0 ? 'display:block;' : 'display:none;'); ?>">
+                    <div class="mhbo-child-ages-inputs">
+                        <?php for ($i = 0; $i < $calc_children; $i++): ?>
+                            <div class="mhbo-child-age-group">
+                                <label><?php echo esc_html(sprintf(I18n::get_label('label_child_n_age'), $i + 1)); ?> <span class="required">*</span></label>
+                                <input type="number" name="child_ages[]"
+                                    value="<?php echo esc_attr((string) ($calc_child_ages[$i] ?? '')); ?>"
+                                    placeholder="0" min="0" max="17" required class="mhbo-child-age-input">
+                            </div>
+                        <?php endfor; ?>
+                    </div>
+                </div>
 <div class="mhbo-form-group">
                     <label><?php echo esc_html(I18n::get_label('label_phone')); ?> <span class="required">*</span></label><input
                         type="tel" name="customer_phone" value="<?php echo esc_attr($customer_phone); ?>" required>

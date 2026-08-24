@@ -35,6 +35,7 @@ class Plugin
         // Initialize I18n filters
         I18n::init();
         Email::init();
+        Pricing::register_hooks();
 
         /* ---- iCal Export (public endpoint) ---- *//* ---- REST API ---- */
         add_action('rest_api_init', function () {

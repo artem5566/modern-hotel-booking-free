@@ -159,6 +159,11 @@ class CreateBookingLink {
 
         // ── Calculate pricing (read-only, no DB insert) ─────────────
         $currency = Pricing::get_currency_code();
+        $ci_date = \DateTime::createFromFormat('Y-m-d', $check_in);
+        $co_date = \DateTime::createFromFormat('Y-m-d', $check_out);
+        $GLOBALS['mhbo_current_stay_nights'] = ($ci_date && $co_date)
+            ? max(1, $ci_date->diff($co_date)->days)
+            : 0;
         $calc     = Pricing::calculate_booking_money( $room_id, $check_in, $check_out, $adults, [], $children, [] );
 
         if ( ! isset( $calc['total'] ) || ! ( $calc['total'] instanceof Money ) ) {

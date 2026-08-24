@@ -118,8 +118,14 @@ class BookingProcessor
         // 3. Pro Features Check
         $is_pro_active = false;
 
-$children      = 0;
-        $child_ages    = [];
+// 3. Children (Free-tier: flat per-child-per-night discount; no per-age pricing tiers)
+        $children      = max(0, absint($data['children'] ?? 0));
+        $child_ages_raw = is_array($data['child_ages'] ?? null) ? $data['child_ages'] : [];
+        $child_ages    = array_map('absint', $child_ages_raw);
+        // Defensive: trim/pad ages array to match the declared count so a mismatched
+        // payload can't claim more discount-eligible children than were declared.
+        $child_ages    = array_slice($child_ages, 0, $children);
+
         $extras_input  = [];
         $payment_type  = 'full';
 
@@ -136,6 +142,11 @@ $children      = 0;
             }
 
             // 4. Pricing Calculation
+            $ci_date = \DateTime::createFromFormat('Y-m-d', $check_in);
+            $co_date = \DateTime::createFromFormat('Y-m-d', $check_out);
+            $GLOBALS['mhbo_current_stay_nights'] = ($ci_date && $co_date)
+                ? max(1, $ci_date->diff($co_date)->days)
+                : 0;
             $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, $guests, $extras_input, $children, $child_ages);
             if (!$calc) {
                 return new \WP_Error('mhbo_pricing_failed', I18n::get_label('label_price_calc_error'));

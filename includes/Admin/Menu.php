@@ -687,6 +687,12 @@ $edit_mode = false;
                     $post_extras[$ex_id] = $qty;
                 }
             }
+            
+            $ci_date = \DateTime::createFromFormat('Y-m-d', $check_in);
+            $co_date = \DateTime::createFromFormat('Y-m-d', $check_out);
+            $GLOBALS['mhbo_current_stay_nights'] = ($ci_date && $co_date)
+                ? max(1, $ci_date->diff($co_date)->days)
+                : 0;
 
             $calc = Pricing::calculate_booking_money($room_id, $check_in, $check_out, $guests, $post_extras, $children_count, $child_ages);
             $tax_data = $calc['tax'] ?? null;
@@ -849,6 +855,15 @@ $edit_mode = false;
                                 <th><?php echo esc_html(I18n::get_label('label_guests')); ?></th>
                                 <td><input type="number" name="guests" id="mhbo_add_guests" value="2" min="1" max="10"
                                         class="small-text"></td>
+                            </tr>
+                            <tr>
+                                <th><?php echo esc_html(I18n::get_label('label_children')); ?></th>
+                                <td><input type="number" name="children" id="mhbo_add_children" value="0" min="0" max="10"
+                                        class="small-text"></td>
+                            </tr>
+                            <tr id="mhbo_add_child_ages_row" style="display:none;">
+                                <th><?php echo esc_html(I18n::get_label('label_child_ages')); ?></th>
+                                <td><div id="mhbo_add_child_ages_container"></div></td>
                             </tr>
 
 <!-- Custom Fields -->
@@ -1074,6 +1089,28 @@ $edit_mode = false;
                             if (!is_array($edit_children_ages))
                                 $edit_children_ages = [];
                             ?>
+                            <tr>
+                                <th><?php echo esc_html(I18n::get_label('label_children')); ?></th>
+                                <td><input type="number" name="children" id="mhbo_edit_children"
+                                        value="<?php echo esc_attr((string) $edit_children); ?>" min="0" max="10"
+                                        class="small-text">
+                                </td>
+                            </tr>
+                            <tr id="mhbo_edit_child_ages_row" style="<?php echo esc_attr($edit_children > 0 ? '' : 'display:none;'); ?>">
+                                <th><?php echo esc_html(I18n::get_label('label_child_ages')); ?></th>
+                                <td>
+                                    <div id="mhbo_edit_child_ages_container">
+                                        <?php for ($i = 0; $i < $edit_children; $i++): ?>
+                                            <label style="display:inline-block; margin-right:10px; margin-bottom:5px;">
+                                                <?php echo esc_html(sprintf(I18n::get_label('label_child_n_age'), $i + 1)); ?>
+                                                <input type="number" name="child_ages[]"
+                                                    value="<?php echo esc_attr((string) ($edit_children_ages[$i] ?? 0)); ?>"
+                                                    min="0" max="17" style="width:60px;">
+                                            </label>
+                                        <?php endfor; ?>
+                                    </div>
+                                </td>
+                            </tr>
 
 <!-- Custom Fields -->
                             <?php
@@ -1553,6 +1590,7 @@ if ($ex['control_type'] === 'quantity') {
 
             $base_price = Money::fromDecimal(isset($_POST['base_price']) ? sanitize_text_field(wp_unslash($_POST['base_price'])) : '0', $currency)->toDecimal();
             $max_adults = isset($_POST['max_adults']) ? absint(wp_unslash($_POST['max_adults'])) : 1;
+            $max_children = isset($_POST['max_children']) ? absint(wp_unslash($_POST['max_children'])) : 0;
             $image_url = isset($_POST['image_url']) ? esc_url_raw(wp_unslash($_POST['image_url'])) : '';
 
             $data = array(
@@ -1560,7 +1598,7 @@ if ($ex['control_type'] === 'quantity') {
                 'description' => $room_desc,
                 'base_price' => $base_price,
                 'max_adults' => $max_adults,
-                
+                'max_children' => $max_children,
                 'amenities' => $amenities,
                 'image_url' => $image_url,
             );
@@ -1651,7 +1689,12 @@ if ($ex['control_type'] === 'quantity') {
                                         value="<?php echo $edit_mode ? esc_attr($edit_data->max_adults) : '2'; ?>"
                                         class="mhbo-input-mid" min="1">
                                 </div>
-                                
+                                <div class="mhbo-settings-item">
+                                    <label class="mhbo-label"><?php esc_html_e('Child Capacity', 'modern-hotel-booking'); ?></label>
+                                    <input type="number" name="max_children"
+                                        value="<?php echo $edit_mode ? esc_attr($edit_data->max_children ?? 0) : '0'; ?>"
+                                        class="mhbo-input-mid" min="0">
+                                </div>                                
                             </div>
                         </div>
 
