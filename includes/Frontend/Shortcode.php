@@ -1217,7 +1217,15 @@ class Shortcode
             if (is_array($amenities) && [] !== $amenities) {
                 echo '<div class="mhbo-amenities" style="margin-bottom:10px; font-size:0.85rem; color:#666;">';
                 foreach ($amenities as $am) {
-                    echo '<span style="display:inline-block; background:#eee; padding:2px 8px; border-radius:12px; margin-right:5px; margin-bottom:5px;">' . esc_html(ucfirst((string)I18n::decode($am))) . '</span>';
+                    $am_raw = (string) $am;
+                    // Look up the translated label stored as option "mhbo_label_<slug>"
+                    $am_slug  = sanitize_title($am_raw);
+                    $am_label = '' !== $am_slug ? (string) I18n::decode((string) get_option('mhbo_label_' . $am_slug, '')) : '';
+                    // Fall back to the raw amenity text if no translation option exists
+                    if ('' === $am_label) {
+                        $am_label = (string) I18n::decode($am_raw);
+                    }
+                    echo '<span style="display:inline-block; background:#eee; padding:2px 8px; border-radius:12px; margin-right:5px; margin-bottom:5px;">' . esc_html(ucfirst($am_label)) . '</span>';
                 }
                 echo '</div>';
             }
@@ -1461,7 +1469,7 @@ $deposit_data = null;
 
                         <div class="mhbo-summary-row mhbo-child-discount-row" style="<?php echo esc_attr($child_discount->isPositive() ? '' : 'display:none;'); ?>">
                             <span class="mhbo-child-discount-label"><?php
-                                esc_html(sprintf(
+                                echo esc_html(sprintf(
                                     I18n::get_label('label_child_discount'),
                                         $child_discount_count,
                                         $nights,
